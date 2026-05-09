@@ -171,25 +171,30 @@
                     <thead>
                         <tr>
                             <th>Nom</th>
-                            <th>Variation poids (kg)</th>
+                            <th>Variation estimée</th>
                             <th>Composition</th>
                             <th>Durées</th>
+                            <th>Nb activités</th>
                         </tr>
                     </thead>
                     <tbody id="regime-rows">
                         <?php foreach ($regimes as $regime) : ?>
                             <?php $durees = $regimeDurees[$regime['id_regime']] ?? []; ?>
                             <tr>
-                                <td><?= esc($regime['nom_regime']) ?></td>
+                                <td>
+                                    <a href="<?= esc(site_url('regimes/' . $regime['id_regime'])) ?>">
+                                        <?= esc($regime['nom_regime']) ?>
+                                    </a>
+                                </td>
                                 <td>
                                     <span class="badge">
-                                        <?= esc($regime['variation_poids']) ?>
+                                        <?= esc($regime['variation_label']) ?>
                                     </span>
                                 </td>
                                 <td>
                                     <?= esc($regime['pourcentage_viande']) ?>% viande,
                                     <?= esc($regime['pourcentage_poisson']) ?>% poisson,
-                                    <?= esc($regime['pourcentage_volaille']) ?>% volaille
+                                        <?= esc($regime['pourcentage_volaille']) ?>% volaille
                                 </td>
                                 <td>
                                     <?php if (empty($durees)) : ?>
@@ -202,6 +207,11 @@
                                         </div>
                                     <?php endif; ?>
                                 </td>
+                                <td>
+                                    <span class="badge badge-muted">
+                                        <?= esc($regime['activity_count']) ?>
+                                    </span>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -213,6 +223,7 @@
         (function() {
             const filters = document.getElementById('filters');
             const rows = document.getElementById('regime-rows');
+            const detailBase = <?= json_encode(rtrim(site_url('regimes'), '/')) ?>;
 
             if (!filters || !rows) return;
 
@@ -222,7 +233,7 @@
                 if (!regimes.length) {
                     const emptyRow = document.createElement('tr');
                     const emptyCell = document.createElement('td');
-                    emptyCell.colSpan = 4;
+                    emptyCell.colSpan = 5;
                     emptyCell.className = 'empty';
                     emptyCell.textContent = 'Aucun régime disponible.';
                     emptyRow.appendChild(emptyCell);
@@ -234,13 +245,16 @@
                     const row = document.createElement('tr');
 
                     const nameCell = document.createElement('td');
-                    nameCell.textContent = regime.nom_regime;
+                    const nameLink = document.createElement('a');
+                    nameLink.href = `${detailBase}/${regime.id_regime}`;
+                    nameLink.textContent = regime.nom_regime;
+                    nameCell.appendChild(nameLink);
                     row.appendChild(nameCell);
 
                     const variationCell = document.createElement('td');
                     const variationBadge = document.createElement('span');
                     variationBadge.className = 'badge';
-                    variationBadge.textContent = regime.variation_poids;
+                    variationBadge.textContent = regime.variation_label;
                     variationCell.appendChild(variationBadge);
                     row.appendChild(variationCell);
 
@@ -267,6 +281,13 @@
                         dureeCell.appendChild(badge);
                     }
                     row.appendChild(dureeCell);
+
+                    const countCell = document.createElement('td');
+                    const countBadge = document.createElement('span');
+                    countBadge.className = 'badge badge-muted';
+                    countBadge.textContent = regime.activity_count || 0;
+                    countCell.appendChild(countBadge);
+                    row.appendChild(countCell);
 
                     rows.appendChild(row);
                 });

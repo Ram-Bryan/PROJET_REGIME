@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
-use CodeIgniter\Validation\ValidationInterface;
 
 class RegimeModel extends Model
 {
@@ -14,7 +13,7 @@ class RegimeModel extends Model
     protected $useSoftDeletes = false;
     protected $allowedFields = [
         'nom_regime',
-        'variation_poids',
+        'variation_mensuelle_kg',
         'pourcentage_viande',
         'pourcentage_poisson',
         'pourcentage_volaille',
@@ -31,11 +30,11 @@ class RegimeModel extends Model
         $idObjectif = (int)($user['id_objectif'] ?? 0);
 
         if ($idObjectif === 1) {
-            return $this->where('variation_poids <', 0)->findAll();
+            return $this->where('variation_mensuelle_kg <', 0)->findAll();
         }
 
         if ($idObjectif === 2) {
-            return $this->where('variation_poids >', 0)->findAll();
+            return $this->where('variation_mensuelle_kg >', 0)->findAll();
         }
 
         if ($idObjectif === 3) {
@@ -51,10 +50,10 @@ class RegimeModel extends Model
             $ideal = $this->imcModel->getIdealRange();
             if ($ideal === null) return [];
 
-            if ($imc < (float)$ideal['imc_min']) return $this->where('variation_poids >', 0)->findAll();
-            if ($imc > (float)$ideal['imc_max']) return $this->where('variation_poids <', 0)->findAll();
+            if ($imc < (float)$ideal['imc_min']) return $this->where('variation_mensuelle_kg >', 0)->findAll();
+            if ($imc > (float)$ideal['imc_max']) return $this->where('variation_mensuelle_kg <', 0)->findAll();
 
-            return $this->where('variation_poids >=', -1)->where('variation_poids <=', 1)->findAll();
+            return $this->where('variation_mensuelle_kg >=', -1)->where('variation_mensuelle_kg <=', 1)->findAll();
         }
 
         return [];
@@ -71,12 +70,12 @@ class RegimeModel extends Model
         }
 
         if ($objectifId === 1) {
-            $builder->where('regime.variation_poids <', 0);
+            $builder->where('regime.variation_mensuelle_kg <', 0);
         } elseif ($objectifId === 2) {
-            $builder->where('regime.variation_poids >', 0);
+            $builder->where('regime.variation_mensuelle_kg >', 0);
         } elseif ($objectifId === 3) {
-            $builder->where('regime.variation_poids >=', -1)
-                ->where('regime.variation_poids <=', 1);
+            $builder->where('regime.variation_mensuelle_kg >=', -1)
+                ->where('regime.variation_mensuelle_kg <=', 1);
         }
 
         $builder->groupBy('regime.id_regime');

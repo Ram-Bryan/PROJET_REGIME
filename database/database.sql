@@ -44,7 +44,7 @@ CREATE TABLE utilisateur (
 CREATE TABLE regime (
     id_regime INT AUTO_INCREMENT PRIMARY KEY,
     nom_regime VARCHAR(100) NOT NULL,
-    variation_poids DECIMAL(5,2) NOT NULL,
+    variation_mensuelle_kg DECIMAL(5,2) NOT NULL,
     pourcentage_viande DECIMAL(5,2) DEFAULT 0,
     pourcentage_poisson DECIMAL(5,2) DEFAULT 0,
     pourcentage_volaille DECIMAL(5,2) DEFAULT 0
@@ -306,7 +306,7 @@ INSERT INTO utilisateur(
 
 INSERT INTO regime(
     nom_regime,
-    variation_poids,
+    variation_mensuelle_kg,
     pourcentage_viande,
     pourcentage_poisson,
     pourcentage_volaille
