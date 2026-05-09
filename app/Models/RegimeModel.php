@@ -59,4 +59,29 @@ class RegimeModel extends Model
 
         return [];
     }
+
+    public function getFilteredList(?int $dureeJours, ?int $objectifId): array
+    {
+        $builder = $this->builder();
+        $builder->select('regime.*');
+
+        if (!empty($dureeJours)) {
+            $builder->join('duree_regime', 'duree_regime.id_regime = regime.id_regime');
+            $builder->where('duree_regime.nb_jours', $dureeJours);
+        }
+
+        if ($objectifId === 1) {
+            $builder->where('regime.variation_poids <', 0);
+        } elseif ($objectifId === 2) {
+            $builder->where('regime.variation_poids >', 0);
+        } elseif ($objectifId === 3) {
+            $builder->where('regime.variation_poids >=', -1)
+                ->where('regime.variation_poids <=', 1);
+        }
+
+        $builder->groupBy('regime.id_regime');
+        $builder->orderBy('regime.nom_regime', 'ASC');
+
+        return $builder->get()->getResultArray();
+    }
 }
