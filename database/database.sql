@@ -170,6 +170,21 @@ CREATE TABLE option_historique (
 );
 
 -- =========================================================
+-- TABLE IMC
+-- =========================================================
+
+CREATE TABLE imc (
+    imc_min DECIMAL(5,2) NOT NULL,
+    imc_max DECIMAL(5,2) NOT NULL
+);
+
+-- =========================================================
+-- INSERTION IMC
+-- =========================================================
+
+INSERT INTO imc (imc_min, imc_max) VALUES (18.5, 25);
+
+-- =========================================================
 -- INSERTION OBJECTIFS
 -- =========================================================
 
@@ -287,7 +302,7 @@ INSERT INTO regime(
 ('Regime Keto', -5, 60, 20, 20),
 ('Regime Mediterraneen', -2, 30, 40, 30),
 ('Regime Hyperproteine', 4, 50, 20, 30),
-('Regime Vegetarien', -3, 0, 10, 0),
+('Regime Vegetarien', -3, 10, 10, 80),
 ('Regime Fitness', 1, 40, 30, 30);
 
 -- =========================================================
@@ -336,7 +351,7 @@ INSERT INTO duree_regime(
 (5,90,120000);
 
 -- =========================================================
--- INSERTION DUREE_REGIME_PRIX
+-- INSERTION DUREE_REGIME_PRIX (HISTORIQUE DES PRIX)
 -- =========================================================
 
 INSERT INTO duree_regime_prix(
