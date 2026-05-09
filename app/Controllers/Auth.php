@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\CommandeModel;
 use App\Models\ObjectifModel;
 use App\Models\UtilisateurModel;
 
@@ -36,7 +37,10 @@ class Auth extends BaseController
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Veuillez compléter correctement les informations personnelles.');
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Veuillez compléter correctement les informations personnelles.')
+                ->with('errors', $this->validator->getErrors());
         }
 
         $userModel = new UtilisateurModel();
@@ -178,6 +182,8 @@ class Auth extends BaseController
             'is_gold' => (bool) $user['is_gold'],
         ]);
 
+        $this->refreshUserSessionData($user);
+
         return redirect()->to('/dashboard')->with('success', 'Connexion réussie.');
     }
 
@@ -187,10 +193,33 @@ class Auth extends BaseController
             return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
         }
 
+        $userModel = new UtilisateurModel();
+        $user = $userModel->find((int) session()->get('id_utilisateur'));
+
+        if ($user !== null) {
+            $this->refreshUserSessionData($user);
+        }
+
         return view('dashboard', [
             'nom' => (string) session()->get('nom'),
             'email' => (string) session()->get('email'),
             'role' => (string) session()->get('role'),
+            'imc' => session()->get('imc'),
+            'objectifLabel' => session()->get('objectif_label'),
+        ]);
+    }
+
+    public function transactions()
+    {
+        if (! session()->get('is_logged_in')) {
+            return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
+        }
+
+        $commandeModel = new CommandeModel();
+        $transactions = $commandeModel->getHistoryByUserId((int) session()->get('id_utilisateur'));
+
+        return view('transactions/index', [
+            'transactions' => $transactions,
         ]);
     }
 
@@ -262,7 +291,7 @@ class Auth extends BaseController
         $rules = [
             'nom' => 'required|min_length[3]',
             'genre' => 'required|in_list[Homme,Femme]',
-            'date_naissance' => 'required|valid_date',
+            'date_naissance' => 'required|valid_date[Y-m-d]',
             'taille_cm' => 'required|numeric|greater_than[0]',
             'poids_kg' => 'required|numeric|greater_than[0]',
             'poids_objectif' => 'required|numeric|greater_than[0]',
@@ -270,7 +299,12 @@ class Auth extends BaseController
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Veuillez compléter correctement tous les champs.');
+            $errors = $this->validator->getErrors();
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Veuillez corriger les champs indiqués.')
+                ->with('errors', $errors);
         }
 
         $tailleCm = (float) $this->request->getPost('taille_cm');
@@ -315,5 +349,25 @@ class Auth extends BaseController
         session()->destroy();
 
         return redirect()->to('/login')->with('success', 'Déconnexion effectuée.');
+    }
+
+    private function refreshUserSessionData(array $user): void
+    {
+        $userModel = new UtilisateurModel();
+        $objectifModel = new ObjectifModel();
+
+        $objectif = null;
+        if (! empty($user['id_objectif'])) {
+            $objectif = $objectifModel->find((int) $user['id_objectif']);
+        }
+
+        session()->set([
+            'nom' => $user['nom'],
+            'email' => $user['email'],
+            'role' => $user['role_utilisateur'],
+            'is_gold' => (bool) $user['is_gold'],
+            'imc' => $userModel->calculateImc((float) $user['poids_kg'], (float) $user['taille_cm']),
+            'objectif_label' => $objectif['label_objectif'] ?? null,
+        ]);
     }
 }

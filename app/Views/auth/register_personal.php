@@ -12,6 +12,14 @@
         <p style="color: red;"><?= esc(session()->getFlashdata('error')) ?></p>
     <?php endif; ?>
 
+    <?php if (session('errors')): ?>
+        <ul style="color: red;">
+            <?php foreach (session('errors') as $error): ?>
+                <li><?= esc($error) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+
     <?php if (session()->getFlashdata('success')): ?>
         <p style="color: green;"><?= esc(session()->getFlashdata('success')) ?></p>
     <?php endif; ?>
@@ -31,7 +39,7 @@
 
         <div>
             <label for="mot_de_passe">Mot de passe</label><br>
-            <input type="password" id="mot_de_passe" name="mot_de_passe" required>
+            <input type="password" id="mot_de_passe" name="mot_de_passe" minlength="6" required>
         </div>
 
         <div>
