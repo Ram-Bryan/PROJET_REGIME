@@ -1,6 +1,8 @@
 <?php 
 namespace App\Controllers;
+use App\Models\ObjectifModel;
 use App\Models\AdminModel;
+use App\Models\UtilisateurModel;
 class AdminController extends BaseController
 {   
     public function login()
@@ -32,7 +34,35 @@ class AdminController extends BaseController
             return redirect()->to('/admin/login');
         }
 
-        return view('admin/dashboard');
+        $utilisateurModel = new UtilisateurModel();
+        $objectifModel = new ObjectifModel();
+        $db = db_connect();
+
+        $usersCount = $utilisateurModel->countAllResults();
+        $goldCount = $utilisateurModel->where('is_gold', 1)->countAllResults();
+        $salesCount = $db->table('commande')->countAllResults();
+        $objectivesCount = $objectifModel->countAllResults();
+
+        $objectifs = $objectifModel
+            ->select('objectif.id_objectif, objectif.label_objectif, COUNT(utilisateur.id_utilisateur) AS total', false)
+            ->join('utilisateur', 'utilisateur.id_objectif = objectif.id_objectif', 'left')
+            ->groupBy('objectif.id_objectif')
+            ->orderBy('objectif.id_objectif', 'ASC')
+            ->findAll();
+
+        $recentUsers = $utilisateurModel
+            ->select('nom, email')
+            ->orderBy('id_utilisateur', 'DESC')
+            ->findAll(5);
+
+        return view('admin/dashboard', [
+            'usersCount' => $usersCount,
+            'goldCount' => $goldCount,
+            'salesCount' => $salesCount,
+            'objectivesCount' => $objectivesCount,
+            'objectifs' => $objectifs,
+            'recentUsers' => $recentUsers,
+        ]);
     }
 
     public function logout()

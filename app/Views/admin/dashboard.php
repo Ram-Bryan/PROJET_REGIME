@@ -397,6 +397,45 @@
             background-color: #d1ecf1;
             color: #0c5460;
         }
+
+        .chart-card {
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            margin-bottom: 20px;
+        }
+
+        .chart-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 18px;
+        }
+
+        .chart-wrap {
+            position: relative;
+            min-height: 320px;
+        }
+
+        .metric-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .metric-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-radius: 10px;
+            background: #f8f9fb;
+        }
+
+        .metric-item strong {
+            color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
@@ -436,6 +475,12 @@
                 <a href="<?= base_url('admin/objectifs') ?>">
                     <i class="fas fa-bullseye"></i>
                     <span>Objectifs</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?= base_url('admin/promos') ?>">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Promos</span>
                 </a>
             </li>
             <li>
@@ -490,6 +535,12 @@
             </div>
         <?php endif; ?>
 
+        <?php
+            $objectiveLabels = array_map(static fn ($item) => $item['label_objectif'] ?? 'Objectif', $objectifs ?? []);
+            $objectiveTotals = array_map(static fn ($item) => (int)($item['total'] ?? 0), $objectifs ?? []);
+            $recentUsers = $recentUsers ?? [];
+        ?>
+
         <!-- Section de bienvenue -->
         <div class="welcome-section">
             <h1>Bienvenue, <?= session()->get('admin_name') ?> ! 👋</h1>
@@ -501,7 +552,7 @@
             <div class="col-lg-3 col-md-6">
                 <div class="stat-card primary">
                     <div>
-                        <div class="stat-value">156</div>
+                        <div class="stat-value"><?= esc($usersCount) ?></div>
                         <div class="stat-label">Utilisateurs</div>
                     </div>
                     <i class="fas fa-users stat-icon"></i>
@@ -510,105 +561,107 @@
             <div class="col-lg-3 col-md-6">
                 <div class="stat-card accent">
                     <div>
-                        <div class="stat-value">42</div>
-                        <div class="stat-label">Régimes Actifs</div>
+                        <div class="stat-value"><?= esc($goldCount) ?></div>
+                        <div class="stat-label">Utilisateurs Gold</div>
                     </div>
-                    <i class="fas fa-apple-alt stat-icon"></i>
+                    <i class="fas fa-crown stat-icon"></i>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="stat-card success">
                     <div>
-                        <div class="stat-value">89</div>
-                        <div class="stat-label">Activités</div>
+                        <div class="stat-value"><?= esc($salesCount) ?></div>
+                        <div class="stat-label">Ventes</div>
                     </div>
-                    <i class="fas fa-running stat-icon"></i>
+                    <i class="fas fa-shopping-cart stat-icon"></i>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="stat-card danger">
                     <div>
-                        <div class="stat-value">12</div>
-                        <div class="stat-label">Alertes</div>
+                        <div class="stat-value"><?= esc($objectivesCount) ?></div>
+                        <div class="stat-label">Objectifs</div>
                     </div>
-                    <i class="fas fa-bell stat-icon"></i>
+                    <i class="fas fa-bullseye stat-icon"></i>
                 </div>
             </div>
         </div>
 
-        <!-- Derniers Utilisateurs -->
         <div class="row">
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-users"></i> Derniers Utilisateurs
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Nom</th>
-                                    <th>Email</th>
-                                    <th>Date d'inscription</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Jean Dupont</td>
-                                    <td>jean@example.com</td>
-                                    <td>09/05/2026</td>
-                                    <td>
-                                        <a href="#" class="btn btn-sm btn-primary">Voir</a>
-                                        <a href="#" class="btn btn-sm btn-danger">Supprimer</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Marie Martin</td>
-                                    <td>marie@example.com</td>
-                                    <td>08/05/2026</td>
-                                    <td>
-                                        <a href="#" class="btn btn-sm btn-primary">Voir</a>
-                                        <a href="#" class="btn btn-sm btn-danger">Supprimer</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Pierre Bernard</td>
-                                    <td>pierre@example.com</td>
-                                    <td>07/05/2026</td>
-                                    <td>
-                                        <a href="#" class="btn btn-sm btn-primary">Voir</a>
-                                        <a href="#" class="btn btn-sm btn-danger">Supprimer</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <div class="col-lg-7">
+                <div class="chart-card">
+                    <h3><i class="fas fa-bullseye"></i> Répartition des utilisateurs selon les objectifs</h3>
+                    <div class="chart-wrap">
+                        <canvas id="objectifChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Activité Récente -->
-            <div class="col-lg-4">
+            <div class="col-lg-5">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-bar"></i> Vue globale</h3>
+                    <div class="chart-wrap">
+                        <canvas id="summaryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header">
-                        <i class="fas fa-history"></i> Activité Récente
+                        <i class="fas fa-users"></i> Derniers utilisateurs
                     </div>
                     <div class="card-body">
-                        <div style="margin-bottom: 15px;">
-                            <small style="display: block; color: #7f8c8d; margin-bottom: 5px;">Il y a 2 heures</small>
-                            <p style="margin: 0; color: var(--primary-color);">Nouvel utilisateur inscrit</p>
+                        <?php if (!empty($recentUsers)): ?>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($recentUsers as $user): ?>
+                                        <tr>
+                                            <td><?= esc($user['nom'] ?? '') ?></td>
+                                            <td><?= esc($user['email'] ?? '') ?></td>
+                                            <td>
+                                                <a href="#" class="btn btn-sm btn-primary">Voir</a>
+                                                <a href="#" class="btn btn-sm btn-danger">Supprimer</a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        <?php else: ?>
+                            <p class="mb-0 text-muted">Aucun utilisateur trouvé.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="chart-card">
+                    <h3><i class="fas fa-list-check"></i> Indicateurs rapides</h3>
+                    <div class="metric-list">
+                        <div class="metric-item">
+                            <span>Utilisateurs</span>
+                            <strong><?= esc($usersCount) ?></strong>
                         </div>
-                        <div style="margin-bottom: 15px;">
-                            <small style="display: block; color: #7f8c8d; margin-bottom: 5px;">Il y a 5 heures</small>
-                            <p style="margin: 0; color: var(--primary-color);">Régime mis à jour</p>
+                        <div class="metric-item">
+                            <span>Gold</span>
+                            <strong><?= esc($goldCount) ?></strong>
                         </div>
-                        <div style="margin-bottom: 15px;">
-                            <small style="display: block; color: #7f8c8d; margin-bottom: 5px;">Hier</small>
-                            <p style="margin: 0; color: var(--primary-color);">Activité supprimée</p>
+                        <div class="metric-item">
+                            <span>Ventes</span>
+                            <strong><?= esc($salesCount) ?></strong>
                         </div>
-                        <div>
-                            <small style="display: block; color: #7f8c8d; margin-bottom: 5px;">Hier</small>
-                            <p style="margin: 0; color: var(--primary-color);">Nouvel objectif créé</p>
+                        <div class="metric-item">
+                            <span>Objectifs</span>
+                            <strong><?= esc($objectivesCount) ?></strong>
                         </div>
                     </div>
                 </div>
@@ -617,11 +670,72 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Toggle sidebar sur mobile
         document.getElementById('sidebarToggle')?.addEventListener('click', function() {
             document.querySelector('.sidebar').classList.toggle('show');
         });
+
+        const objectifLabels = <?= json_encode(array_values($objectiveLabels), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+        const objectifTotals = <?= json_encode(array_values($objectiveTotals), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+
+        const objectifCanvas = document.getElementById('objectifChart');
+        if (objectifCanvas) {
+            new Chart(objectifCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: objectifLabels.length ? objectifLabels : ['Aucun objectif'],
+                    datasets: [{
+                        data: objectifTotals.length ? objectifTotals : [1],
+                        backgroundColor: ['#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        const summaryCanvas = document.getElementById('summaryChart');
+        if (summaryCanvas) {
+            new Chart(summaryCanvas, {
+                type: 'bar',
+                data: {
+                    labels: ['Utilisateurs', 'Gold', 'Ventes'],
+                    datasets: [{
+                        label: 'Nombre',
+                        data: [<?= (int) $usersCount ?>, <?= (int) $goldCount ?>, <?= (int) $salesCount ?>],
+                        backgroundColor: ['#2c3e50', '#3498db', '#27ae60'],
+                        borderRadius: 10,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>

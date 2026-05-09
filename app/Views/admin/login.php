@@ -274,7 +274,7 @@
                 <?php endif; ?>
 
                 <!-- Formulaire de connexion -->
-                <form id="loginForm" action="<?= base_url('admin/authenticate') ?>" method="post" novalidate>
+                <form id="loginForm" action="<?= base_url('/admin/authenticate') ?>" method="post" novalidate>
                     <?= csrf_field() ?>
 
                     <!-- Email -->

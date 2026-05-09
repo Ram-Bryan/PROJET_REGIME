@@ -5,5 +5,5 @@ INSERT INTO admin (nom, prenom, email, mot_de_passe) VALUES (
     'Admin',
     'Test',
     'admin@test.com',
-    '$2y$10$z8XOQf8aaI4B/Yw8oFJn8.3XHKrLg1u1e.j5VqEp/Nh8uKpkQzwA6'
+    '$2y$10$lDe00s8Sqm4VfSo65uX1f.rX9oyQCMxElqwNydMvrrH820oHSacTO'
 );
