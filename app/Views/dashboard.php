@@ -19,6 +19,11 @@
         <p>Objectif: <?= esc((string) session()->get('objectif_label')) ?></p>
     <?php endif; ?>
 
+    <div style="margin: 16px 0;">
+        <a href="<?= site_url('/profile') ?>">Voir mon profil</a> |
+        <a href="<?= site_url('/profile/edit') ?>">Modifier mon profil</a>
+    </div>
+
     <a href="<?= site_url('/logout') ?>">Se déconnecter</a>
 </body>
 </html>
