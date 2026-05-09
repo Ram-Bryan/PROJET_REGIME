@@ -23,6 +23,13 @@ class UtilisateurModel extends Model
         'role_utilisateur',
     ];
 
+    public function findByEmail(string $email): ?array
+    {
+        $user = $this->where('email', $email)->first();
+
+        return is_array($user) ? $user : null;
+    }
+
     public function calculateImc(float $poidsKg, float $tailleCm): ?float
     {
         if ($poidsKg <= 0 || $tailleCm <= 0) {
