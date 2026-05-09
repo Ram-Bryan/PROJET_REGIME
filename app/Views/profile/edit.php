@@ -1,5 +1,11 @@
-<?php echo view('header'); ?>
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier mon Profil</title>
+</head>
+<body>
 <div class="container">
     <div class="row my-4">
         <div class="col-md-8 mx-auto">
@@ -140,5 +146,5 @@
         </div>
     </div>
 </div>
-
-<?php echo view('footer'); ?>
+</body>
+</html>
