@@ -26,6 +26,7 @@
         <a href="<?= site_url('/profile/edit') ?>">Modifier mon profil</a>
         | <a href="<?= site_url('/transactions') ?>">Historique des transactions</a>
         | <a href="<?= site_url('/promo') ?>">Ajouter un code promo</a>
+        | <a href="<?= site_url('/regimes') ?>">Voir les régimes</a>
     </div>
 
     <a href="<?= site_url('/logout') ?>">Se déconnecter</a>
