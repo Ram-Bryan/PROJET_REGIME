@@ -1,5 +1,11 @@
-<?php echo view('header'); ?>
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier mon Profil</title>
+</head>
+<body>
 <div class="container">
     <div class="row my-4">
         <div class="col-md-8 mx-auto">
@@ -20,6 +26,14 @@
             <form method="POST" action="<?= site_url('/profile/update') ?>" class="needs-validation">
                 <?= csrf_field() ?>
 
+                <?php if (session()->getFlashdata('error')): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?= esc(session()->getFlashdata('error')) ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php $validationErrors = session()->getFlashdata('errors') ?? []; ?>
+
                 <!-- Section Informations Personnelles -->
                 <div class="card mb-4">
                     <div class="card-header">
@@ -29,6 +43,9 @@
                         <div class="mb-3">
                             <label for="nom" class="form-label">Nom *</label>
                             <input type="text" class="form-control" id="nom" name="nom" value="<?= old('nom', esc($user['nom'])) ?>" required>
+                            <?php if (isset($validationErrors['nom'])): ?>
+                                <div class="text-danger small"><?= esc($validationErrors['nom']) ?></div>
+                            <?php endif; ?>
                         </div>
 
                         <div class="row">
@@ -39,11 +56,17 @@
                                     <option value="Homme" <?= old('genre', $user['genre']) === 'Homme' ? 'selected' : '' ?>>Homme</option>
                                     <option value="Femme" <?= old('genre', $user['genre']) === 'Femme' ? 'selected' : '' ?>>Femme</option>
                                 </select>
+                                <?php if (isset($validationErrors['genre'])): ?>
+                                    <div class="text-danger small"><?= esc($validationErrors['genre']) ?></div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="date_naissance" class="form-label">Date de Naissance *</label>
                                 <input type="date" class="form-control" id="date_naissance" name="date_naissance" value="<?= old('date_naissance', esc($user['date_naissance'])) ?>" required>
+                                <?php if (isset($validationErrors['date_naissance'])): ?>
+                                    <div class="text-danger small"><?= esc($validationErrors['date_naissance']) ?></div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -59,18 +82,27 @@
                             <div class="col-md-6 mb-3">
                                 <label for="taille_cm" class="form-label">Taille (cm) *</label>
                                 <input type="number" step="0.01" class="form-control" id="taille_cm" name="taille_cm" value="<?= old('taille_cm', esc($user['taille_cm'])) ?>" required>
+                                <?php if (isset($validationErrors['taille_cm'])): ?>
+                                    <div class="text-danger small"><?= esc($validationErrors['taille_cm']) ?></div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="poids_kg" class="form-label">Poids Actuel (kg) *</label>
                                 <input type="number" step="0.01" class="form-control" id="poids_kg" name="poids_kg" value="<?= old('poids_kg', esc($user['poids_kg'])) ?>" required>
+                                <?php if (isset($validationErrors['poids_kg'])): ?>
+                                    <div class="text-danger small"><?= esc($validationErrors['poids_kg']) ?></div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="poids_objectif" class="form-label">Poids Objectif (kg) *</label>
-                                <input type="number" step="0.01" class="form-control" id="poids_objectif" name="poids_objectif" value="<?= old('poids_objectif', esc($user['poids_objectif'])) ?>" required>
+                                <input type="number" step="0.01" class="form-control" id="poids_objectif" name="poids_objectif" value="<?= old('poids_objectif', esc($user['poids_objectif'] ?? '')) ?>" required>
+                                <?php if (isset($validationErrors['poids_objectif'])): ?>
+                                    <div class="text-danger small"><?= esc($validationErrors['poids_objectif']) ?></div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -83,6 +115,9 @@
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <?php if (isset($validationErrors['id_objectif'])): ?>
+                                    <div class="text-danger small"><?= esc($validationErrors['id_objectif']) ?></div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -111,5 +146,5 @@
         </div>
     </div>
 </div>
-
-<?php echo view('footer'); ?>
+</body>
+</html>

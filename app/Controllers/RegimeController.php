@@ -8,6 +8,7 @@ use App\Models\DureeRegimeModel;
 use App\Models\ObjectifModel;
 use App\Models\RegimeActiviteModel;
 use App\Models\RegimeModel;
+use App\Models\UtilisateurModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 class RegimeController extends BaseController
@@ -79,28 +80,6 @@ class RegimeController extends BaseController
             'durees' => $durees,
             'activites' => $activites,
             'objectiveLabel' => $objectiveLabel,
-        ]);
-    }
-
-    public function myRegimes()
-    {
-        $userId = (int) session()->get('id_utilisateur');
-        if ($userId <= 0) {
-            return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
-        }
-
-        $commandeModel = new CommandeModel();
-        $purchases = $commandeModel->getPurchasedByUser($userId);
-
-        $purchases = array_map(function (array $row) {
-            $variation = (float) $row['variation_mensuelle_kg'];
-            $row['variation_label'] = $this->formatVariationLabel($variation);
-            $row['objective_label'] = $this->getObjectiveLabel($variation);
-            return $row;
-        }, $purchases);
-
-        return view('regime/my_regimes', [
-            'purchases' => $purchases,
         ]);
     }
 

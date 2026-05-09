@@ -16,6 +16,7 @@ class UtilisateurModel extends Model
         'genre',
         'taille_cm',
         'poids_kg',
+        'poids_objectif',
         'date_naissance',
         'id_objectif',
         'is_gold',

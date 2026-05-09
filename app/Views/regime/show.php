@@ -183,6 +183,12 @@
                 </table>
             <?php endif; ?>
         </div>
+
+        <div class="card">
+            <h2 style="margin: 0 0 12px; font-size: 18px;">Acheter ce régime</h2>
+            <p class="sub">Passez à l’écran d’achat pour choisir une durée et confirmer votre commande.</p>
+            <p><a class="back" href="<?= esc(site_url('regimes/purchase/' . $regime['id_regime'])) ?>">Voir les options d'achat</a></p>
+        </div>
     </div>
 </body>
 </html>

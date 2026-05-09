@@ -175,6 +175,7 @@
                             <th>Composition</th>
                             <th>Durées</th>
                             <th>Nb activités</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="regime-rows">
@@ -212,6 +213,9 @@
                                         <?= esc($regime['activity_count']) ?>
                                     </span>
                                 </td>
+                                <td>
+                                    <a href="<?= site_url('/regimes/purchase/' . $regime['id_regime']) ?>">Acheter</a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -233,7 +237,7 @@
                 if (!regimes.length) {
                     const emptyRow = document.createElement('tr');
                     const emptyCell = document.createElement('td');
-                    emptyCell.colSpan = 5;
+                    emptyCell.colSpan = 6;
                     emptyCell.className = 'empty';
                     emptyCell.textContent = 'Aucun régime disponible.';
                     emptyRow.appendChild(emptyCell);
@@ -262,7 +266,7 @@
                     compositionCell.textContent = `${regime.pourcentage_viande}% viande, ${regime.pourcentage_poisson}% poisson, ${regime.pourcentage_volaille}% volaille`;
                     row.appendChild(compositionCell);
 
-                    const dureeCell = document.createElement('td');
+                    const durationsCell = document.createElement('td');
                     const durees = regimeDurees[regime.id_regime] || [];
                     if (durees.length) {
                         const group = document.createElement('div');
@@ -273,14 +277,21 @@
                             badge.textContent = `${duree} j`;
                             group.appendChild(badge);
                         });
-                        dureeCell.appendChild(group);
+                        durationsCell.appendChild(group);
                     } else {
                         const badge = document.createElement('span');
                         badge.className = 'badge badge-muted';
                         badge.textContent = 'Aucune';
-                        dureeCell.appendChild(badge);
+                        durationsCell.appendChild(badge);
                     }
-                    row.appendChild(dureeCell);
+                    row.appendChild(durationsCell);
+
+                    const actionCell = document.createElement('td');
+                    const link = document.createElement('a');
+                    link.href = `/regimes/purchase/${regime.id_regime}`;
+                    link.textContent = 'Acheter';
+                    actionCell.appendChild(link);
+                    row.appendChild(actionCell);
 
                     const countCell = document.createElement('td');
                     const countBadge = document.createElement('span');
@@ -289,6 +300,12 @@
                     countCell.appendChild(countBadge);
                     row.appendChild(countCell);
 
+                    const actionCell = document.createElement('td');
+                    const link = document.createElement('a');
+                    link.href = `/regimes/purchase/${regime.id_regime}`;
+                    link.textContent = 'Acheter';
+                    actionCell.appendChild(link);
+                    row.appendChild(actionCell);
                     rows.appendChild(row);
                 });
             };

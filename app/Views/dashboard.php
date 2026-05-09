@@ -19,6 +19,16 @@
         <p>Objectif: <?= esc((string) session()->get('objectif_label')) ?></p>
     <?php endif; ?>
 
+    <p>Argent: <?= esc((string) (session()->get('argent') ?? 0)) ?> Ar</p>
+
+    <div style="margin: 16px 0;">
+        <a href="<?= site_url('/profile') ?>">Voir mon profil</a> |
+        <a href="<?= site_url('/profile/edit') ?>">Modifier mon profil</a>
+        | <a href="<?= site_url('/transactions') ?>">Historique des transactions</a>
+        | <a href="<?= site_url('/promo') ?>">Ajouter un code promo</a>
+        | <a href="<?= site_url('/regimes') ?>">Voir les régimes</a>
+    </div>
+
     <a href="<?= site_url('/logout') ?>">Se déconnecter</a>
 </body>
 </html>
