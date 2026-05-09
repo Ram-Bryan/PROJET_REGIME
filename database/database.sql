@@ -521,3 +521,28 @@ FROM regime r
 JOIN duree_regime d
 ON r.id_regime = d.id_regime;
 
+-- =========================================================
+-- VIEW : REGIMES ACHETES
+-- =========================================================
+
+CREATE VIEW v_commande_regime AS
+SELECT
+    c.id_commande,
+    c.id_utilisateur,
+    c.id_regime,
+    c.id_duree_regime,
+    c.date_achat,
+    c.montant_paye,
+    r.nom_regime,
+    r.variation_mensuelle_kg,
+    r.pourcentage_viande,
+    r.pourcentage_poisson,
+    r.pourcentage_volaille,
+    d.nb_jours,
+    d.prix
+FROM commande c
+JOIN regime r
+ON c.id_regime = r.id_regime
+JOIN duree_regime d
+ON c.id_duree_regime = d.id_duree_regime;
+

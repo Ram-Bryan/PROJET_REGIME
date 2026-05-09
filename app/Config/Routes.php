@@ -19,3 +19,4 @@ $routes->post('profile/update', 'Auth::updateProfile', ['filter' => 'auth']);
 $routes->get('logout', 'Auth::logout', ['filter' => 'auth']);
 $routes->get('regimes', 'RegimeController::index');
 $routes->get('regimes/(:num)', 'RegimeController::show/$1');
+$routes->get('mes-regimes', 'RegimeController::myRegimes', ['filter' => 'auth']);
