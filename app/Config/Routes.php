@@ -8,6 +8,8 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Auth::index');
 $routes->get('register', 'Auth::register');
 $routes->post('register', 'Auth::saveRegisterPersonal');
+$routes->get('register/health', 'Auth::registerHealth');
+$routes->post('register/health', 'Auth::saveRegisterHealth');
 $routes->get('login', 'Auth::login');
 $routes->post('login', 'Auth::attemptLogin');
 $routes->get('dashboard', 'Auth::dashboard', ['filter' => 'auth']);
