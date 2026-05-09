@@ -18,7 +18,6 @@ CREATE TABLE objectif (
 -- =========================================================
 -- TABLE UTILISATEUR
 -- =========================================================
-
 CREATE TABLE utilisateur (
     id_utilisateur INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -27,6 +26,7 @@ CREATE TABLE utilisateur (
     genre ENUM('Homme', 'Femme') NOT NULL,
     taille_cm DECIMAL(5,2),
     poids_kg DECIMAL(5,2),
+    poids_objectif DECIMAL(5,2) NULL, 
     date_naissance DATE,
     id_objectif INT,
     is_gold BOOLEAN DEFAULT FALSE,
