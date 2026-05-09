@@ -99,7 +99,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="poids_objectif" class="form-label">Poids Objectif (kg) *</label>
-                                <input type="number" step="0.01" class="form-control" id="poids_objectif" name="poids_objectif" value="<?= old('poids_objectif', esc($user['poids_objectif'])) ?>" required>
+                                <input type="number" step="0.01" class="form-control" id="poids_objectif" name="poids_objectif" value="<?= old('poids_objectif', esc($user['poids_objectif'] ?? '')) ?>" required>
                                 <?php if (isset($validationErrors['poids_objectif'])): ?>
                                     <div class="text-danger small"><?= esc($validationErrors['poids_objectif']) ?></div>
                                 <?php endif; ?>

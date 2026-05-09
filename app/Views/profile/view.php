@@ -71,7 +71,9 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><strong>Poids Objectif (kg)</strong></label>
-                            <p class="form-control-plaintext"><?= esc($user['poids_objectif']) ?> kg</p>
+                            <p class="form-control-plaintext">
+                                <?= isset($user['poids_objectif']) && $user['poids_objectif'] !== null ? esc($user['poids_objectif']) . ' kg' : 'Non défini' ?>
+                            </p>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><strong>IMC Actuel</strong></label>

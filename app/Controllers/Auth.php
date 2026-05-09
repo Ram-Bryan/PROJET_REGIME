@@ -36,7 +36,10 @@ class Auth extends BaseController
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Veuillez compléter correctement les informations personnelles.');
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Veuillez compléter correctement les informations personnelles.')
+                ->with('errors', $this->validator->getErrors());
         }
 
         $userModel = new UtilisateurModel();
