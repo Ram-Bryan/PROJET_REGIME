@@ -168,21 +168,29 @@ CREATE TABLE option_historique (
     FOREIGN KEY (id_option)
         REFERENCES option(id_option)
 );
-
 -- =========================================================
 -- TABLE IMC
 -- =========================================================
 
 CREATE TABLE imc (
+    id_imc INT AUTO_INCREMENT PRIMARY KEY,
+    label_imc VARCHAR(50) NOT NULL,
     imc_min DECIMAL(5,2) NOT NULL,
     imc_max DECIMAL(5,2) NOT NULL
 );
 
 -- =========================================================
--- INSERTION IMC
+-- INSERTIONS STANDARD OMS
 -- =========================================================
 
-INSERT INTO imc (imc_min, imc_max) VALUES (18.5, 25);
+INSERT INTO imc (label_imc, imc_min, imc_max) VALUES
+('Insuffisance pondérale sévère', 0.00, 16.49),
+('Insuffisance pondérale modérée', 16.50, 18.49),
+('Poids normal', 18.50, 24.99),
+('Surpoids', 25.00, 29.99),
+('Obésité modérée', 30.00, 34.99),
+('Obésité sévère', 35.00, 39.99),
+('Obésité morbide', 40.00, 99.99);
 
 -- =========================================================
 -- INSERTION OBJECTIFS
