@@ -14,4 +14,15 @@ class ActiviteSportiveModel extends Model
         'nb_par_semaine',
     ];
 
+    public function getByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        return $this->whereIn('id_activite', $ids)
+            ->orderBy('label_activite', 'ASC')
+            ->findAll();
+    }
+
 }

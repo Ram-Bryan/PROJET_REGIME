@@ -2,18 +2,23 @@
 
 namespace App\Controllers;
 
+use App\Models\ActiviteSportiveModel;
 use App\Models\CommandeModel;
 use App\Models\DureeRegimeModel;
 use App\Models\ObjectifModel;
+use App\Models\RegimeActiviteModel;
 use App\Models\RegimeModel;
 use App\Models\UtilisateurModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
-class Regime extends BaseController
+class RegimeController extends BaseController
 {
     public function index()
     {
         $regimeModel = new RegimeModel();
         $dureeModel = new DureeRegimeModel();
+        $objectifModel = new ObjectifModel();
+        $regimeActiviteModel = new RegimeActiviteModel();
 
         $duree = $this->request->getGet('duree');
         $duree = is_numeric($duree) ? (int) $duree : null;
@@ -23,8 +28,15 @@ class Regime extends BaseController
         $regimes = $regimeModel->getFilteredList($duree, $objectif);
         $regimeDurees = $dureeModel->getAllGroupedByRegime();
         $dureeOptions = $dureeModel->getDistinctDurations();
-        $objectifModel = new ObjectifModel();
         $objectifOptions = $objectifModel->orderBy('id_objectif', 'ASC')->findAll();
+        $activityCounts = $regimeActiviteModel->getCountsByRegime();
+
+        $regimes = array_map(function (array $regime) use ($activityCounts) {
+            $variation = (float) $regime['variation_mensuelle_kg'];
+            $regime['variation_label'] = $this->formatVariationLabel($variation);
+            $regime['activity_count'] = $activityCounts[(int) $regime['id_regime']] ?? 0;
+            return $regime;
+        }, $regimes);
 
         if ($this->request->isAJAX()) {
             return $this->response->setJSON([
@@ -40,6 +52,34 @@ class Regime extends BaseController
             'selectedDuree' => $duree,
             'selectedObjectif' => $objectif,
             'objectifOptions' => $objectifOptions,
+        ]);
+    }
+
+    public function show(int $id)
+    {
+        $regimeModel = new RegimeModel();
+        $dureeModel = new DureeRegimeModel();
+        $regimeActiviteModel = new RegimeActiviteModel();
+        $activiteModel = new ActiviteSportiveModel();
+
+        $regime = $regimeModel->find($id);
+        if ($regime === null) {
+            throw PageNotFoundException::forPageNotFound('Régime introuvable');
+        }
+
+        $variation = (float) $regime['variation_mensuelle_kg'];
+        $regime['variation_label'] = $this->formatVariationLabel($variation);
+        $objectiveLabel = $this->getObjectiveLabel($variation);
+
+        $durees = $dureeModel->getByRegimeId($id);
+        $activiteIds = $regimeActiviteModel->getActiviteIdsForRegime($id);
+        $activites = $activiteModel->getByIds($activiteIds);
+
+        return view('regime/show', [
+            'regime' => $regime,
+            'durees' => $durees,
+            'activites' => $activites,
+            'objectiveLabel' => $objectiveLabel,
         ]);
     }
 
@@ -73,9 +113,7 @@ class Regime extends BaseController
             $prixBase = (float) $duree['prix'];
             $prixFinal = round($prixBase * (1 - ($discountPercent / 100)), 2);
 
-            return $duree + [
-                'prix_final' => $prixFinal,
-            ];
+            return $duree + ['prix_final' => $prixFinal];
         }, $durees);
 
         return view('regime/purchase', [
@@ -149,5 +187,27 @@ class Regime extends BaseController
         session()->set('argent', $nouveauSolde);
 
         return redirect()->to('/transactions')->with('success', 'Achat effectué avec succès.');
+    }
+
+    private function formatVariationLabel(float $variation): string
+    {
+        $formatted = number_format($variation, 2, ',', ' ');
+        $formatted = rtrim(rtrim($formatted, '0'), ',');
+        $sign = $variation > 0 ? '+' : '';
+
+        return $sign . $formatted . ' kg / 30 j';
+    }
+
+    private function getObjectiveLabel(float $variation): string
+    {
+        if ($variation > 0) {
+            return 'Prise de masse';
+        }
+
+        if ($variation < 0) {
+            return 'Perte de poids';
+        }
+
+        return 'IMC idéal';
     }
 }
