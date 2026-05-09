@@ -22,4 +22,29 @@ class DureeRegimeModel extends Model
             ->orderBy('nb_jours', 'ASC')
             ->findAll();
     }
+
+    public function getDistinctDurations(): array
+    {
+        $rows = $this->select('nb_jours')
+            ->groupBy('nb_jours')
+            ->orderBy('nb_jours', 'ASC')
+            ->findAll();
+
+        return array_map(static fn(array $row): int => (int) $row['nb_jours'], $rows);
+    }
+
+    public function getAllGroupedByRegime(): array
+    {
+        $rows = $this->select('id_regime, nb_jours')
+            ->orderBy('nb_jours', 'ASC')
+            ->findAll();
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $idRegime = (int) $row['id_regime'];
+            $grouped[$idRegime][] = (int) $row['nb_jours'];
+        }
+
+        return $grouped;
+    }
 }
