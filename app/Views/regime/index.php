@@ -99,6 +99,7 @@
                             <th>Nom</th>
                             <th>Variation poids (kg)</th>
                             <th>Composition</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,6 +115,9 @@
                                     <?= esc($regime['pourcentage_viande']) ?>% viande,
                                     <?= esc($regime['pourcentage_poisson']) ?>% poisson,
                                     <?= esc($regime['pourcentage_volaille']) ?>% volaille
+                                </td>
+                                <td>
+                                    <a href="<?= site_url('/regimes/purchase/' . $regime['id_regime']) ?>">Acheter</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
