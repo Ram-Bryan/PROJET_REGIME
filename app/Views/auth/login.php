@@ -31,5 +31,7 @@
 
         <button type="submit">Se connecter</button>
     </form>
+
+    <p><a href="<?= site_url('/register') ?>">Créer un compte</a></p>
 </body>
 </html>

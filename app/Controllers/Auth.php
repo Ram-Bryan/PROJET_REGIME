@@ -15,6 +15,40 @@ class Auth extends BaseController
         return redirect()->to('/login');
     }
 
+    public function register()
+    {
+        if (session()->get('is_logged_in')) {
+            return redirect()->to('/dashboard');
+        }
+
+        return view('auth/register_personal');
+    }
+
+    public function saveRegisterPersonal()
+    {
+        $rules = [
+            'nom' => 'required|min_length[3]',
+            'email' => 'required|valid_email',
+            'mot_de_passe' => 'required|min_length[6]',
+            'genre' => 'required|in_list[Homme,Femme]',
+            'date_naissance' => 'required|valid_date',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('error', 'Veuillez compléter correctement les informations personnelles.');
+        }
+
+        session()->set('register_step_personal', [
+            'nom' => (string) $this->request->getPost('nom'),
+            'email' => (string) $this->request->getPost('email'),
+            'mot_de_passe' => (string) $this->request->getPost('mot_de_passe'),
+            'genre' => (string) $this->request->getPost('genre'),
+            'date_naissance' => (string) $this->request->getPost('date_naissance'),
+        ]);
+
+        return redirect()->to('/register')->with('success', 'Infos personnelles enregistrées. La partie santé viendra à l’étape suivante.');
+    }
+
     public function login()
     {
         if (session()->get('is_logged_in')) {
