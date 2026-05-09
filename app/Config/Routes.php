@@ -14,5 +14,7 @@ $routes->get('login', 'Auth::login');
 $routes->post('login', 'Auth::attemptLogin');
 $routes->get('dashboard', 'Auth::dashboard', ['filter' => 'auth']);
 $routes->get('profile', 'Auth::profile', ['filter' => 'auth']);
+$routes->get('profile/edit', 'Auth::editProfile', ['filter' => 'auth']);
+$routes->post('profile/update', 'Auth::updateProfile', ['filter' => 'auth']);
 $routes->get('logout', 'Auth::logout', ['filter' => 'auth']);
 $routes->get('regimes', 'Regime::index');

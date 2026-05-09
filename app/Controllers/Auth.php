@@ -219,6 +219,97 @@ class Auth extends BaseController
         ]);
     }
 
+    public function editProfile()
+    {
+        if (! session()->get('is_logged_in')) {
+            return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
+        }
+
+        $userModel = new UtilisateurModel();
+        $user = $userModel->find((int) session()->get('id_utilisateur'));
+
+        if ($user === null) {
+            return redirect()->to('/login')->with('error', 'Utilisateur introuvable.');
+        }
+
+        $objectifModel = new ObjectifModel();
+
+        return view('profile/edit', [
+            'user' => $user,
+            'objectifs' => $objectifModel->findAll(),
+        ]);
+    }
+
+    public function updateProfile()
+    {
+        if (! session()->get('is_logged_in')) {
+            return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
+        }
+
+        $userModel = new UtilisateurModel();
+        $currentUser = $userModel->find((int) session()->get('id_utilisateur'));
+
+        if ($currentUser === null) {
+            return redirect()->to('/login')->with('error', 'Utilisateur introuvable.');
+        }
+
+        // Verify current password before allowing changes
+        $currentPassword = (string) $this->request->getPost('current_password');
+        if (! password_verify($currentPassword, (string) $currentUser['mot_de_passe'])) {
+            return redirect()->back()->withInput()->with('error', 'Le mot de passe actuel est incorrect.');
+        }
+
+        $rules = [
+            'nom' => 'required|min_length[3]',
+            'genre' => 'required|in_list[Homme,Femme]',
+            'date_naissance' => 'required|valid_date',
+            'taille_cm' => 'required|numeric|greater_than[0]',
+            'poids_kg' => 'required|numeric|greater_than[0]',
+            'poids_objectif' => 'required|numeric|greater_than[0]',
+            'id_objectif' => 'required|is_natural_no_zero',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('error', 'Veuillez compléter correctement tous les champs.');
+        }
+
+        $tailleCm = (float) $this->request->getPost('taille_cm');
+        $poidsKg = (float) $this->request->getPost('poids_kg');
+        $idObjectif = (int) $this->request->getPost('id_objectif');
+
+        // Verify objectif exists
+        $objectifModel = new ObjectifModel();
+        $objectif = $objectifModel->find($idObjectif);
+        if ($objectif === null) {
+            return redirect()->back()->withInput()->with('error', 'Objectif invalide.');
+        }
+
+        // Update user in database
+        $updateData = [
+            'nom' => (string) $this->request->getPost('nom'),
+            'genre' => (string) $this->request->getPost('genre'),
+            'date_naissance' => (string) $this->request->getPost('date_naissance'),
+            'taille_cm' => $tailleCm,
+            'poids_kg' => $poidsKg,
+            'poids_objectif' => (float) $this->request->getPost('poids_objectif'),
+            'id_objectif' => $idObjectif,
+        ];
+
+        $userModel->update((int) session()->get('id_utilisateur'), $updateData);
+
+        // Calculate new IMC
+        $newImc = $userModel->calculateImc($poidsKg, $tailleCm);
+
+        // Update session with new data
+        session()->set([
+            'nom' => (string) $this->request->getPost('nom'),
+            'imc' => $newImc,
+            'objectif_label' => $objectif['label_objectif'],
+        ]);
+
+        return redirect()->to('/profile')->with('success', 'Profil mis à jour avec succès.');
+    }
+
     public function logout()
     {
         session()->destroy();
