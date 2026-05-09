@@ -194,6 +194,31 @@ class Auth extends BaseController
         ]);
     }
 
+    public function profile()
+    {
+        if (! session()->get('is_logged_in')) {
+            return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
+        }
+
+        $userModel = new UtilisateurModel();
+        $user = $userModel->find((int) session()->get('id_utilisateur'));
+
+        if ($user === null) {
+            return redirect()->to('/login')->with('error', 'Utilisateur introuvable.');
+        }
+
+        $objectifModel = new ObjectifModel();
+        $objectif = $objectifModel->find((int) $user['id_objectif']);
+
+        $imc = $userModel->calculateImc((float) $user['poids_kg'], (float) $user['taille_cm']);
+
+        return view('profile/view', [
+            'user' => $user,
+            'objectif' => $objectif,
+            'imc' => $imc,
+        ]);
+    }
+
     public function logout()
     {
         session()->destroy();
