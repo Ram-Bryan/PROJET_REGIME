@@ -42,6 +42,14 @@
             margin: 6px 0 0;
             font-size: 14px;
         }
+        .back {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
         .card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -131,6 +139,7 @@
     <div class="container">
         <div class="header">
             <div>
+                <a class="back" href="<?= esc(site_url('profile')) ?>">← Retour au profil</a>
                 <h1>Régimes</h1>
                 <p class="sub">Liste des régimes disponibles</p>
             </div>
@@ -214,7 +223,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="<?= site_url('/regimes/purchase/' . $regime['id_regime']) ?>">Acheter</a>
+                                    <a href="<?= site_url('/regimes/' . $regime['id_regime']) ?>">Voir détail</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -286,13 +295,6 @@
                     }
                     row.appendChild(durationsCell);
 
-                    const actionCell = document.createElement('td');
-                    const link = document.createElement('a');
-                    link.href = `/regimes/purchase/${regime.id_regime}`;
-                    link.textContent = 'Acheter';
-                    actionCell.appendChild(link);
-                    row.appendChild(actionCell);
-
                     const countCell = document.createElement('td');
                     const countBadge = document.createElement('span');
                     countBadge.className = 'badge badge-muted';
@@ -301,10 +303,10 @@
                     row.appendChild(countCell);
 
                     const actionCell = document.createElement('td');
-                    const link = document.createElement('a');
-                    link.href = `/regimes/purchase/${regime.id_regime}`;
-                    link.textContent = 'Acheter';
-                    actionCell.appendChild(link);
+                    const actionLink = document.createElement('a');
+                    actionLink.href = `${detailBase}/${regime.id_regime}`;
+                    actionLink.textContent = 'Voir détail';
+                    actionCell.appendChild(actionLink);
                     row.appendChild(actionCell);
                     rows.appendChild(row);
                 });

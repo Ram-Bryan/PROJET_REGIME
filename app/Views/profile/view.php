@@ -110,6 +110,7 @@
             <!-- Section Actions -->
             <div class="d-flex gap-2">
                 <a href="<?= site_url('/profile/edit') ?>" class="btn btn-primary">Modifier le profil</a>
+                <a href="<?= site_url('/mes-regimes') ?>" class="btn btn-outline-primary">Mes régimes</a>
                 <a href="<?= site_url('/dashboard') ?>" class="btn btn-secondary">Retour au tableau de bord</a>
             </div>
         </div>

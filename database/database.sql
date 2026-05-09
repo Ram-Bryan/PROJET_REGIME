@@ -264,7 +264,7 @@ INSERT INTO utilisateur(
     '$2y$10$pj4MlDW6Mbg/2QlChmFFhePzl5EwXGff5RC1Ssab0e7IVFDT6DfGG',
     'Homme',
     180,
-    85,
+    98,
     75,
     '1997-11-22',
     3,
@@ -461,7 +461,7 @@ CREATE VIEW v_regime_details AS
 SELECT
     r.id_regime,
     r.nom_regime,
-    r.variation_poids,
+    r.variation_mensuelle_kg,
     r.pourcentage_viande,
     r.pourcentage_poisson,
     r.pourcentage_volaille,
@@ -545,4 +545,18 @@ JOIN regime r
 ON c.id_regime = r.id_regime
 JOIN duree_regime d
 ON c.id_duree_regime = d.id_duree_regime;
+
+CREATE VIEW v_regime_duree AS
+SELECT
+    r.id_regime,
+    r.nom_regime,
+    r.variation_mensuelle_kg,
+    r.pourcentage_viande,
+    r.pourcentage_poisson,
+    r.pourcentage_volaille,
+    d.nb_jours,
+    d.prix
+FROM regime r
+JOIN duree_regime d
+ON r.id_regime = d.id_regime;
 

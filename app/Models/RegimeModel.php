@@ -53,33 +53,67 @@ class RegimeModel extends Model
             if ($imc < (float)$ideal['imc_min']) return $this->where('variation_mensuelle_kg >', 0)->findAll();
             if ($imc > (float)$ideal['imc_max']) return $this->where('variation_mensuelle_kg <', 0)->findAll();
 
-            return $this->where('variation_mensuelle_kg >=', -1)->where('variation_mensuelle_kg <=', 1)->findAll();
+            // Already in ideal IMC -> nothing to suggest to attain it
+            return [];
         }
 
         return [];
     }
 
-    public function getFilteredList(?int $dureeJours, ?int $objectifId): array
+    public function getFilteredList(?int $dureeJours, ?int $objectifId, ?int $userId = null): array
     {
-        $builder = $this->builder();
-        $builder->select('regime.*');
+        $builder = $this->db->table('v_regime_duree');
+        $builder->select('id_regime, nom_regime, variation_mensuelle_kg, pourcentage_viande, pourcentage_poisson, pourcentage_volaille');
 
         if (!empty($dureeJours)) {
-            $builder->join('duree_regime', 'duree_regime.id_regime = regime.id_regime');
-            $builder->where('duree_regime.nb_jours', $dureeJours);
+            $builder->where('nb_jours', $dureeJours);
         }
 
         if ($objectifId === 1) {
-            $builder->where('regime.variation_mensuelle_kg <', 0);
+            $builder->where('variation_mensuelle_kg <', 0);
         } elseif ($objectifId === 2) {
-            $builder->where('regime.variation_mensuelle_kg >', 0);
+            $builder->where('variation_mensuelle_kg >', 0);
         } elseif ($objectifId === 3) {
-            $builder->where('regime.variation_mensuelle_kg >=', -1)
-                ->where('regime.variation_mensuelle_kg <=', 1);
+            $idealConditionSet = false;
+            
+            if ($userId !== null) {
+                $userModel = new \App\Models\UtilisateurModel();
+                $user = $userModel->find($userId);
+                
+                if ($user) {
+                    $poidsKg = (float)($user['poids_kg'] ?? 0);
+                    $tailleCm = (float)($user['taille_cm'] ?? 0);
+                    
+                    if ($poidsKg > 0 && $tailleCm > 0) {
+                        $tailleM = $tailleCm / 100;
+                        $imc = $poidsKg / ($tailleM ** 2);
+                        
+                        $ideal = $this->imcModel->getIdealRange();
+                        if ($ideal !== null) {
+                            if ($imc < (float)$ideal['imc_min']) {
+                                $builder->where('variation_mensuelle_kg >', 0);
+                                $idealConditionSet = true;
+                            } elseif ($imc > (float)$ideal['imc_max']) {
+                                $builder->where('variation_mensuelle_kg <', 0);
+                                $idealConditionSet = true;
+                            } else {
+                                // User is already at ideal IMC, they don't need any regime to attain it
+                                $builder->where('1 = 0'); 
+                                $idealConditionSet = true;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (!$idealConditionSet) {
+                // Fallback for an objective 3 without a valid logged-in user => show nothing or maintenance
+                $builder->where('1 = 0');
+            }
         }
 
-        $builder->groupBy('regime.id_regime');
-        $builder->orderBy('regime.nom_regime', 'ASC');
+        $builder->groupBy('id_regime');
+        $builder->orderBy('nom_regime', 'ASC');
 
         return $builder->get()->getResultArray();
     }

@@ -89,6 +89,22 @@
             font-weight: 600;
             font-size: 14px;
         }
+        .alert {
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        .alert-success {
+            background: #ecfdf3;
+            color: #027a48;
+            border: 1px solid #abefc6;
+        }
+        .alert-error {
+            background: #fef3f2;
+            color: #b42318;
+            border: 1px solid #fecdca;
+        }
     </style>
 </head>
 <body>
@@ -100,6 +116,12 @@
                 <p class="sub">Historique de vos achats et régimes actifs</p>
             </div>
         </div>
+        <?php if (session()->getFlashdata('success')) : ?>
+            <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
+        <?php endif; ?>
+        <?php if (session()->getFlashdata('error')) : ?>
+            <div class="alert alert-error"><?= esc(session()->getFlashdata('error')) ?></div>
+        <?php endif; ?>
         <div class="card">
             <?php if (empty($purchases)) : ?>
                 <div class="empty">Aucun régime acheté pour le moment.</div>
@@ -113,13 +135,14 @@
                             <th>Durée</th>
                             <th>Prix</th>
                             <th>Date d'achat</th>
+                            <th>PDF</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($purchases as $purchase) : ?>
                             <tr>
                                 <td>
-                                    <a href="<?= esc(site_url('regimes/' . $purchase['id_regime'])) ?>">
+                                    <a href="<?= esc(site_url('mes-regimes/' . $purchase['id_commande'])) ?>">
                                         <?= esc($purchase['nom_regime']) ?>
                                     </a>
                                 </td>
@@ -128,6 +151,9 @@
                                 <td><span class="badge badge-muted"><?= esc($purchase['nb_jours']) ?> j</span></td>
                                 <td><?= esc(number_format((float) $purchase['montant_paye'], 0, ',', ' ')) ?> Ar</td>
                                 <td><?= esc(date('d/m/Y', strtotime((string) $purchase['date_achat']))) ?></td>
+                                <td>
+                                    <a href="<?= esc(site_url('mes-regimes/' . $purchase['id_commande'] . '/export-pdf')) ?>">Exporter</a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
