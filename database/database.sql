@@ -216,7 +216,6 @@ Sofia/sofia
 Admin/admin
 
 */
-
 INSERT INTO utilisateur(
     nom,
     email,
@@ -224,6 +223,7 @@ INSERT INTO utilisateur(
     genre,
     taille_cm,
     poids_kg,
+    poids_objectif,
     date_naissance,
     id_objectif,
     is_gold,
@@ -237,6 +237,7 @@ INSERT INTO utilisateur(
     'Homme',
     175,
     72,
+    65,
     '1998-05-12',
     1,
     FALSE,
@@ -250,6 +251,7 @@ INSERT INTO utilisateur(
     'Femme',
     165,
     58,
+    62,
     '2000-08-10',
     2,
     FALSE,
@@ -263,6 +265,7 @@ INSERT INTO utilisateur(
     'Homme',
     180,
     85,
+    75,
     '1997-11-22',
     3,
     FALSE,
@@ -276,6 +279,7 @@ INSERT INTO utilisateur(
     'Femme',
     170,
     65,
+    60,
     '2001-01-17',
     1,
     FALSE,
@@ -289,13 +293,13 @@ INSERT INTO utilisateur(
     'Homme',
     178,
     75,
+    NULL,
     '1995-03-15',
     NULL,
     TRUE,
     100000,
     'admin'
 );
-
 -- =========================================================
 -- INSERTION REGIMES
 -- =========================================================
