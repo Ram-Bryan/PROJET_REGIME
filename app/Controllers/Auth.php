@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\CodePromoModel;
 use App\Models\CommandeModel;
 use App\Models\ObjectifModel;
 use App\Models\UtilisateurModel;
@@ -180,6 +181,7 @@ class Auth extends BaseController
             'email' => $user['email'],
             'role' => $user['role_utilisateur'],
             'is_gold' => (bool) $user['is_gold'],
+            'argent' => (float) ($user['argent'] ?? 0),
         ]);
 
         $this->refreshUserSessionData($user);
@@ -206,6 +208,7 @@ class Auth extends BaseController
             'role' => (string) session()->get('role'),
             'imc' => session()->get('imc'),
             'objectifLabel' => session()->get('objectif_label'),
+            'argent' => session()->get('argent'),
         ]);
     }
 
@@ -221,6 +224,73 @@ class Auth extends BaseController
         return view('transactions/index', [
             'transactions' => $transactions,
         ]);
+    }
+
+    public function promo()
+    {
+        if (! session()->get('is_logged_in')) {
+            return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
+        }
+
+        $userModel = new UtilisateurModel();
+        $user = $userModel->find((int) session()->get('id_utilisateur'));
+
+        return view('promo/index', [
+            'argent' => (float) ($user['argent'] ?? session()->get('argent') ?? 0),
+        ]);
+    }
+
+    public function applyPromo()
+    {
+        if (! session()->get('is_logged_in')) {
+            return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
+        }
+
+        $rules = [
+            'code_promo' => 'required|min_length[3]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('error', 'Veuillez saisir un code promo valide.');
+        }
+
+        $code = trim((string) $this->request->getPost('code_promo'));
+        $promoModel = new CodePromoModel();
+        $promo = $promoModel->findByCode($code);
+
+        if ($promo === null) {
+            return redirect()->back()->withInput()->with('error', 'Code promo introuvable.');
+        }
+
+        if ((bool) $promo['deja_utilise']) {
+            return redirect()->back()->withInput()->with('error', 'Ce code promo a déjà été utilisé.');
+        }
+
+        $userId = (int) session()->get('id_utilisateur');
+        $userModel = new UtilisateurModel();
+        $currentUser = $userModel->find($userId);
+
+        if ($currentUser === null) {
+            return redirect()->to('/login')->with('error', 'Utilisateur introuvable.');
+        }
+
+        $newArgent = (float) ($currentUser['argent'] ?? 0) + (float) $promo['montant'];
+
+        $userModel->update($userId, [
+            'argent' => $newArgent,
+        ]);
+
+        $promoModel->update((int) $promo['id_code'], [
+            'deja_utilise' => true,
+            'id_utilisateur_utilisation' => $userId,
+        ]);
+
+        $updatedUser = $userModel->find($userId);
+        if (is_array($updatedUser)) {
+            $this->refreshUserSessionData($updatedUser);
+        }
+
+        return redirect()->to('/promo')->with('success', 'Code promo appliqué. Votre solde a été crédité.');
     }
 
     public function profile()
@@ -368,6 +438,7 @@ class Auth extends BaseController
             'is_gold' => (bool) $user['is_gold'],
             'imc' => $userModel->calculateImc((float) $user['poids_kg'], (float) $user['taille_cm']),
             'objectif_label' => $objectif['label_objectif'] ?? null,
+            'argent' => (float) ($user['argent'] ?? 0),
         ]);
     }
 }
