@@ -22,6 +22,7 @@
     <div style="margin: 16px 0;">
         <a href="<?= site_url('/profile') ?>">Voir mon profil</a> |
         <a href="<?= site_url('/profile/edit') ?>">Modifier mon profil</a>
+        | <a href="<?= site_url('/transactions') ?>">Historique des transactions</a>
     </div>
 
     <a href="<?= site_url('/logout') ?>">Se déconnecter</a>

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\CommandeModel;
 use App\Models\ObjectifModel;
 use App\Models\UtilisateurModel;
 
@@ -205,6 +206,20 @@ class Auth extends BaseController
             'role' => (string) session()->get('role'),
             'imc' => session()->get('imc'),
             'objectifLabel' => session()->get('objectif_label'),
+        ]);
+    }
+
+    public function transactions()
+    {
+        if (! session()->get('is_logged_in')) {
+            return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
+        }
+
+        $commandeModel = new CommandeModel();
+        $transactions = $commandeModel->getHistoryByUserId((int) session()->get('id_utilisateur'));
+
+        return view('transactions/index', [
+            'transactions' => $transactions,
         ]);
     }
 
