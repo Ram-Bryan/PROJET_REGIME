@@ -1,10 +1,13 @@
-<?php 
+<?php
+
 namespace App\Controllers;
-use App\Models\ObjectifModel;
+
 use App\Models\AdminModel;
+use App\Models\ObjectifModel;
 use App\Models\UtilisateurModel;
+
 class AdminController extends BaseController
-{   
+{
     public function login()
     {
         return view('admin/login');
@@ -13,24 +16,26 @@ class AdminController extends BaseController
     public function authenticate()
     {
         $email = $this->request->getPost('email');
-        $mot_de_passe = $this->request->getPost('mot_de_passe');
+        $motDePasse = $this->request->getPost('mot_de_passe');
 
         $adminModel = new AdminModel();
-        $admin = $adminModel->checkAdmin($email, $mot_de_passe);
+        $admin = $adminModel->checkAdmin($email, $motDePasse);
 
         if ($admin) {
             session()->set('admin_id', $admin['id_utilisateur']);
             session()->set('admin_name', $admin['nom']);
+
             return redirect()->to('/admin/dashboard');
-        } else {
-            session()->setFlashdata('error', 'Email ou mot de passe incorrect.');
-            return redirect()->back();
         }
+
+        session()->setFlashdata('error', 'Email ou mot de passe incorrect.');
+
+        return redirect()->back();
     }
 
     public function dashboard()
     {
-        if (!session()->has('admin_id')) {
+        if (! session()->has('admin_id')) {
             return redirect()->to('/admin/login');
         }
 
@@ -62,12 +67,14 @@ class AdminController extends BaseController
             'objectivesCount' => $objectivesCount,
             'objectifs' => $objectifs,
             'recentUsers' => $recentUsers,
+            'activeNav' => 'dashboard',
         ]);
     }
 
     public function logout()
     {
         session()->destroy();
+
         return redirect()->to('/admin/login');
     }
 }

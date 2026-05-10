@@ -239,10 +239,48 @@ Side bar has utf 8 accents prob;eme, Dont use accent
 
 
 
+STill in Backoffice:
+We will polish it
+Make eveyrthin in french.
+List:
+Can you do composition with use a cricualr graph on teh composition column and add a legend of what color is what composition. Hoevering make we see the composition of that color.
+Nb de duree disponilble is a badge of all teh duree of that regime, Just like in frontoffice listing.
+Actions should be icons like eye, pecnil and trash can
+For the filters: 
+MIn and max days inputs should be next to each other. 
+If still not done, min price and max price should take into account all teh duree of that regime. 
+Delete should show a custom card of comfirmation instea dof browser defutl conforimation
 
+In view:
+the cards nb activite asssocie and nb duree are uselfess. Remove them. remove composition total
+The composition utrition should also be the circle graph 
+L'effet sur le poids diot etre un graph x et y.
+suggested user should be on top or like a color badge only 
 
-CRUD Duree-Prix 
+Edit:
+Activte sportives selecton is really smart. Keep it like that. BUt like can you make the higlight more prominent like a real green. card when selected, because rn it is mixed with teh bg color
+And do the name of the activite on top and the frequence at the botton of teh name like:
+"Cyclisme
+3 fois par semaines"
+Because righ now it is next to teh name which is very unclean,
+
+And I have another problem, I edited a regime and it keeps saying "Impossible de mettre a jour ce regime pour le moment." why ?
+
+I repeat every UI in french
+
 CRUD Options
 CRUD IMC 
 
 No CDN
+
+
+
+
+Remove all teh 100% normally it should alreayd default to 100% everywhere. 
+Apart from that remove the "Survoler les parts
+Affiche la part viande, poisson ou volaille." Instead make the circular bigger. And also hovering doesnt diaply teh percentages. Make the hoverin work.
+The actions icons should be all hornzintaol in the same line.
+
+For the graph the jour is confused with the 90j words
+
+Apart from taht, I'm on Regime page of backoffice, When I go to other pages, the sidebar changes or either there are weird stuff happening. So the sidebar of Regme is what we take as final sidebar and put tha tin each pages of backoffice And a8lso when I go to some pages, there ar en8o sidebar add them 

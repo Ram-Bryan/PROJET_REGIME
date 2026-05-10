@@ -37,6 +37,7 @@ class AdminRegimeController extends BaseController
         return view('admin/regimes/index', [
             'regimes' => $this->getRegimeListing($filters),
             'filters' => $filters,
+            'regimeDurations' => (new DureeRegimeModel())->getAllGroupedByRegime(),
             'activeNav' => 'regimes',
         ]);
     }
@@ -86,11 +87,7 @@ class AdminRegimeController extends BaseController
         $db->transStart();
 
         $regimeId = $regimeModel->insert([
-            'nom_regime' => $formData['nom_regime'],
-            'variation_mensuelle_kg' => $formData['variation_mensuelle_kg'],
-            'pourcentage_viande' => $formData['pourcentage_viande'],
-            'pourcentage_poisson' => $formData['pourcentage_poisson'],
-            'pourcentage_volaille' => $formData['pourcentage_volaille'],
+            ...$this->buildRegimePayload($formData),
         ], true);
 
         $this->syncRelations((int) $regimeId, $formData['activite_ids'], $formData['duration_rows']);
@@ -148,6 +145,7 @@ class AdminRegimeController extends BaseController
             'activities' => $this->getActivityChoices(),
             'selectedActivities' => old('activites') ?? $regimeActiviteModel->getActiviteIdsForRegime($id),
             'durationRows' => $this->resolveDurationRows($id),
+            'lockedDurationIds' => $this->getLockedDurationIds($id),
             'activeNav' => 'regimes',
         ]);
     }
@@ -182,15 +180,15 @@ class AdminRegimeController extends BaseController
         $db = db_connect();
         $db->transStart();
 
-        $regimeModel->update($id, [
-            'nom_regime' => $formData['nom_regime'],
-            'variation_mensuelle_kg' => $formData['variation_mensuelle_kg'],
-            'pourcentage_viande' => $formData['pourcentage_viande'],
-            'pourcentage_poisson' => $formData['pourcentage_poisson'],
-            'pourcentage_volaille' => $formData['pourcentage_volaille'],
-        ]);
+        $regimeModel->update($id, $this->buildRegimePayload($formData));
 
-        $this->syncRelations($id, $formData['activite_ids'], $formData['duration_rows']);
+        try {
+            $this->syncRelations($id, $formData['activite_ids'], $formData['duration_rows']);
+        } catch (\RuntimeException $exception) {
+            $db->transRollback();
+
+            return redirect()->back()->withInput()->with('error', $exception->getMessage());
+        }
 
         $db->transComplete();
 
@@ -215,6 +213,14 @@ class AdminRegimeController extends BaseController
         }
 
         $db = db_connect();
+        $lockedDurations = $this->getLockedDurationLabels($id);
+        if ($lockedDurations !== []) {
+            return redirect()->to('/admin/regimes')->with(
+                'error',
+                'Suppression impossible: certaines durees sont deja utilisees (' . implode(', ', $lockedDurations) . ').'
+            );
+        }
+
         $db->transStart();
 
         (new RegimeActiviteModel())->where('id_regime', $id)->delete();
@@ -254,6 +260,20 @@ class AdminRegimeController extends BaseController
         ];
     }
 
+    private function buildRegimePayload(array $formData): array
+    {
+        $payload = [
+            'nom_regime' => $formData['nom_regime'],
+            'pourcentage_viande' => $formData['pourcentage_viande'],
+            'pourcentage_poisson' => $formData['pourcentage_poisson'],
+            'pourcentage_volaille' => $formData['pourcentage_volaille'],
+        ];
+
+        $payload[$this->getVariationColumn()] = $formData['variation_mensuelle_kg'];
+
+        return $payload;
+    }
+
     private function sanitizeActivityIds($rawIds): array
     {
         $ids = is_array($rawIds) ? $rawIds : [];
@@ -281,6 +301,7 @@ class AdminRegimeController extends BaseController
             }
 
             $cleanRows[] = [
+                'id_duree_regime' => (int) ($row['id_duree_regime'] ?? 0),
                 'nb_jours' => $nbJours,
                 'prix' => $prix,
             ];
@@ -338,6 +359,7 @@ class AdminRegimeController extends BaseController
 
     private function syncRelations(int $regimeId, array $activityIds, array $durationRows): void
     {
+        $db = db_connect();
         $regimeActiviteModel = new RegimeActiviteModel();
         $dureeRegimeModel = new DureeRegimeModel();
 
@@ -352,15 +374,69 @@ class AdminRegimeController extends BaseController
             ));
         }
 
-        $dureeRegimeModel->where('id_regime', $regimeId)->delete();
-        $dureeRegimeModel->insertBatch(array_map(
-            static fn (array $row): array => [
+        $existingRows = $dureeRegimeModel
+            ->where('id_regime', $regimeId)
+            ->findAll();
+
+        $existingById = [];
+        foreach ($existingRows as $existingRow) {
+            $existingById[(int) $existingRow['id_duree_regime']] = $existingRow;
+        }
+
+        $submittedIds = [];
+        foreach ($durationRows as $row) {
+            $durationId = (int) ($row['id_duree_regime'] ?? 0);
+            if ($durationId > 0) {
+                $submittedIds[] = $durationId;
+            }
+        }
+
+        $rowsToDelete = array_diff(array_keys($existingById), $submittedIds);
+        $lockedLabels = [];
+        foreach ($rowsToDelete as $durationId) {
+            if ($this->durationHasDependencies((int) $durationId)) {
+                $lockedLabels[] = (int) ($existingById[$durationId]['nb_jours'] ?? 0) . ' jours';
+            }
+        }
+
+        if ($lockedLabels !== []) {
+            throw new \RuntimeException(
+                'Impossible de retirer les durees deja utilisees ou historisees: ' . implode(', ', $lockedLabels) . '.'
+            );
+        }
+
+        foreach ($durationRows as $row) {
+            $payload = [
                 'id_regime' => $regimeId,
                 'nb_jours' => (int) $row['nb_jours'],
                 'prix' => (float) $row['prix'],
-            ],
-            $durationRows
-        ));
+            ];
+            $durationId = (int) ($row['id_duree_regime'] ?? 0);
+
+            if ($durationId > 0 && isset($existingById[$durationId])) {
+                $existingRow = $existingById[$durationId];
+                if (
+                    $this->durationHasDependencies($durationId)
+                    && (
+                        (int) ($existingRow['nb_jours'] ?? 0) !== $payload['nb_jours']
+                        || (float) ($existingRow['prix'] ?? 0) !== $payload['prix']
+                    )
+                ) {
+                    throw new \RuntimeException(
+                        'La duree ' . (int) ($existingRow['nb_jours'] ?? 0) . ' jours est deja utilisee et ne peut plus etre modifiee.'
+                    );
+                }
+
+                $dureeRegimeModel->update($durationId, $payload);
+                continue;
+            }
+
+            $dureeRegimeModel->insert($payload);
+        }
+
+        foreach ($rowsToDelete as $durationId) {
+            $db->table('duree_regime')->where('id_duree_regime', (int) $durationId)->delete();
+        }
     }
 
     private function getRegimeListing(array $filters): array
@@ -477,6 +553,7 @@ class AdminRegimeController extends BaseController
                 ->findAll();
 
             return array_map(static fn (array $row): array => [
+                'id_duree_regime' => (int) ($row['id_duree_regime'] ?? 0),
                 'nb_jours' => (string) ($row['nb_jours'] ?? ''),
                 'prix' => (string) ($row['prix'] ?? ''),
             ], $rows);
@@ -510,7 +587,7 @@ class AdminRegimeController extends BaseController
 
     private function buildWeightEstimates(float $monthlyVariation): array
     {
-        $durations = [30, 60, 90];
+        $durations = [0, 30, 60, 90];
         $estimates = [];
 
         foreach ($durations as $days) {
@@ -528,21 +605,77 @@ class AdminRegimeController extends BaseController
         $suggestions = [];
 
         if ($monthlyVariation < 0) {
-            $suggestions[] = 'Suited for perdre du poids.';
+            $suggestions[] = ['label' => 'Perte de poids', 'tone' => 'warn'];
         }
 
         if ($monthlyVariation > 0) {
-            $suggestions[] = 'Suited for prise de masse.';
+            $suggestions[] = ['label' => 'Prise de masse', 'tone' => 'success'];
         }
 
         if (abs($monthlyVariation) <= 1) {
-            $suggestions[] = 'Can fit users already close to an ideal IMC.';
+            $suggestions[] = ['label' => 'IMC proche de l ideal', 'tone' => 'neutral'];
         }
 
         if ($suggestions === []) {
-            $suggestions[] = 'Variation neutre: a valider selon le profil utilisateur.';
+            $suggestions[] = ['label' => 'Variation neutre', 'tone' => 'neutral'];
         }
 
         return $suggestions;
+    }
+
+    private function getLockedDurationIds(int $regimeId): array
+    {
+        $rows = (new DureeRegimeModel())
+            ->where('id_regime', $regimeId)
+            ->findAll();
+
+        $ids = [];
+        foreach ($rows as $row) {
+            $durationId = (int) ($row['id_duree_regime'] ?? 0);
+            if ($durationId > 0 && $this->durationHasDependencies($durationId)) {
+                $ids[] = $durationId;
+            }
+        }
+
+        return $ids;
+    }
+
+    private function getLockedDurationLabels(int $regimeId): array
+    {
+        $rows = (new DureeRegimeModel())
+            ->where('id_regime', $regimeId)
+            ->orderBy('nb_jours', 'ASC')
+            ->findAll();
+
+        $labels = [];
+        foreach ($rows as $row) {
+            $durationId = (int) ($row['id_duree_regime'] ?? 0);
+            if ($durationId > 0 && $this->durationHasDependencies($durationId)) {
+                $labels[] = (int) ($row['nb_jours'] ?? 0) . ' jours';
+            }
+        }
+
+        return $labels;
+    }
+
+    private function durationHasDependencies(int $durationId): bool
+    {
+        $db = db_connect();
+
+        $hasCommandes = $db->table('commande')
+            ->where('id_duree_regime', $durationId)
+            ->countAllResults() > 0;
+
+        if ($hasCommandes) {
+            return true;
+        }
+
+        if (! $db->tableExists('duree_regime_prix')) {
+            return false;
+        }
+
+        return $db->table('duree_regime_prix')
+            ->where('id_duree_regime', $durationId)
+            ->countAllResults() > 0;
     }
 }

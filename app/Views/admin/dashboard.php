@@ -1,718 +1,219 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord Admin - Gestion du Régime</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<?= $this->extend('admin/layout') ?>
+
+<?php
+    $recentUsers = $recentUsers ?? [];
+    $objectifs = $objectifs ?? [];
+    $maxObjectif = 1;
+    foreach ($objectifs as $objectif) {
+        $maxObjectif = max($maxObjectif, (int) ($objectif['total'] ?? 0));
+    }
+?>
+
+<?= $this->section('title') ?>Tableau de bord<?= $this->endSection() ?>
+<?= $this->section('head') ?>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --danger-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --light-bg: #ecf0f1;
-            --sidebar-width: 250px;
+        .dashboard-hero {
+            padding: 26px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #163449 0%, #20506f 55%, #1f8f6a 100%);
+            color: #ffffff;
+            box-shadow: var(--shadow);
         }
 
-        * {
+        .dashboard-hero h3 {
+            margin: 0 0 10px;
+            font-size: 30px;
+        }
+
+        .dashboard-hero p {
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            color: rgba(255, 255, 255, 0.84);
+            max-width: 70ch;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
+        .stats-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
         }
 
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            overflow-y: auto;
-            z-index: 1000;
-            padding-top: 20px;
-        }
-
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .sidebar-header {
+        .stat-box {
             padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
+            border-radius: 20px;
+            color: #ffffff;
+            box-shadow: var(--shadow);
         }
 
-        .sidebar-header h2 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-header p {
-            font-size: 12px;
-            opacity: 0.8;
-            margin: 0;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar-menu li {
-            margin: 0;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar-menu a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-left-color: var(--accent-color);
-        }
-
-        .sidebar-menu a.active {
-            background-color: rgba(52, 152, 219, 0.2);
-            color: white;
-            border-left-color: var(--accent-color);
-        }
-
-        .sidebar-menu i {
-            width: 24px;
-            margin-right: 12px;
-            text-align: center;
-        }
-
-        .sidebar-footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-footer a {
-            display: flex;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-footer a:hover {
-            color: white;
-        }
-
-        /* Top Bar */
-        .topbar {
-            position: fixed;
-            top: 0;
-            left: var(--sidebar-width);
-            right: 0;
-            height: 70px;
-            background: white;
-            border-bottom: 1px solid var(--light-bg);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            z-index: 999;
-        }
-
-        .topbar-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-color), #2980b9);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: var(--primary-color);
+        .stat-box h4 {
+            margin: 0 0 8px;
             font-size: 14px;
+            font-weight: 700;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .user-role {
-            font-size: 12px;
-            color: #7f8c8d;
+        .stat-box p {
+            margin: 0;
+            font-size: 34px;
+            font-weight: 800;
         }
 
-        /* Main Content */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            margin-top: 70px;
-            padding: 30px;
-            min-height: calc(100vh - 70px);
+        .stat-a { background: linear-gradient(135deg, #183247, #20506f); }
+        .stat-b { background: linear-gradient(135deg, #7c3aed, #4f46e5); }
+        .stat-c { background: linear-gradient(135deg, #1f8f6a, #157454); }
+        .stat-d { background: linear-gradient(135deg, #d97706, #b45309); }
+
+        .objectif-bars {
+            display: grid;
+            gap: 14px;
         }
 
-        /* Cards */
-        .card {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
+        .objectif-row {
+            display: grid;
+            gap: 8px;
         }
 
-        .card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
-            background-color: transparent;
-            border-bottom: 1px solid var(--light-bg);
-            padding: 20px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        /* Stats Cards */
-        .stat-card {
-            padding: 20px;
-            border-radius: 8px;
-            color: white;
-            margin-bottom: 20px;
+        .objectif-meta {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .stat-card.primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        }
-
-        .stat-card.accent {
-            background: linear-gradient(135deg, var(--accent-color), #2980b9);
-        }
-
-        .stat-card.success {
-            background: linear-gradient(135deg, var(--success-color), #229954);
-        }
-
-        .stat-card.danger {
-            background: linear-gradient(135deg, var(--danger-color), #c0392b);
-        }
-
-        .stat-value {
-            font-size: 32px;
+            gap: 12px;
             font-weight: 700;
         }
 
-        .stat-label {
-            font-size: 14px;
-            opacity: 0.9;
+        .objectif-track {
+            height: 12px;
+            border-radius: 999px;
+            background: #e9eef3;
+            overflow: hidden;
         }
 
-        .stat-icon {
-            font-size: 40px;
-            opacity: 0.3;
-        }
-
-        /* Buttons */
-        .btn {
-            border-radius: 6px;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            border-color: var(--danger-color);
-        }
-
-        .btn-danger:hover {
-            background-color: #c0392b;
-            border-color: #c0392b;
-        }
-
-        /* Table */
-        .table {
-            margin-bottom: 0;
-        }
-
-        .table thead th {
-            border: none;
-            background-color: var(--light-bg);
-            color: var(--primary-color);
-            font-weight: 600;
-            padding: 15px;
-        }
-
-        .table tbody td {
-            padding: 15px;
-            border-color: var(--light-bg);
-            vertical-align: middle;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        /* Welcome Section */
-        .welcome-section {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            padding: 40px 30px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .welcome-section h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .welcome-section p {
-            font-size: 15px;
-            opacity: 0.9;
-            margin: 0;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 0;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.show {
-                width: var(--sidebar-width);
-                transform: translateX(0);
-            }
-
-            .topbar {
-                left: 0;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .stat-card {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .stat-icon {
-                margin-bottom: 10px;
-            }
-        }
-
-        /* Alert Messages */
-        .alert {
-            border: none;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-
-        .alert-info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .chart-card {
-            padding: 20px;
-            border-radius: 8px;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        .objectif-fill {
             height: 100%;
-            margin-bottom: 20px;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #1f8f6a, #2f6f88);
         }
 
-        .chart-card h3 {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 18px;
-        }
-
-        .chart-wrap {
-            position: relative;
-            min-height: 320px;
-        }
-
-        .metric-list {
+        .quick-list {
             display: grid;
             gap: 12px;
         }
 
-        .metric-item {
+        .quick-item {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            gap: 12px;
             padding: 14px 16px;
-            border-radius: 10px;
-            background: #f8f9fb;
+            border-radius: 16px;
+            background: var(--surface-soft);
+            border: 1px solid var(--line);
+            font-weight: 700;
         }
 
-        .metric-item strong {
-            color: var(--primary-color);
+        @media (max-width: 980px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
-</head>
-<body>
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <div class="sidebar-header">
-            <h2><i class="fas fa-heartbeat"></i> Admin</h2>
-            <p>Panneau d'administration</p>
-        </div>
+<?= $this->endSection() ?>
+<?= $this->section('page_title') ?>Tableau de bord<?= $this->endSection() ?>
+<?= $this->section('page_subtitle') ?>Vue d'ensemble rapide de l'activite de la plateforme et des objectifs utilisateurs.<?= $this->endSection() ?>
 
-                <ul class="sidebar-menu">
-            <li>
-                <a href="<?= base_url('admin/dashboard') ?>" class="active">
-                    <i class="fas fa-home"></i>
-                    <span>Tableau de bord</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?= base_url('admin/regimes') ?>">
-                    <i class="fas fa-apple-alt"></i>
-                    <span>R�gimes</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?= base_url('admin/activites') ?>">
-                    <i class="fas fa-running"></i>
-                    <span>Activit�s</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?= base_url('admin/promos') ?>">
-                    <i class="fas fa-ticket-alt"></i>
-                    <span>Promos</span>
-                </a>
-            </li>
-        </ul>
+<?= $this->section('content') ?>
+    <div class="dashboard-hero">
+        <h3>Bienvenue, <?= esc((string) session()->get('admin_name')) ?></h3>
+        <p>Voici un apercu clair de la plateforme. Cette page reprend le meme layout final que le module Regime pour garder une navigation stable dans tout le backoffice.</p>
+    </div>
 
-        <div class="sidebar-footer">
-            <a href="<?= base_url('admin/logout') ?>" onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?');">
-                <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>
-                <span>Déconnexion</span>
-            </a>
+    <div class="stats-grid" style="margin-top:18px;">
+        <div class="stat-box stat-a">
+            <h4>Utilisateurs</h4>
+            <p><?= esc((string) $usersCount) ?></p>
         </div>
-    </nav>
+        <div class="stat-box stat-b">
+            <h4>Comptes Gold</h4>
+            <p><?= esc((string) $goldCount) ?></p>
+        </div>
+        <div class="stat-box stat-c">
+            <h4>Ventes</h4>
+            <p><?= esc((string) $salesCount) ?></p>
+        </div>
+        <div class="stat-box stat-d">
+            <h4>Objectifs</h4>
+            <p><?= esc((string) $objectivesCount) ?></p>
+        </div>
+    </div>
 
-    <!-- Top Bar -->
-    <div class="topbar">
-        <div class="topbar-title">
-            <i class="fas fa-bars" style="cursor: pointer; display: none;" id="sidebarToggle"></i>
-            Tableau de bord
-        </div>
-        <div class="topbar-right">
-            <div class="user-profile">
-                <div class="user-avatar">
-                    <?= substr(session()->get('admin_name'), 0, 1) ?>
+    <div class="grid-2" style="margin-top:18px;">
+        <div class="card">
+            <h3 class="section-title">Repartition des objectifs</h3>
+            <p class="section-subtitle">Lecture sans CDN ni librairie externe.</p>
+
+            <?php if ($objectifs !== []): ?>
+                <div class="objectif-bars">
+                    <?php foreach ($objectifs as $objectif): ?>
+                        <?php $total = (int) ($objectif['total'] ?? 0); ?>
+                        <div class="objectif-row">
+                            <div class="objectif-meta">
+                                <span><?= esc($objectif['label_objectif'] ?? 'Objectif') ?></span>
+                                <span><?= esc((string) $total) ?></span>
+                            </div>
+                            <div class="objectif-track">
+                                <div class="objectif-fill" style="width: <?= esc((string) round(($total / $maxObjectif) * 100, 2)) ?>%;"></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-                <div class="user-info">
-                    <div class="user-name"><?= session()->get('admin_name') ?></div>
-                    <div class="user-role">Administrateur</div>
-                </div>
+            <?php else: ?>
+                <p class="hint">Aucune donnee disponible.</p>
+            <?php endif; ?>
+        </div>
+
+        <div class="card">
+            <h3 class="section-title">Indicateurs rapides</h3>
+            <p class="section-subtitle">Resume des chiffres principaux.</p>
+
+            <div class="quick-list">
+                <div class="quick-item"><span>Utilisateurs</span><strong><?= esc((string) $usersCount) ?></strong></div>
+                <div class="quick-item"><span>Gold</span><strong><?= esc((string) $goldCount) ?></strong></div>
+                <div class="quick-item"><span>Ventes</span><strong><?= esc((string) $salesCount) ?></strong></div>
+                <div class="quick-item"><span>Objectifs</span><strong><?= esc((string) $objectivesCount) ?></strong></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Messages de bienvenue -->
-        <?php if (session()->getFlashdata('success')): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle"></i>
-                <?= session()->getFlashdata('success') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="card">
+        <h3 class="section-title">Derniers utilisateurs</h3>
+        <p class="section-subtitle">Les cinq inscriptions les plus recentes.</p>
+
+        <?php if ($recentUsers !== []): ?>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($recentUsers as $user): ?>
+                            <tr>
+                                <td><?= esc($user['nom'] ?? '') ?></td>
+                                <td><?= esc($user['email'] ?? '') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
+        <?php else: ?>
+            <p class="hint">Aucun utilisateur recent.</p>
         <?php endif; ?>
-
-        <?php
-            $objectiveLabels = array_map(static fn ($item) => $item['label_objectif'] ?? 'Objectif', $objectifs ?? []);
-            $objectiveTotals = array_map(static fn ($item) => (int)($item['total'] ?? 0), $objectifs ?? []);
-            $recentUsers = $recentUsers ?? [];
-        ?>
-
-        <!-- Section de bienvenue -->
-        <div class="welcome-section">
-            <h1>Bienvenue, <?= session()->get('admin_name') ?> ! 👋</h1>
-            <p>Voici un aperçu de votre plateforme de gestion du régime et des activités sportives.</p>
-        </div>
-
-        <!-- Statistiques -->
-        <div class="row mb-4">
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card primary">
-                    <div>
-                        <div class="stat-value"><?= esc($usersCount) ?></div>
-                        <div class="stat-label">Utilisateurs</div>
-                    </div>
-                    <i class="fas fa-users stat-icon"></i>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card accent">
-                    <div>
-                        <div class="stat-value"><?= esc($goldCount) ?></div>
-                        <div class="stat-label">Utilisateurs Gold</div>
-                    </div>
-                    <i class="fas fa-crown stat-icon"></i>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card success">
-                    <div>
-                        <div class="stat-value"><?= esc($salesCount) ?></div>
-                        <div class="stat-label">Ventes</div>
-                    </div>
-                    <i class="fas fa-shopping-cart stat-icon"></i>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card danger">
-                    <div>
-                        <div class="stat-value"><?= esc($objectivesCount) ?></div>
-                        <div class="stat-label">Objectifs</div>
-                    </div>
-                    <i class="fas fa-bullseye stat-icon"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-7">
-                <div class="chart-card">
-                    <h3><i class="fas fa-bullseye"></i> Répartition des utilisateurs selon les objectifs</h3>
-                    <div class="chart-wrap">
-                        <canvas id="objectifChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-5">
-                <div class="chart-card">
-                    <h3><i class="fas fa-chart-bar"></i> Vue globale</h3>
-                    <div class="chart-wrap">
-                        <canvas id="summaryChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-users"></i> Derniers utilisateurs
-                    </div>
-                    <div class="card-body">
-                        <?php if (!empty($recentUsers)): ?>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Nom</th>
-                                        <th>Email</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($recentUsers as $user): ?>
-                                        <tr>
-                                            <td><?= esc($user['nom'] ?? '') ?></td>
-                                            <td><?= esc($user['email'] ?? '') ?></td>
-                                            <td>
-                                                <a href="#" class="btn btn-sm btn-primary">Voir</a>
-                                                <a href="#" class="btn btn-sm btn-danger">Supprimer</a>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        <?php else: ?>
-                            <p class="mb-0 text-muted">Aucun utilisateur trouvé.</p>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="chart-card">
-                    <h3><i class="fas fa-list-check"></i> Indicateurs rapides</h3>
-                    <div class="metric-list">
-                        <div class="metric-item">
-                            <span>Utilisateurs</span>
-                            <strong><?= esc($usersCount) ?></strong>
-                        </div>
-                        <div class="metric-item">
-                            <span>Gold</span>
-                            <strong><?= esc($goldCount) ?></strong>
-                        </div>
-                        <div class="metric-item">
-                            <span>Ventes</span>
-                            <strong><?= esc($salesCount) ?></strong>
-                        </div>
-                        <div class="metric-item">
-                            <span>Objectifs</span>
-                            <strong><?= esc($objectivesCount) ?></strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Toggle sidebar sur mobile
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('show');
-        });
-
-        const objectifLabels = <?= json_encode(array_values($objectiveLabels), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
-        const objectifTotals = <?= json_encode(array_values($objectiveTotals), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
-
-        const objectifCanvas = document.getElementById('objectifChart');
-        if (objectifCanvas) {
-            new Chart(objectifCanvas, {
-                type: 'doughnut',
-                data: {
-                    labels: objectifLabels.length ? objectifLabels : ['Aucun objectif'],
-                    datasets: [{
-                        data: objectifTotals.length ? objectifTotals : [1],
-                        backgroundColor: ['#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6'],
-                        borderWidth: 0,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
-
-        const summaryCanvas = document.getElementById('summaryChart');
-        if (summaryCanvas) {
-            new Chart(summaryCanvas, {
-                type: 'bar',
-                data: {
-                    labels: ['Utilisateurs', 'Gold', 'Ventes'],
-                    datasets: [{
-                        label: 'Nombre',
-                        data: [<?= (int) $usersCount ?>, <?= (int) $goldCount ?>, <?= (int) $salesCount ?>],
-                        backgroundColor: ['#2c3e50', '#3498db', '#27ae60'],
-                        borderRadius: 10,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-    </script>
-</body>
-</html>
-
+<?= $this->endSection() ?>

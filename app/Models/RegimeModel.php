@@ -15,6 +15,7 @@ class RegimeModel extends Model
     protected $allowedFields = [
         'nom_regime',
         'variation_mensuelle_kg',
+        'variation_poids',
         'pourcentage_viande',
         'pourcentage_poisson',
         'pourcentage_volaille',

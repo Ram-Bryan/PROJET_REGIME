@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $this->renderSection('title') ?: 'Admin regime' ?></title>
+    <title><?= $this->renderSection('title') ?: 'Administration regime' ?></title>
     <style>
         :root {
             --sidebar-width: 250px;
@@ -316,10 +316,33 @@
             background: var(--danger-soft);
         }
 
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border-color: transparent;
+        }
+
+        .btn-ghost:hover {
+            background: var(--surface-soft);
+            border-color: var(--line);
+        }
+
         .btn-small {
             padding: 9px 12px;
             border-radius: 12px;
             font-size: 14px;
+        }
+
+        .btn-icon {
+            width: 42px;
+            height: 42px;
+            padding: 0;
+            border-radius: 14px;
+        }
+
+        .btn-icon img {
+            width: 18px;
+            height: 18px;
         }
 
         .badge {
@@ -337,6 +360,22 @@
         .badge.warn {
             background: var(--warn-soft);
             color: var(--warn-text);
+        }
+
+        .badge.success {
+            background: var(--success-soft);
+            color: var(--success-text);
+        }
+
+        .badge.neutral {
+            background: #eef2f6;
+            color: #526171;
+        }
+
+        .badge-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .metric {
@@ -427,25 +466,32 @@
             border: 1px solid var(--line);
             padding: 16px;
             background: var(--surface-soft);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 14px;
             transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
         }
 
         .choice input:checked + .choice-card {
-            border-color: #7fb9a3;
-            background: #eefaf5;
-            transform: translateY(-1px);
+            border-color: #15925f;
+            background: linear-gradient(180deg, #e8fff5 0%, #d4f7e7 100%);
+            box-shadow: 0 12px 26px rgba(21, 146, 95, 0.18);
+            transform: translateY(-2px);
         }
 
         .choice-title {
             margin: 0;
             font-size: 17px;
             font-weight: 700;
+            display: block;
         }
 
         .choice-meta {
-            margin: 8px 0 0;
+            margin: 0;
             color: var(--muted);
             font-size: 14px;
+            display: block;
         }
 
         .stack {
@@ -519,15 +565,15 @@
     <div class="admin-shell">
         <aside class="sidebar">
             <div class="brand">
-                <span class="brand-kicker">Backoffice</span>
-                <h1>Admin regime</h1>
+                <span class="brand-kicker">Administration</span>
+                <h1>Gestion regime</h1>
                 <p>Gestion simple des contenus regime, activite et promo.</p>
             </div>
 
-            <nav class="nav-list" aria-label="Admin navigation">
+            <nav class="nav-list" aria-label="Navigation admin">
                 <a href="<?= base_url('admin/dashboard') ?>" class="<?= $navClass('dashboard') ?>">
                     <img class="icon" src="<?= esc(base_url('assets/icons/layout-dashboard.svg')) ?>" alt="">
-                    <span>Dashboard</span>
+                    <span>Tableau de bord</span>
                 </a>
                 <a href="<?= base_url('admin/regimes') ?>" class="<?= $navClass('regimes') ?>">
                     <img class="icon" src="<?= esc(base_url('assets/icons/apple.svg')) ?>" alt="">
@@ -544,9 +590,9 @@
             </nav>
 
             <div class="sidebar-footer">
-                <a href="<?= base_url('admin/logout') ?>" class="nav-link" onclick="return confirm('Logout from admin?');">
+                <a href="<?= base_url('admin/logout') ?>" class="nav-link" onclick="return confirm('Voulez-vous vraiment vous deconnecter ?');">
                     <img class="icon" src="<?= esc(base_url('assets/icons/log-out.svg')) ?>" alt="">
-                    <span>Logout</span>
+                    <span>Deconnexion</span>
                 </a>
             </div>
         </aside>
@@ -554,7 +600,7 @@
         <main class="content">
             <div class="page-head">
                 <div>
-                    <h2><?= $this->renderSection('page_title') ?: 'Admin page' ?></h2>
+                    <h2><?= $this->renderSection('page_title') ?: 'Page admin' ?></h2>
                     <p><?= $this->renderSection('page_subtitle') ?></p>
                 </div>
                 <div class="actions-inline"><?= $this->renderSection('page_actions') ?></div>

@@ -9,7 +9,7 @@ class AdminActiviteController extends BaseController
 {
     private function requireAdmin()
     {
-        if (!session()->has('admin_id')) {
+        if (! session()->has('admin_id')) {
             return redirect()->to('/admin/login');
         }
 
@@ -28,6 +28,7 @@ class AdminActiviteController extends BaseController
         return view('admin/activites/index', [
             'activites' => $activiteModel->orderBy('id_activite', 'DESC')->findAll(),
             'regimes' => $regimeModel->select('id_regime, nom_regime')->orderBy('nom_regime', 'ASC')->findAll(),
+            'activeNav' => 'activites',
         ]);
     }
 
@@ -38,10 +39,11 @@ class AdminActiviteController extends BaseController
         }
 
         return view('admin/activites/form', [
-            'title' => 'Créer une activité sportive',
+            'title' => 'Creer une activite sportive',
             'action' => base_url('admin/activites/store'),
             'activite' => null,
             'validation' => session('validation'),
+            'activeNav' => 'activites',
         ]);
     }
 
@@ -66,7 +68,7 @@ class AdminActiviteController extends BaseController
             'nb_par_semaine' => (int) $this->request->getPost('nb_par_semaine'),
         ]);
 
-        return redirect()->to('/admin/activites')->with('success', 'Activité sportive créée avec succès.');
+        return redirect()->to('/admin/activites')->with('success', 'Activite sportive creee avec succes.');
     }
 
     public function edit(int $id)
@@ -79,14 +81,15 @@ class AdminActiviteController extends BaseController
         $activite = $activiteModel->find($id);
 
         if (! $activite) {
-            return redirect()->to('/admin/activites')->with('error', 'Activité introuvable.');
+            return redirect()->to('/admin/activites')->with('error', 'Activite introuvable.');
         }
 
         return view('admin/activites/form', [
-            'title' => 'Modifier une activité sportive',
+            'title' => 'Modifier une activite sportive',
             'action' => base_url('admin/activites/update/' . $id),
             'activite' => $activite,
             'validation' => session('validation'),
+            'activeNav' => 'activites',
         ]);
     }
 
@@ -107,7 +110,7 @@ class AdminActiviteController extends BaseController
 
         $activiteModel = new ActiviteSportiveModel();
         if (! $activiteModel->find($id)) {
-            return redirect()->to('/admin/activites')->with('error', 'Activité introuvable.');
+            return redirect()->to('/admin/activites')->with('error', 'Activite introuvable.');
         }
 
         $activiteModel->update($id, [
@@ -115,7 +118,7 @@ class AdminActiviteController extends BaseController
             'nb_par_semaine' => (int) $this->request->getPost('nb_par_semaine'),
         ]);
 
-        return redirect()->to('/admin/activites')->with('success', 'Activité sportive mise à jour avec succès.');
+        return redirect()->to('/admin/activites')->with('success', 'Activite sportive mise a jour avec succes.');
     }
 
     public function delete(int $id)
@@ -126,12 +129,12 @@ class AdminActiviteController extends BaseController
 
         $activiteModel = new ActiviteSportiveModel();
         if (! $activiteModel->find($id)) {
-            return redirect()->to('/admin/activites')->with('error', 'Activité introuvable.');
+            return redirect()->to('/admin/activites')->with('error', 'Activite introuvable.');
         }
 
         $activiteModel->delete($id);
 
-        return redirect()->to('/admin/activites')->with('success', 'Activité sportive supprimée avec succès.');
+        return redirect()->to('/admin/activites')->with('success', 'Activite sportive supprimee avec succes.');
     }
 
     public function regimeActivites(int $regimeId)
@@ -142,7 +145,7 @@ class AdminActiviteController extends BaseController
 
         $regimeModel = new RegimeModel();
         if (! $regimeModel->find($regimeId)) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Régime introuvable.'])->setStatusCode(404);
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Regime introuvable.'])->setStatusCode(404);
         }
 
         $db = db_connect();
@@ -184,7 +187,7 @@ class AdminActiviteController extends BaseController
             ->countAllResults();
 
         if ($exists > 0) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Cette activité est déjà liée à ce régime.'])->setStatusCode(409);
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Cette activite est deja liee a ce regime.'])->setStatusCode(409);
         }
 
         $db->table('regime_activite')->insert([
@@ -192,7 +195,7 @@ class AdminActiviteController extends BaseController
             'id_activite' => $activiteId,
         ]);
 
-        return $this->response->setJSON(['status' => 'success', 'message' => 'Activité ajoutée au régime.'])->setStatusCode(201);
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Activite ajoutee au regime.'])->setStatusCode(201);
     }
 
     public function removeRegimeActivite(int $id)
@@ -210,6 +213,6 @@ class AdminActiviteController extends BaseController
 
         $db->table('regime_activite')->where('id_regime_activite', $id)->delete();
 
-        return $this->response->setJSON(['status' => 'success', 'message' => 'Lien supprimé.']);
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Lien supprime.']);
     }
 }

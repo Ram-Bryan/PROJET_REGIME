@@ -8,7 +8,7 @@ class AdminPromoController extends BaseController
 {
     private function requireAdmin()
     {
-        if (!session()->has('admin_id')) {
+        if (! session()->has('admin_id')) {
             return redirect()->to('/admin/login');
         }
 
@@ -25,6 +25,7 @@ class AdminPromoController extends BaseController
 
         return view('admin/promos/index', [
             'promos' => $promoModel->orderBy('id_code', 'DESC')->findAll(),
+            'activeNav' => 'promos',
         ]);
     }
 
@@ -35,10 +36,11 @@ class AdminPromoController extends BaseController
         }
 
         return view('admin/promos/form', [
-            'title' => 'Créer un code promo',
+            'title' => 'Creer un code promo',
             'action' => base_url('admin/promos/store'),
             'promo' => null,
             'validation' => session('validation'),
+            'activeNav' => 'promos',
         ]);
     }
 
@@ -65,7 +67,7 @@ class AdminPromoController extends BaseController
             'id_utilisateur_utilisation' => null,
         ]);
 
-        return redirect()->to('/admin/promos')->with('success', 'Code promo créé avec succès.');
+        return redirect()->to('/admin/promos')->with('success', 'Code promo cree avec succes.');
     }
 
     public function edit(int $id)
@@ -86,6 +88,7 @@ class AdminPromoController extends BaseController
             'action' => base_url('admin/promos/update/' . $id),
             'promo' => $promo,
             'validation' => session('validation'),
+            'activeNav' => 'promos',
         ]);
     }
 
@@ -117,7 +120,7 @@ class AdminPromoController extends BaseController
             'deja_utilise' => (bool) $this->request->getPost('deja_utilise'),
         ]);
 
-        return redirect()->to('/admin/promos')->with('success', 'Code promo mis à jour avec succès.');
+        return redirect()->to('/admin/promos')->with('success', 'Code promo mis a jour avec succes.');
     }
 
     public function delete(int $id)
@@ -133,7 +136,7 @@ class AdminPromoController extends BaseController
 
         $promoModel->delete($id);
 
-        return redirect()->to('/admin/promos')->with('success', 'Code promo supprimé avec succès.');
+        return redirect()->to('/admin/promos')->with('success', 'Code promo supprime avec succes.');
     }
 
     public function validatePage()
@@ -145,6 +148,7 @@ class AdminPromoController extends BaseController
         return view('admin/promos/validate', [
             'result' => session()->getFlashdata('promo_result'),
             'validation' => session()->getFlashdata('validation'),
+            'activeNav' => 'promos',
         ]);
     }
 
@@ -176,7 +180,7 @@ class AdminPromoController extends BaseController
         if ((int) ($promo['deja_utilise'] ?? 0) === 1) {
             return redirect()->back()->withInput()->with('promo_result', [
                 'status' => 'error',
-                'message' => 'Ce code promo a déjà été utilisé.',
+                'message' => 'Ce code promo a deja ete utilise.',
                 'promo' => $promo,
             ]);
         }

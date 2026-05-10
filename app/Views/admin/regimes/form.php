@@ -4,8 +4,10 @@
     $selectedActivities = is_array($selectedActivities ?? null) ? $selectedActivities : [];
     $selectedActivities = array_map('strval', $selectedActivities);
     $durationRows = $durationRows ?? [];
+    $lockedDurationIds = array_map('intval', $lockedDurationIds ?? []);
+
     if ($durationRows === []) {
-        $durationRows = [['nb_jours' => '', 'prix' => '']];
+        $durationRows = [['id_duree_regime' => 0, 'nb_jours' => '', 'prix' => '']];
     }
 
     $validationErrors = [];
@@ -17,21 +19,40 @@
     $allErrors = array_values(array_unique(array_merge($validationErrors, $formErrors)));
 ?>
 
-<?= $this->section('title') ?><?= esc($title ?? 'Admin regime form') ?><?= $this->endSection() ?>
-<?= $this->section('page_title') ?><?= esc($title ?? 'Admin regime form') ?><?= $this->endSection() ?>
-<?= $this->section('page_subtitle') ?>Manage the regime itself, related sports, and duration-price offers in one place.<?= $this->endSection() ?>
+<?= $this->section('title') ?><?= esc($title ?? 'Formulaire regime') ?><?= $this->endSection() ?>
+<?= $this->section('head') ?>
+    <style>
+        .duration-status {
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--warn-text);
+        }
+
+        .duration-status.success {
+            color: var(--success-text);
+        }
+
+        .choice-meta strong {
+            color: #146c43;
+            font-weight: 700;
+        }
+    </style>
+<?= $this->endSection() ?>
+<?= $this->section('page_title') ?><?= esc($title ?? 'Formulaire regime') ?><?= $this->endSection() ?>
+<?= $this->section('page_subtitle') ?>Gerez le regime, les activites sportives et les lignes duree + prix dans un seul formulaire.<?= $this->endSection() ?>
 <?= $this->section('page_actions') ?>
-    <a href="<?= base_url('admin/regimes') ?>" class="btn btn-secondary">Back to list</a>
+    <a href="<?= base_url('admin/regimes') ?>" class="btn btn-secondary">Retour a la liste</a>
     <?php if (! empty($regime['id_regime'])): ?>
-        <a href="<?= base_url('admin/regimes/view/' . $regime['id_regime']) ?>" class="btn btn-secondary">Read only detail</a>
+        <a href="<?= base_url('admin/regimes/view/' . $regime['id_regime']) ?>" class="btn btn-secondary">Voir le detail</a>
     <?php endif; ?>
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
     <?php if ($allErrors !== []): ?>
         <div class="card" style="border-color:#f1bbbb;">
-            <h3 class="section-title">Check the form</h3>
-            <p class="section-subtitle">Some values still need attention before we can save this regime.</p>
+            <h3 class="section-title">Verifications du formulaire</h3>
+            <p class="section-subtitle">Certaines informations doivent etre corrigees avant l'enregistrement.</p>
             <ul class="error-list">
                 <?php foreach ($allErrors as $error): ?>
                     <li><?= esc($error) ?></li>
@@ -44,25 +65,25 @@
         <?= csrf_field() ?>
 
         <div class="card">
-            <h3 class="section-title">Core info</h3>
-            <p class="section-subtitle">Start with the core regime definition and a clear monthly weight variation label.</p>
+            <h3 class="section-title">Informations principales</h3>
+            <p class="section-subtitle">Definissez le nom du regime et sa variation mensuelle de poids.</p>
 
             <div class="grid-2">
                 <div class="field">
-                    <label for="nom_regime">Nom regime</label>
+                    <label for="nom_regime">Nom du regime</label>
                     <input id="nom_regime" type="text" name="nom_regime" value="<?= esc(old('nom_regime', $regime['nom_regime'] ?? '')) ?>" required>
                 </div>
                 <div class="field">
                     <label for="variation_mensuelle_kg">Variation mensuelle (kg / mois)</label>
                     <input id="variation_mensuelle_kg" type="number" step="0.01" name="variation_mensuelle_kg" value="<?= esc(old('variation_mensuelle_kg', $regime['variation_mensuelle_kg'] ?? '')) ?>" required>
-                    <p class="hint">Use a negative value for weight loss and a positive value for weight gain.</p>
+                    <p class="hint">Valeur negative pour une perte de poids, positive pour une prise de poids.</p>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="section-title">Nutrition composition</h3>
-            <p class="section-subtitle">Keep the breakdown balanced. The three percentages must total 100%.</p>
+            <h3 class="section-title">Composition nutritionnelle</h3>
+            <p class="section-subtitle">Les pourcentages viande, poisson et volaille doivent totaliser 100%.</p>
 
             <div class="grid-3">
                 <div class="field">
@@ -82,7 +103,7 @@
 
         <div class="card">
             <h3 class="section-title">Activites sportives</h3>
-            <p class="section-subtitle">Select every activity that should be linked to this regime.</p>
+            <p class="section-subtitle">Conservez cette selection intelligente, avec un etat selectionne plus visible en vert.</p>
 
             <?php if (! empty($activities)): ?>
                 <div class="choice-grid">
@@ -92,23 +113,25 @@
                             <input type="checkbox" name="activites[]" value="<?= esc($activityId) ?>" <?= in_array($activityId, $selectedActivities, true) ? 'checked' : '' ?>>
                             <span class="choice-card">
                                 <strong class="choice-title"><?= esc($activity['label_activite']) ?></strong>
-                                <span class="choice-meta"><?= esc((string) $activity['nb_par_semaine']) ?> time(s) per week</span>
+                                <span class="choice-meta">
+                                    <strong><?= esc((string) $activity['nb_par_semaine']) ?> fois par semaine</strong>
+                                </span>
                             </span>
                         </label>
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                <p class="hint">No activity is available yet. You can still save the regime, then add activities from the activites admin page.</p>
+                <p class="hint">Aucune activite sportive n'est encore disponible.</p>
             <?php endif; ?>
         </div>
 
         <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:end; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
                 <div>
-                    <h3 class="section-title" style="margin-bottom:4px;">Durees + prix</h3>
-                    <p class="section-subtitle" style="margin-bottom:0;">This is the key pricing matrix. Add or remove rows as needed.</p>
+                    <h3 class="section-title" style="margin-bottom:4px;">Durees et prix</h3>
+                    <p class="section-subtitle" style="margin-bottom:0;">Ajoutez plusieurs lignes pour configurer toutes les offres du regime.</p>
                 </div>
-                <button type="button" class="btn btn-secondary" id="add-duration-row">Add row</button>
+                <button type="button" class="btn btn-secondary" id="add-duration-row">Ajouter une ligne</button>
             </div>
 
             <div class="table-wrap">
@@ -117,41 +140,61 @@
                         <tr>
                             <th>Nb jours</th>
                             <th>Prix (Ar)</th>
+                            <th>Etat</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($durationRows as $index => $row): ?>
+                            <?php
+                                $durationId = (int) ($row['id_duree_regime'] ?? 0);
+                                $isLocked = in_array($durationId, $lockedDurationIds, true);
+                            ?>
                             <tr>
                                 <td>
+                                    <input type="hidden" name="durees[<?= $index ?>][id_duree_regime]" value="<?= esc((string) $durationId) ?>">
                                     <div class="field">
-                                        <input type="number" min="1" name="durees[<?= $index ?>][nb_jours]" value="<?= esc((string) ($row['nb_jours'] ?? '')) ?>" required>
+                                        <input type="number" min="1" name="durees[<?= $index ?>][nb_jours]" value="<?= esc((string) ($row['nb_jours'] ?? '')) ?>" <?= $isLocked ? 'readonly' : '' ?> required>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="field">
-                                        <input type="number" min="0.01" step="0.01" name="durees[<?= $index ?>][prix]" value="<?= esc((string) ($row['prix'] ?? '')) ?>" required>
+                                        <input type="number" min="0.01" step="0.01" name="durees[<?= $index ?>][prix]" value="<?= esc((string) ($row['prix'] ?? '')) ?>" <?= $isLocked ? 'readonly' : '' ?> required>
                                     </div>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-danger btn-small remove-duration-row">Remove</button>
+                                    <?php if ($isLocked): ?>
+                                        <div class="duration-status">Deja utilisee</div>
+                                    <?php else: ?>
+                                        <div class="duration-status success">Libre</div>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-small remove-duration-row" <?= $isLocked ? 'disabled' : '' ?>>
+                                        <?= $isLocked ? 'Suppression bloquee' : 'Retirer' ?>
+                                    </button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
+
+            <?php if ($lockedDurationIds !== []): ?>
+                <p class="hint">Les durees deja utilisees dans des commandes ou historisees ne peuvent pas etre supprimees depuis cet ecran.</p>
+            <?php endif; ?>
         </div>
 
         <div class="actions-inline" style="justify-content:flex-end;">
-            <a href="<?= base_url('admin/regimes') ?>" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-primary">Save regime</button>
+            <a href="<?= base_url('admin/regimes') ?>" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">Enregistrer le regime</button>
         </div>
     </form>
 
     <template id="duration-row-template">
         <tr>
             <td>
+                <input type="hidden" name="__NAME_ID__" value="0">
                 <div class="field">
                     <input type="number" min="1" name="__NAME_DAYS__" value="" required>
                 </div>
@@ -162,7 +205,10 @@
                 </div>
             </td>
             <td>
-                <button type="button" class="btn btn-danger btn-small remove-duration-row">Remove</button>
+                <div class="duration-status success">Nouvelle ligne</div>
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger btn-small remove-duration-row">Retirer</button>
             </td>
         </tr>
     </template>
@@ -183,6 +229,11 @@
                     if (!button) {
                         return;
                     }
+
+                    if (button.disabled) {
+                        return;
+                    }
+
                     button.disabled = rows.length === 1;
                 });
             }
@@ -190,7 +241,9 @@
             function addRow() {
                 const index = nextRowIndex;
                 nextRowIndex += 1;
+
                 const html = template.innerHTML
+                    .replace('__NAME_ID__', 'durees[' + index + '][id_duree_regime]')
                     .replace('__NAME_DAYS__', 'durees[' + index + '][nb_jours]')
                     .replace('__NAME_PRICE__', 'durees[' + index + '][prix]');
 
@@ -204,7 +257,7 @@
 
             tableBody?.addEventListener('click', function (event) {
                 const button = event.target.closest('.remove-duration-row');
-                if (!button) {
+                if (!button || button.disabled) {
                     return;
                 }
 
