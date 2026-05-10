@@ -1,0 +1,467 @@
+<?= $this->extend('admin/layout') ?>
+
+<?php
+    $regimeDurations = $regimeDurations ?? [];
+    $compositionColors = [
+        'viande' => '#ef4444',
+        'poisson' => '#3b82f6',
+        'volaille' => '#f59e0b',
+    ];
+
+    $pointOnCircle = static function (float $angle, float $radius, float $cx, float $cy): array {
+        $radians = deg2rad($angle);
+
+        return [
+            'x' => $cx + cos($radians) * $radius,
+            'y' => $cy + sin($radians) * $radius,
+        ];
+    };
+
+    $renderCompositionChart = static function (array $regime, int $size = 92) use ($compositionColors, $pointOnCircle): string {
+        $segments = [
+            ['label' => 'Viande', 'value' => (float) ($regime['pourcentage_viande'] ?? 0), 'color' => $compositionColors['viande']],
+            ['label' => 'Poisson', 'value' => (float) ($regime['pourcentage_poisson'] ?? 0), 'color' => $compositionColors['poisson']],
+            ['label' => 'Volaille', 'value' => (float) ($regime['pourcentage_volaille'] ?? 0), 'color' => $compositionColors['volaille']],
+        ];
+
+        $cx = $size / 2;
+        $cy = $size / 2;
+        $radius = ($size / 2) - 3;
+        $innerRadius = $radius * 0.54;
+        $startAngle = -90.0;
+        $svg = '<svg viewBox="0 0 ' . $size . ' ' . $size . '" width="' . $size . '" height="' . $size . '" aria-label="Composition du regime">';
+
+        foreach ($segments as $segment) {
+            if ($segment['value'] <= 0) {
+                continue;
+            }
+
+            $sweep = ($segment['value'] / 100) * 360;
+            $endAngle = $startAngle + $sweep;
+            $largeArc = $sweep > 180 ? 1 : 0;
+
+            if ($segment['value'] >= 100) {
+                $svg .= '<circle cx="' . $cx . '" cy="' . $cy . '" r="' . $radius . '" fill="' . $segment['color'] . '" data-tooltip="'
+                    . esc($segment['label']) . ' : ' . esc(number_format($segment['value'], 0, ',', ' ')) . '%"></circle>';
+                break;
+            }
+
+            $outerStart = $pointOnCircle($startAngle, $radius, $cx, $cy);
+            $outerEnd = $pointOnCircle($endAngle, $radius, $cx, $cy);
+            $innerStart = $pointOnCircle($startAngle, $innerRadius, $cx, $cy);
+            $innerEnd = $pointOnCircle($endAngle, $innerRadius, $cx, $cy);
+
+            $path = sprintf(
+                'M %.3F %.3F A %.3F %.3F 0 %d 1 %.3F %.3F L %.3F %.3F A %.3F %.3F 0 %d 0 %.3F %.3F Z',
+                $outerStart['x'],
+                $outerStart['y'],
+                $radius,
+                $radius,
+                $largeArc,
+                $outerEnd['x'],
+                $outerEnd['y'],
+                $innerEnd['x'],
+                $innerEnd['y'],
+                $innerRadius,
+                $innerRadius,
+                $largeArc,
+                $innerStart['x'],
+                $innerStart['y']
+            );
+
+            $svg .= '<path d="' . $path . '" fill="' . $segment['color'] . '" data-tooltip="'
+                . esc($segment['label']) . ' : ' . esc(number_format($segment['value'], 0, ',', ' ')) . '%"></path>';
+
+            $startAngle = $endAngle;
+        }
+
+        $svg .= '<circle cx="' . $cx . '" cy="' . $cy . '" r="' . ($innerRadius - 1) . '" fill="#ffffff"></circle>';
+        $svg .= '</svg>';
+
+        return $svg;
+    };
+?>
+
+<?= $this->section('title') ?>Gestion des regimes<?= $this->endSection() ?>
+<?= $this->section('head') ?>
+    <style>
+        .filters-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: 1.15fr 1fr 1fr;
+        }
+
+        .filter-pair {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .composition-legend {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .legend-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border-radius: 999px;
+            background: var(--surface-soft);
+            border: 1px solid var(--line);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .legend-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        .composition-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .composition-chart {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .composition-chart svg {
+            flex: 0 0 auto;
+            overflow: visible;
+        }
+
+        .composition-tooltip {
+            position: absolute;
+            left: 50%;
+            top: -12px;
+            transform: translate(-50%, -100%);
+            background: #132238;
+            color: #ffffff;
+            padding: 8px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.12s ease;
+        }
+
+        .duration-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .duration-badges .badge {
+            background: #eef2f6;
+            color: #435364;
+        }
+
+        .icon-action {
+            position: relative;
+        }
+
+        .icon-action img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 24, 38, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            z-index: 30;
+        }
+
+        .confirm-overlay.is-open {
+            display: flex;
+        }
+
+        .confirm-card {
+            width: min(100%, 480px);
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid rgba(195, 208, 223, 0.7);
+            box-shadow: 0 24px 56px rgba(15, 23, 42, 0.2);
+            padding: 26px;
+        }
+
+        .confirm-card h3 {
+            margin: 0 0 10px;
+            font-size: 24px;
+        }
+
+        .confirm-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .confirm-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 920px) {
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<?= $this->endSection() ?>
+<?= $this->section('page_title') ?>Bibliotheque des regimes<?= $this->endSection() ?>
+<?= $this->section('page_subtitle') ?>Vue admin en francais avec composition visuelle, badges de duree et actions rapides.<?= $this->endSection() ?>
+<?= $this->section('page_actions') ?>
+    <a href="<?= base_url('admin/regimes/create') ?>" class="btn btn-primary">
+        <img class="icon" src="<?= esc(base_url('assets/icons/plus.svg')) ?>" alt="">
+        <span>Nouveau regime</span>
+    </a>
+<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
+    <div class="card">
+        <h3 class="section-title">Filtres</h3>
+        <p class="section-subtitle">Affinez la liste selon le nom, la variation, les durees et les prix disponibles.</p>
+
+        <form method="get" action="<?= base_url('admin/regimes') ?>" class="stack">
+            <div class="filters-grid">
+                <div class="field">
+                    <label for="nom_regime">Nom du regime</label>
+                    <input id="nom_regime" type="text" name="nom_regime" value="<?= esc($filters['nom_regime'] ?? '') ?>" placeholder="Rechercher un regime">
+                </div>
+                <div class="field">
+                    <label>Variation mensuelle (kg / mois)</label>
+                    <div class="filter-pair">
+                        <input id="variation_min" type="number" step="0.01" name="variation_min" value="<?= esc($filters['variation_min'] ?? '') ?>" placeholder="Min">
+                        <input id="variation_max" type="number" step="0.01" name="variation_max" value="<?= esc($filters['variation_max'] ?? '') ?>" placeholder="Max">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Durees disponibles (jours)</label>
+                    <div class="filter-pair">
+                        <input id="duree_min" type="number" name="duree_min" value="<?= esc($filters['duree_min'] ?? '') ?>" placeholder="Min">
+                        <input id="duree_max" type="number" name="duree_max" value="<?= esc($filters['duree_max'] ?? '') ?>" placeholder="Max">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Prix disponibles (Ar)</label>
+                    <div class="filter-pair">
+                        <input id="prix_min" type="number" step="0.01" name="prix_min" value="<?= esc($filters['prix_min'] ?? '') ?>" placeholder="Min">
+                        <input id="prix_max" type="number" step="0.01" name="prix_max" value="<?= esc($filters['prix_max'] ?? '') ?>" placeholder="Max">
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions-inline" style="justify-content:flex-start;">
+                <button type="submit" class="btn btn-primary">Filtrer</button>
+                <a href="<?= base_url('admin/regimes') ?>" class="btn btn-secondary">Reinitialiser</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:end; gap:16px; flex-wrap:wrap; margin-bottom:12px;">
+            <div>
+                <h3 class="section-title" style="margin-bottom:4px;">Liste des regimes</h3>
+                <p class="section-subtitle" style="margin-bottom:0;"><?= count($regimes ?? []) ?> resultat(s)</p>
+            </div>
+        </div>
+
+        <div class="composition-legend">
+            <span class="legend-chip" title="Viande">
+                <span class="legend-dot" style="background:<?= esc($compositionColors['viande']) ?>;"></span>
+                Viande
+            </span>
+            <span class="legend-chip" title="Poisson">
+                <span class="legend-dot" style="background:<?= esc($compositionColors['poisson']) ?>;"></span>
+                Poisson
+            </span>
+            <span class="legend-chip" title="Volaille">
+                <span class="legend-dot" style="background:<?= esc($compositionColors['volaille']) ?>;"></span>
+                Volaille
+            </span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom du regime</th>
+                        <th>Variation mensuelle</th>
+                        <th>Composition</th>
+                        <th>Nb d'activites liees</th>
+                        <th>Durees disponibles</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (! empty($regimes)): ?>
+                        <?php foreach ($regimes as $regime): ?>
+                            <?php
+                                $variation = (float) ($regime['variation_mensuelle_kg'] ?? 0);
+                                $durations = $regimeDurations[$regime['id_regime']] ?? [];
+                            ?>
+                            <tr>
+                                <td>
+                                    <strong><?= esc($regime['nom_regime']) ?></strong>
+                                </td>
+                                <td>
+                                    <span class="badge <?= $variation < 0 ? 'warn' : 'success' ?>">
+                                        <?= $variation > 0 ? '+' : '' ?><?= esc(number_format($variation, 2, ',', ' ')) ?> kg / mois
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="composition-cell">
+                                        <div class="composition-chart">
+                                            <?= $renderCompositionChart($regime) ?>
+                                            <span class="composition-tooltip"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge neutral"><?= esc((string) ($regime['nb_activites'] ?? 0)) ?></span></td>
+                                <td>
+                                    <?php if ($durations !== []): ?>
+                                        <div class="duration-badges">
+                                            <?php foreach ($durations as $duration): ?>
+                                                <span class="badge neutral"><?= esc((string) $duration) ?> j</span>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="badge neutral">Aucune duree</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="<?= base_url('admin/regimes/view/' . $regime['id_regime']) ?>" class="btn btn-ghost btn-icon icon-action" title="Voir le detail">
+                                            <img src="<?= esc(base_url('assets/icons/eye.svg')) ?>" alt="Voir">
+                                        </a>
+                                        <a href="<?= base_url('admin/regimes/edit/' . $regime['id_regime']) ?>" class="btn btn-secondary btn-icon icon-action" title="Modifier le regime">
+                                            <img src="<?= esc(base_url('assets/icons/pencil.svg')) ?>" alt="Modifier">
+                                        </a>
+                                        <button
+                                            type="button"
+                                            class="btn btn-danger btn-icon icon-action js-delete-trigger"
+                                            title="Supprimer le regime"
+                                            data-action="<?= esc(base_url('admin/regimes/delete/' . $regime['id_regime'])) ?>"
+                                            data-name="<?= esc($regime['nom_regime']) ?>"
+                                        >
+                                            <img src="<?= esc(base_url('assets/icons/trash-2.svg')) ?>" alt="Supprimer">
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6">Aucun regime ne correspond aux filtres actuels.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="confirm-overlay" id="delete-confirmation">
+        <div class="confirm-card">
+            <h3>Supprimer ce regime ?</h3>
+            <p id="delete-confirmation-text">Cette action supprimera le regime selectionne si aucune duree verrouillee n'est liee a des commandes.</p>
+            <form id="delete-confirmation-form" method="post">
+                <?= csrf_field() ?>
+                <div class="confirm-actions">
+                    <button type="button" class="btn btn-secondary" id="delete-cancel">Annuler</button>
+                    <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+    <script>
+        (function () {
+            document.querySelectorAll('.composition-chart').forEach(function (chart) {
+                const tooltip = chart.querySelector('.composition-tooltip');
+
+                chart.querySelectorAll('[data-tooltip]').forEach(function (segment) {
+                    segment.addEventListener('mouseenter', function () {
+                        if (!tooltip) {
+                            return;
+                        }
+                        tooltip.textContent = segment.getAttribute('data-tooltip') || '';
+                        tooltip.style.opacity = '1';
+                    });
+
+                    segment.addEventListener('mousemove', function (event) {
+                        if (!tooltip) {
+                            return;
+                        }
+                        const rect = chart.getBoundingClientRect();
+                        tooltip.style.left = (event.clientX - rect.left) + 'px';
+                        tooltip.style.top = (event.clientY - rect.top - 10) + 'px';
+                    });
+
+                    segment.addEventListener('mouseleave', function () {
+                        if (tooltip) {
+                            tooltip.style.opacity = '0';
+                        }
+                    });
+                });
+            });
+
+            const overlay = document.getElementById('delete-confirmation');
+            const form = document.getElementById('delete-confirmation-form');
+            const text = document.getElementById('delete-confirmation-text');
+            const cancel = document.getElementById('delete-cancel');
+            const triggers = document.querySelectorAll('.js-delete-trigger');
+
+            function closeModal() {
+                overlay?.classList.remove('is-open');
+                document.body.style.overflow = '';
+            }
+
+            triggers.forEach((button) => {
+                button.addEventListener('click', function () {
+                    const action = button.getAttribute('data-action') || '';
+                    const name = button.getAttribute('data-name') || 'ce regime';
+
+                    form.setAttribute('action', action);
+                    text.textContent = 'Vous allez supprimer "' + name + '". Cette action sera bloquee si certaines durees sont deja utilisees.';
+                    overlay?.classList.add('is-open');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            cancel?.addEventListener('click', closeModal);
+            overlay?.addEventListener('click', function (event) {
+                if (event.target === overlay) {
+                    closeModal();
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        }());
+    </script>
+<?= $this->endSection() ?>

@@ -83,7 +83,9 @@
 ?>
 
 <?= $this->section('title') ?>Gestion des regimes<?= $this->endSection() ?>
-
+<?= $this->section('head') ?>
+    
+<?= $this->endSection() ?>
 <?= $this->section('page_title') ?>Bibliotheque des regimes<?= $this->endSection() ?>
 <?= $this->section('page_subtitle') ?>Vue admin en francais avec composition visuelle, badges de duree et actions rapides.<?= $this->endSection() ?>
 <?= $this->section('page_actions') ?>
@@ -127,7 +129,7 @@
                 </div>
             </div>
 
-            <div class="actions-inline" style="justify-content:flex-start;">
+            <div class="actions-inline">
                 <button type="submit" class="btn btn-primary">Filtrer</button>
                 <a href="<?= base_url('admin/regimes') ?>" class="btn btn-secondary">Reinitialiser</a>
             </div>
@@ -135,10 +137,10 @@
     </div>
 
     <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:end; gap:16px; flex-wrap:wrap; margin-bottom:12px;">
+        <div class="card-header-flex">
             <div>
-                <h3 class="section-title" style="margin-bottom:4px;">Liste des regimes</h3>
-                <p class="section-subtitle" style="margin-bottom:0;"><?= count($regimes ?? []) ?> resultat(s)</p>
+                <h3 class="section-title">Liste des regimes</h3>
+                <p class="section-subtitle"><?= count($regimes ?? []) ?> resultat(s)</p>
             </div>
         </div>
 

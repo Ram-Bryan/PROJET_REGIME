@@ -5,11 +5,11 @@
 <?= $this->section('content') ?>
 <section class="stack">
     <div class="hero">
-        <div class="page-header" style="position:relative; z-index:1;">
+        <div class="page-header">
             <h1><?= esc($purchase['nom_regime']) ?></h1>
             <p class="sub">Détails complets de votre achat, du programme et de ses activités associées.</p>
         </div>
-        <div class="hero-actions" style="position:relative; z-index:1;">
+        <div class="hero-actions">
             <a class="btn" href="<?= esc(site_url('mes-regimes/' . $purchase['id_commande'] . '/export-pdf')) ?>">Exporter PDF</a>
             <a class="btn btn-secondary" href="<?= esc(site_url('mes-regimes')) ?>">Retour</a>
         </div>
@@ -38,11 +38,11 @@
                 <p class="sub">La logique du programme et sa composition.</p>
             </div>
         </div>
-        <p class="sub" style="margin-bottom: 10px;">
+        <p class="sub">
             <?= esc($purchase['nom_regime']) ?> est un programme adapté pour <?= esc(strtolower($purchase['objective_label'])) ?>,
             basé sur une répartition précise des sources protéiques.
         </p>
-        <ul style="margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px;">
+        <ul class="info-list">
             <li>Répartition: <?= esc($purchase['pourcentage_viande']) ?>% viande, <?= esc($purchase['pourcentage_poisson']) ?>% poisson, <?= esc($purchase['pourcentage_volaille']) ?>% volaille.</li>
             <li>Variation estimée mensuelle: <strong><?= esc($purchase['variation_label']) ?></strong></li>
             <li>Objectif aligné avec votre achat.</li>

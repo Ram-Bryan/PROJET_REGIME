@@ -332,9 +332,15 @@ Okay now I want to completely refractor this project and upgrade the UI. To do s
 
 
 Okay Opus just messed up. The ui is so gross:
-Frontoffice and backoffice UI are just so not homegenous and very not UX well structured,
+Frontoffice and backoffice UI are just so not homegenous and very not UX well structured. it is not well guided. there are stuff in the UI structure that is just so messy in every pages !
 There are UX\UI stuff that are very hard to watch. So I want you to work on that
-Wither you
+Either you rebuild the whole UI (following pro UX rules) or you redo the views following the previous Views (see docs\fix\Views).
+
+but still everything css sepaated files and js and all. It was just bette rbefore. 
+
+apart form that,  is it okay to have logic of display isnide model ?
 
 
-now is it okay to have logic of display isnide model ?
+Now lets refine:
+in isncirption:
+creer un compte enleve ca: Champs obligatoires : nom, email, mot de passe et met genre un texte meaningful

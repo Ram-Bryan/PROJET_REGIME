@@ -1,23 +1,19 @@
-<?= $this->extend('frontoffice/layout') ?>
+<?= $this->extend('auth/layout') ?>
 
 <?= $this->section('title') ?>Connexion<?= $this->endSection() ?>
 
-<?= $this->section('head') ?>
-<link rel="stylesheet" href="<?= base_url('assets/css/auth.css') ?>">
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
-<section class="card auth-shell">
+<section class="auth-shell">
     <div class="auth-grid">
         <div class="auth-promo">
             <div>
-                <div class="badge">Espace membre</div>
+                <div class="auth-badge">Espace membre</div>
                 <div class="page-header">
                     <h1>Connexion</h1>
                     <p class="sub">Accédez à votre espace personnel, vos régimes et votre suivi en quelques secondes.</p>
                 </div>
             </div>
-            <div class="sub">Connexion sécurisée • expérience mobile propre • accès rapide aux actions clés</div>
+            <div class="auth-promo-footer">Connexion sécurisée · expérience mobile propre · accès rapide</div>
         </div>
 
         <div class="auth-form-panel">
@@ -41,15 +37,23 @@
                 <button type="submit" class="btn">Se connecter</button>
             </form>
 
-            <p style="margin-top: var(--space-4);">Pas encore de compte ? <a href="<?= site_url('/register') ?>">Créer un compte</a></p>
+            <p class="auth-link">Pas encore de compte ? <a href="<?= site_url('/register') ?>">Créer un compte</a></p>
         </div>
     </div>
 </section>
 <?= $this->endSection() ?>
 
-
-
 <?= $this->section('scripts') ?>
-<script src="<?= base_url('assets/js/auth.js') ?>"></script>
+<script>
+(() => {
+  const input = document.getElementById('mot_de_passe');
+  const btn = document.getElementById('toggle-login-password');
+  if (!input || !btn) return;
+  btn.addEventListener('click', () => {
+    const hidden = input.type === 'password';
+    input.type = hidden ? 'text' : 'password';
+    btn.querySelector('img').src = hidden ? '<?= base_url('assets/icons/eye-off.svg') ?>' : '<?= base_url('assets/icons/eye.svg') ?>';
+  });
+})();
+</script>
 <?= $this->endSection() ?>
-

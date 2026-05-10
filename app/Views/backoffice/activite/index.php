@@ -1,7 +1,9 @@
 <?= $this->extend('backoffice/layout') ?>
 
 <?= $this->section('title') ?>Gestion des activites<?= $this->endSection() ?>
-
+<?= $this->section('head') ?>
+    
+<?= $this->endSection() ?>
 <?= $this->section('page_title') ?>Activites sportives<?= $this->endSection() ?>
 <?= $this->section('page_subtitle') ?>Pilotez les activites sportives avec une liste filtree, des actions rapides et une page detail par activite.<?= $this->endSection() ?>
 <?= $this->section('page_actions') ?>
@@ -17,7 +19,7 @@
         <p>Retrouvez ici toutes les activites disponibles, leur frequence hebdomadaire et le nombre de regimes qui les utilisent deja.</p>
     </div>
 
-    <div class="card" style="margin-top:18px;">
+    <div class="card">
         <h3 class="section-title">Filtres</h3>
         <p class="section-subtitle">Affinez la liste par nom et par frequence hebdomadaire.</p>
 
@@ -36,7 +38,7 @@
                 </div>
             </div>
 
-            <div class="actions-inline" style="justify-content:flex-start;">
+            <div class="actions-inline">
                 <button type="submit" class="btn btn-primary">Filtrer</button>
                 <a href="<?= base_url('admin/activites') ?>" class="btn btn-secondary">Reinitialiser</a>
             </div>
@@ -44,10 +46,10 @@
     </div>
 
     <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:end; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+        <div class="card-header-flex">
             <div>
-                <h3 class="section-title" style="margin-bottom:4px;">Liste des activites</h3>
-                <p class="section-subtitle" style="margin-bottom:0;"><?= count($activites ?? []) ?> activite(s) trouvee(s)</p>
+                <h3 class="section-title">Liste des activites</h3>
+                <p class="section-subtitle"><?= count($activites ?? []) ?> activite(s) trouvee(s)</p>
             </div>
         </div>
 

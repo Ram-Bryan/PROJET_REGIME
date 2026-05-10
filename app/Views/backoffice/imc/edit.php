@@ -12,7 +12,7 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-    <div class="card" style="max-width: 600px;">
+    <div class="card">
         <form action="<?= base_url('admin/imc/update/' . esc($imc['id_imc'])) ?>" method="post" id="imcForm">
         
             <div class="stack">
@@ -33,13 +33,13 @@
                     </div>
                 </div>
 
-                <div id="validationAlert" class="flash error" style="display:none; padding:12px; margin-top:8px;">
+                <div id="validationAlert" class="flash error" id="validationAlert">
                     <span id="alertMessage">L'IMC minimum doit etre strictement inferieur a l'IMC maximum.</span>
                 </div>
 
                 <div class="field">
                     <button type="submit" class="btn btn-primary" id="submitBtn">
-                        <img class="icon" src="<?= esc(base_url('assets/icons/save.svg')) ?>" alt="" style="filter: brightness(0) invert(1);"> 
+                        <img class="icon" src="<?= esc(base_url('assets/icons/save.svg')) ?>" alt=""> 
                         Enregistrer
                     </button>
                 </div>

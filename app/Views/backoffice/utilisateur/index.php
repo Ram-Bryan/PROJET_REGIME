@@ -19,7 +19,7 @@
                             <th>Email</th>
                             <th>Genre</th>
                             <th>Status Gold</th>
-                            <th style="width: 120px;">Actions</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -6,7 +6,7 @@
 <?= $this->section('content') ?>
 <section class="stack gold-shell">
     <div class="hero">
-        <div class="page-header" style="position:relative; z-index:1;">
+        <div class="page-header">
             <h1>Option Gold</h1>
             <p class="sub">Debloquez une reduction permanente sur vos achats de regimes une fois les conditions remplies.</p>
         </div>
@@ -14,7 +14,7 @@
 
     <?php if ($gold === null): ?>
         <div class="card">
-            <h2 style="margin:0 0 10px;">Gold indisponible</h2>
+            <h2>Gold indisponible</h2>
             <p class="sub">Aucune offre Gold n'est actuellement configuree par l'administration.</p>
         </div>
     <?php else: ?>
@@ -30,8 +30,8 @@
                         <img src="<?= esc(base_url('assets/icons/crown.svg')) ?>" alt="">
                         <span><?= esc($gold['nom_option']) ?></span>
                     </div>
-                    <h2 style="margin:16px 0 8px; font-size:34px;">Accedez a Gold en une seule fois</h2>
-                    <p class="sub" style="max-width:70ch;">Une fois achetee, l'option Gold active votre reduction sur tous les prochains achats de regimes.</p>
+                    <h2 class="gold-heading">Accedez a Gold en une seule fois</h2>
+                    <p class="sub">Une fois achetee, l'option Gold active votre reduction sur tous les prochains achats de regimes.</p>
                 </div>
                 <span class="badge <?= $isGold ? 'success' : 'neutral' ?>"><?= $isGold ? 'Deja active' : 'Option premium' ?></span>
             </div>
@@ -52,21 +52,21 @@
             </div>
 
             <?php if ($isGold): ?>
-                <div class="gold-note success" style="margin-bottom:18px;">Votre compte possede deja Gold. Les reductions sont maintenant appliquees automatiquement.</div>
+                <div class="gold-note success">Votre compte possede deja Gold. Les reductions sont maintenant appliquees automatiquement.</div>
             <?php elseif ($locked): ?>
-                <div class="gold-note" style="margin-bottom:18px;">
+                <div class="gold-note">
                     Vous devez acheter encore <?= esc((string) $remainingPurchases) ?> regime(s) pour pouvoir acceder au Gold.
                     Vous en avez deja achete <?= esc((string) $purchaseCount) ?> sur <?= esc((string) $requiredPurchases) ?>.
                 </div>
             <?php elseif ($insufficientBalance): ?>
-                <div class="gold-note" style="margin-bottom:18px;">Vous avez debloque l'acces a Gold, mais votre solde actuel ne suffit pas encore pour l'acheter.</div>
+                <div class="gold-note">Vous avez debloque l'acces a Gold, mais votre solde actuel ne suffit pas encore pour l'acheter.</div>
             <?php else: ?>
-                <div class="gold-note success" style="margin-bottom:18px;">Toutes les conditions sont remplies. Vous pouvez maintenant acheter Gold.</div>
+                <div class="gold-note success">Toutes les conditions sont remplies. Vous pouvez maintenant acheter Gold.</div>
             <?php endif; ?>
 
             <form action="<?= site_url('options/gold/buy/' . $gold['id_option']) ?>" method="post">
                 <?= csrf_field() ?>
-                <div class="actions" style="margin-top:0;">
+                <div class="actions">
                     <button type="submit" class="btn" <?= ($locked || $insufficientBalance || $isGold) ? 'disabled' : '' ?>>Acheter Gold</button>
                     <a href="<?= site_url('regimes') ?>" class="btn btn-secondary">Voir les regimes</a>
                 </div>

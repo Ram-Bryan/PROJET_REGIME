@@ -2,12 +2,14 @@
 
 <?= $this->section('title') ?>Régimes<?= $this->endSection() ?>
 
+<?= $this->section('head') ?>
 
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="stack">
     <div class="hero">
-        <div class="page-header" style="position:relative; z-index:1;">
+        <div class="page-header">
             <h1>Régimes</h1>
             <p class="sub">Explorez les formules disponibles, filtrez par durée ou objectif, et visualisez rapidement les durées et activités associées.</p>
         </div>

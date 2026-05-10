@@ -23,7 +23,7 @@
                         <input type="number" step="0.01" name="montant_max" value="<?= esc($filters['montant_max'] ?? '') ?>" placeholder="Max">
                     </div>
                 </div>
-                <div class="field" style="grid-column: span 2;">
+                <div class="field">
                     <label>Etat</label>
                     <div class="radio-row">
                         <?php $etat = $filters['etat'] ?? 'tous'; ?>
@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            <div class="actions-inline" style="justify-content:flex-start;">
+            <div class="actions-inline">
                 <button type="submit" class="btn btn-primary">Filtrer</button>
                 <a href="<?= base_url('admin/promos') ?>" class="btn btn-secondary">Reinitialiser</a>
             </div>

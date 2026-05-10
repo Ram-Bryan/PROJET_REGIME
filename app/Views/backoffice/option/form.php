@@ -8,9 +8,9 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-    <div class="card" style="max-width:820px;">
+    <div class="card">
         <?php if (! empty($validation)): ?>
-            <div class="flash error" style="margin-bottom:18px;"><?= esc($validation->listErrors()) ?></div>
+            <div class="flash error"><?= esc($validation->listErrors()) ?></div>
         <?php endif; ?>
 
         <form action="<?= esc($action) ?>" method="post" class="stack">
@@ -39,7 +39,7 @@
                     <input id="reduction_pourcentage" type="number" step="0.01" name="reduction_pourcentage" value="<?= esc(old('reduction_pourcentage', $option['reduction_pourcentage'] ?? '')) ?>" required>
                 </div>
             </div>
-            <div class="actions-inline" style="justify-content:flex-end;">
+            <div class="actions-inline">
                 <a href="<?= base_url('admin/options') ?>" class="btn btn-secondary">Annuler</a>
                 <button type="submit" class="btn btn-primary">Enregistrer</button>
             </div>

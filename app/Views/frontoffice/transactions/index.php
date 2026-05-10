@@ -5,7 +5,7 @@
 <?= $this->section('content') ?>
 <section class="stack">
     <div class="hero">
-        <div class="page-header" style="position:relative; z-index:1;">
+        <div class="page-header">
             <h1>Historique des transactions</h1>
             <p class="sub">Retrouvez toutes vos commandes passées, le détail des durées et les montants associés.</p>
         </div>

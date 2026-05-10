@@ -2,7 +2,9 @@
 
 <?= $this->section('title') ?>Acheter un régime<?= $this->endSection() ?>
 
+<?= $this->section('head') ?>
 
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <?php
@@ -10,9 +12,9 @@
         return number_format($price, 0, ',', ' ');
     };
 ?>
-<section class="stack" style="max-width:980px; margin:0 auto;">
+<section class="stack">
     <div class="hero">
-        <div class="page-header" style="position:relative; z-index:1;">
+        <div class="page-header">
             <h1>Acheter un régime</h1>
             <p class="sub">Sélectionnez une durée pour le régime <?= esc($regime['nom_regime']) ?> et validez une seule fois votre achat.</p>
         </div>

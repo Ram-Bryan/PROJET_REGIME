@@ -9,10 +9,12 @@
 ?>
 
 <?= $this->section('title') ?>Code promo<?= $this->endSection() ?>
-
+<?= $this->section('head') ?>
+    
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<section class="card" style="max-width:760px; margin:0 auto;">
+<section class="card">
     <div class="section-title">
         <div>
             <h2>Ajouter un code promo</h2>
@@ -21,9 +23,9 @@
         <span class="promo-kicker">Validation admin</span>
     </div>
 
-    <div class="hero" style="margin-bottom:20px; padding:20px 22px; border-radius: var(--radius-md); box-shadow:none;">
-        <div class="page-header" style="position:relative; z-index:1;">
-            <h1 style="font-size:26px;">Envoyez votre code promo</h1>
+    <div class="hero" class="promo-hero">
+        <div class="page-header">
+            <h1>Envoyez votre code promo</h1>
             <p class="sub">Votre demande sera transmise au backoffice pour verification. Si le code a deja ete utilise, le systeme vous le signalera tout de suite.</p>
         </div>
     </div>
@@ -33,7 +35,7 @@
         <div class="form-feedback" data-form-feedback></div>
         <div>
             <label for="code_promo">Code promo</label>
-            <input type="text" id="code_promo" name="code_promo" minlength="3" maxlength="30" style="text-transform: uppercase;" value="<?= esc(old('code_promo')) ?>" required>
+            <input type="text" id="code_promo" name="code_promo" minlength="3" maxlength="30" value="<?= esc(old('code_promo')) ?>" required>
             <p class="field-hint">Le code est envoye pour verification, meme s'il n'existe pas encore dans la base.</p>
             <div class="field-error" data-field-error="code_promo"></div>
         </div>
@@ -44,7 +46,7 @@
     </form>
 
     <?php if (! empty($demandes)): ?>
-        <div style="margin-top:24px;">
+        <div class="history-section">
             <div class="section-title">
                 <div>
                     <h2>Mes demandes recentes</h2>

@@ -1,7 +1,9 @@
 <?= $this->extend('backoffice/layout') ?>
 
 <?= $this->section('title') ?>Gestion des options<?= $this->endSection() ?>
-
+<?= $this->section('head') ?>
+    
+<?= $this->endSection() ?>
 <?= $this->section('page_title') ?>Options<?= $this->endSection() ?>
 <?= $this->section('page_subtitle') ?>Administrez les offres speciales comme Gold, leurs conditions d'acces et leur tarification actuelle.<?= $this->endSection() ?>
 <?= $this->section('page_actions') ?>
@@ -27,7 +29,7 @@
             </div>
             <div class="spec-card">
                 <div class="spec-label">Option phare</div>
-                <div class="spec-value" style="font-size:22px;"><?= ! empty($options) ? esc((string) ($options[0]['nom_option'] ?? 'Aucune')) : 'Aucune' ?></div>
+                <div class="spec-value"><?= ! empty($options) ? esc((string) ($options[0]['nom_option'] ?? 'Aucune')) : 'Aucune' ?></div>
             </div>
         </div>
     </div>

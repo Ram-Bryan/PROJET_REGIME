@@ -17,7 +17,7 @@
                             <th>Nom (Label)</th>
                             <th>Minimum</th>
                             <th>Maximum</th>
-                            <th style="width: 120px;">Actions</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>

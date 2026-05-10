@@ -8,9 +8,9 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-    <div class="card" style="max-width:760px;">
+    <div class="card">
         <?php if (! empty($validation)): ?>
-            <div class="flash error" style="margin-bottom:18px;"><?= esc($validation->listErrors()) ?></div>
+            <div class="flash error"><?= esc($validation->listErrors()) ?></div>
         <?php endif; ?>
 
         <form action="<?= esc($action) ?>" method="post" class="stack">
@@ -23,7 +23,7 @@
                 <label for="montant">Montant</label>
                 <input id="montant" type="number" step="0.01" name="montant" value="<?= esc(old('montant', $promo['montant'] ?? '')) ?>" required>
             </div>
-            <div class="actions-inline" style="justify-content:flex-end;">
+            <div class="actions-inline">
                 <a href="<?= base_url('admin/promos') ?>" class="btn btn-secondary">Annuler</a>
                 <button type="submit" class="btn btn-primary">Enregistrer</button>
             </div>

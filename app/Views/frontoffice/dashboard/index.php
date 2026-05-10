@@ -1,16 +1,18 @@
 <?= $this->extend('frontoffice/layout') ?>
 
 <?= $this->section('title') ?>Dashboard<?= $this->endSection() ?>
+<?= $this->section('head') ?>
 
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="stack">
     <div class="hero">
-        <div class="page-header" style="position:relative; z-index:1;">
+        <div class="page-header">
             <h1>Dashboard</h1>
             <p class="sub">Bienvenue, <?= esc($nom) ?>. Retrouvez ici les éléments clés de votre parcours régime, votre statut et vos raccourcis d’action.</p>
         </div>
-        <div class="hero-actions" style="position:relative; z-index:1;">
+        <div class="hero-actions">
             <a href="<?= site_url('/regimes') ?>" class="btn">Explorer les régimes</a>
             <a href="<?= site_url('/mes-regimes') ?>" class="btn btn-secondary">Mes régimes</a>
             <a href="<?= site_url('/profile') ?>" class="btn btn-secondary">Mon profil</a>
@@ -58,7 +60,7 @@
                 <p class="sub">Les pages les plus utilisées sont à portée de clic.</p>
             </div>
         </div>
-        <div class="actions" style="margin-top:0;">
+        <div class="actions">
             <a href="<?= site_url('/profile/edit') ?>" class="btn btn-secondary">Modifier mon profil</a>
             <a href="<?= site_url('/options') ?>" class="btn btn-secondary">Option Gold</a>
             <a href="<?= site_url('/transactions') ?>" class="btn btn-secondary">Transactions</a>

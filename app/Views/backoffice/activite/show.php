@@ -15,7 +15,7 @@
         <p>Frequence recommandee: <?= esc((string) $activite['nb_par_semaine']) ?> fois par semaine.</p>
     </div>
 
-    <div class="grid-2" style="margin-top:18px;">
+    <div class="grid-2">
         <div class="metric">
             <p class="metric-label">Frequence hebdomadaire</p>
             <p class="metric-value"><?= esc((string) $activite['nb_par_semaine']) ?></p>

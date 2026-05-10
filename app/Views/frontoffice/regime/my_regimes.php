@@ -7,7 +7,7 @@
 <?= $this->section('content') ?>
 <section class="stack">
     <div class="hero">
-        <div class="page-header" style="position:relative; z-index:1;">
+        <div class="page-header">
             <h1>Mes régimes</h1>
             <p class="sub">Historique de vos achats, avec accès rapide à chaque détail et export PDF.</p>
         </div>

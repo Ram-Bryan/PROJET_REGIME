@@ -20,7 +20,9 @@
 ?>
 
 <?= $this->section('title') ?><?= esc($title ?? 'Formulaire regime') ?><?= $this->endSection() ?>
-
+<?= $this->section('head') ?>
+    
+<?= $this->endSection() ?>
 <?= $this->section('page_title') ?><?= esc($title ?? 'Formulaire regime') ?><?= $this->endSection() ?>
 <?= $this->section('page_subtitle') ?>Gerez le regime, les activites sportives et les lignes duree + prix dans un seul formulaire.<?= $this->endSection() ?>
 <?= $this->section('page_actions') ?>
@@ -32,7 +34,7 @@
 
 <?= $this->section('content') ?>
     <?php if ($allErrors !== []): ?>
-        <div class="card" style="border-color:#f1bbbb;">
+        <div class="card" class="card-error">
             <h3 class="section-title">Verifications du formulaire</h3>
             <p class="section-subtitle">Certaines informations doivent etre corrigees avant l'enregistrement.</p>
             <ul class="error-list">
@@ -108,10 +110,10 @@
         </div>
 
         <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:end; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+            <div class="card-header-flex">
                 <div>
-                    <h3 class="section-title" style="margin-bottom:4px;">Durees et prix</h3>
-                    <p class="section-subtitle" style="margin-bottom:0;">Ajoutez plusieurs lignes pour configurer toutes les offres du regime.</p>
+                    <h3 class="section-title">Durees et prix</h3>
+                    <p class="section-subtitle">Ajoutez plusieurs lignes pour configurer toutes les offres du regime.</p>
                 </div>
                 <button type="button" class="btn btn-secondary" id="add-duration-row">Ajouter une ligne</button>
             </div>
@@ -167,7 +169,7 @@
             <?php endif; ?>
         </div>
 
-        <div class="actions-inline" style="justify-content:flex-end;">
+        <div class="actions-inline">
             <a href="<?= base_url('admin/regimes') ?>" class="btn btn-secondary">Annuler</a>
             <button type="submit" class="btn btn-primary">Enregistrer le regime</button>
         </div>

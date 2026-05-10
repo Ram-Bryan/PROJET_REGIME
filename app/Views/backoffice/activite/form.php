@@ -1,7 +1,9 @@
 <?= $this->extend('backoffice/layout') ?>
 
 <?= $this->section('title') ?><?= esc($title ?? 'Activite sportive') ?><?= $this->endSection() ?>
-
+<?= $this->section('head') ?>
+    
+<?= $this->endSection() ?>
 <?= $this->section('page_title') ?><?= esc($title ?? 'Activite sportive') ?><?= $this->endSection() ?>
 <?= $this->section('page_subtitle') ?>Definissez le libelle de l'activite et sa frequence hebdomadaire.<?= $this->endSection() ?>
 <?= $this->section('page_actions') ?>
@@ -17,7 +19,7 @@
 
         <div class="card">
             <?php if (! empty($validation)): ?>
-                <div class="flash error" style="margin-bottom:18px;"><?= esc($validation->listErrors()) ?></div>
+                <div class="flash error"><?= esc($validation->listErrors()) ?></div>
             <?php endif; ?>
 
             <form action="<?= esc($action) ?>" method="post" class="stack">
@@ -30,7 +32,7 @@
                     <label for="nb_par_semaine">Frequence par semaine</label>
                     <input id="nb_par_semaine" type="number" name="nb_par_semaine" min="1" value="<?= esc(old('nb_par_semaine', $activite['nb_par_semaine'] ?? '')) ?>" required>
                 </div>
-                <div class="actions-inline" style="justify-content:flex-end;">
+                <div class="actions-inline">
                     <a href="<?= base_url('admin/activites') ?>" class="btn btn-secondary">Annuler</a>
                     <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>

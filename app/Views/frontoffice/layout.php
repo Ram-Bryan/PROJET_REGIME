@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $this->renderSection('title') ?: 'Projet Régime' ?></title>
+    <link rel="stylesheet" href="<?= base_url('assets/css/variables.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/global.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/frontoffice.css') ?>">
     <?= $this->renderSection('head') ?>
 </head>
-<body class="frontoffice-body">
+<body class="fo-body">
 <?= $this->include('frontoffice/partials/navbar') ?>
 
 <main class="shell stack">
@@ -38,8 +39,7 @@
     </div>
 </div>
 
-<script src="<?= base_url('assets/js/global.js') ?>"></script>
-<script src="<?= base_url('assets/js/frontoffice.js') ?>"></script>
+<script src="<?= base_url('assets/js/app.js') ?>"></script>
 <?= $this->renderSection('scripts') ?>
 </body>
 </html>

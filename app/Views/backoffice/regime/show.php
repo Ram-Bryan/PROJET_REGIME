@@ -108,7 +108,9 @@
 ?>
 
 <?= $this->section('title') ?>Detail du regime<?= $this->endSection() ?>
-
+<?= $this->section('head') ?>
+    
+<?= $this->endSection() ?>
 <?= $this->section('page_title') ?><?= esc($regime['nom_regime'] ?? 'Detail du regime') ?><?= $this->endSection() ?>
 <?= $this->section('page_subtitle') ?>Vue detaillee en lecture seule avec composition graphique, effet sur le poids et offres disponibles.<?= $this->endSection() ?>
 <?= $this->section('page_actions') ?>

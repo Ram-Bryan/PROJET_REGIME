@@ -2,7 +2,9 @@
 
 <?= $this->section('title') ?><?= esc($regime['nom_regime']) ?> - Détails<?= $this->endSection() ?>
 
+<?= $this->section('head') ?>
 
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <?php
@@ -33,7 +35,7 @@
                 </div>
                 <div>
                     <div class="kv-title">Composition</div>
-                    <div class="kv-value" style="font-size:14px;">
+                    <div class="kv-value">
                         <?= esc($regime['pourcentage_viande']) ?>% viande ·
                         <?= esc($regime['pourcentage_poisson']) ?>% poisson ·
                         <?= esc($regime['pourcentage_volaille']) ?>% volaille
@@ -43,12 +45,12 @@
         </div>
 
         <div class="card">
-            <h2 style="margin: 0 0 12px; font-size: 18px;">À propos de ce régime</h2>
-            <p class="sub" style="margin-bottom: 8px;">
+            <h2>À propos de ce régime</h2>
+            <p class="sub">
                 <?= esc($regime['nom_regime']) ?> est un programme alimentaire conçu pour <?= esc(strtolower($objectiveLabel)) ?>,
                 basé sur une répartition précise des sources protéiques.
             </p>
-            <ul style="margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px;">
+            <ul class="info-list">
                 <li>Variation estimée mensuelle: <strong><?= esc($regime['variation_label']) ?></strong></li>
                 <li>Répartition: <?= esc($regime['pourcentage_viande']) ?>% viande, <?= esc($regime['pourcentage_poisson']) ?>% poisson, <?= esc($regime['pourcentage_volaille']) ?>% volaille.</li>
                 <li>Accompagnement sport recommandé selon les activités proposées.</li>
@@ -56,7 +58,7 @@
         </div>
 
         <div class="card">
-            <h2 style="margin: 0 0 12px; font-size: 18px;">Activités recommandées</h2>
+            <h2>Activités recommandées</h2>
             <?php if (empty($activites)) : ?>
                 <div class="empty">Aucune activité associée à ce régime.</div>
             <?php else : ?>
@@ -80,7 +82,7 @@
         </div>
 
         <div class="card">
-            <h2 style="margin: 0 0 12px; font-size: 18px;">Commander</h2>
+            <h2>Commander</h2>
             <?php if (empty($durees)) : ?>
                 <div class="empty">Aucune durée disponible pour ce régime.</div>
             <?php else : ?>
@@ -102,10 +104,10 @@
                             <div class="option-meta">
                                 → <?= esc($formatPrice($prixFinal)) ?> Ar
                                 <?php if ($isGold): ?>
-                                    <span style="text-decoration: line-through; margin-left: 6px; color: var(--muted);">
+                                    <span class="price-old">
                                         <?= esc($formatPrice((float) $duree['prix'])) ?> Ar
                                     </span>
-                                    <span class="badge badge-success" style="margin-left: 6px;">-<?= esc(rtrim(rtrim(number_format($discountPercent, 2, ',', ' '), '0'), ',')) ?>%</span>
+                                    <span class="badge badge-success">-<?= esc(rtrim(rtrim(number_format($discountPercent, 2, ',', ' '), '0'), ',')) ?>%</span>
                                 <?php endif; ?>
                             </div>
                             <div class="option-meta">→ Résultat estimé: <span class="estimate" data-days="<?= esc($duree['nb_jours']) ?>"></span></div>
@@ -115,7 +117,7 @@
                     <div class="form-feedback" data-form-feedback></div>
                     <div id="objectif-status" class="success" style="display:none; margin-top: 8px;">✅ Objectif atteint</div>
                     <div id="objectif-status-fail" class="danger" style="display:none; margin-top: 8px;">❌ Objectif non atteint</div>
-                    <div style="margin-top: 16px;">
+                    <div>
                         <button class="btn" type="submit" data-confirm-message="Confirmer cet achat de régime ?">Commander</button>
                     </div>
                 </form>

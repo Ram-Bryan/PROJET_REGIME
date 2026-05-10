@@ -6,11 +6,11 @@
 <?= $this->section('content') ?>
 <section class="stack">
     <div class="hero">
-        <div class="page-header" style="position:relative; z-index:1;">
+        <div class="page-header">
             <h1>Mon profil</h1>
             <p class="sub">Consultez vos informations personnelles et santé, puis accédez rapidement à vos actions principales.</p>
         </div>
-        <div class="hero-actions" style="position:relative; z-index:1;">
+        <div class="hero-actions">
             <a href="<?= site_url('/profile/edit') ?>" class="btn">Modifier le profil</a>
             <a href="<?= site_url('/mes-regimes') ?>" class="btn btn-secondary">Mes régimes</a>
             <a href="<?= site_url('/dashboard') ?>" class="btn btn-secondary">Dashboard</a>

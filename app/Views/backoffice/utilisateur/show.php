@@ -11,7 +11,9 @@
     </a>
 <?= $this->endSection() ?>
 
-
+<?= $this->section('head') ?>
+    
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
     <div class="grid-2">
@@ -83,7 +85,7 @@
         </div>
     </div>
 
-    <div class="card" style="margin-top: 18px;">
+    <div class="card">
         <h3 class="section-title">Regimes Achetes</h3>
         <p class="section-subtitle">Historique des commandes de l'utilisateur.</p>
 

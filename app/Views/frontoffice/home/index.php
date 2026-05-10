@@ -1,194 +1,124 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet Régime — Atteignez vos objectifs santé</title>
-    <meta name="description" content="Projet Régime : plans alimentaires personnalisés et suivi de vos objectifs santé. Perdez du poids, prenez de la masse ou atteignez votre IMC idéal.">
-    <link rel="stylesheet" href="<?= base_url('assets/css/global.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/frontoffice.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/landing.css') ?>">
-</head>
-<body>
+<?= $this->extend('frontoffice/landing_layout') ?>
 
-<!-- ── Header ── -->
-<header class="topbar">
-    <div class="topbar-inner">
-        <a class="fo-brand" href="<?= esc(site_url('/')) ?>">PROJET RÉGIME</a>
-        <button class="mobile-menu-btn" aria-label="Menu">
-            <img src="<?= esc(base_url('assets/icons/menu.svg')) ?>" alt="Menu">
-        </button>
-        <nav class="nav">
-            <a href="<?= esc(site_url('login')) ?>">Connexion</a>
-            <a href="<?= esc(site_url('register')) ?>" class="btn" style="padding: 9px 16px;">S'inscrire</a>
-        </nav>
-    </div>
-</header>
+<?= $this->section('title') ?>Le régime intelligent<?= $this->endSection() ?>
 
-<!-- ── Hero ── -->
+<?= $this->section('content') ?>
+
+<!-- ═══ Hero ═══ -->
 <section class="landing-hero">
     <div class="landing-hero-inner">
         <div>
-            <h1>Transformez votre <span>alimentation</span>, transformez votre vie.</h1>
-            <p>Des plans alimentaires personnalisés, un suivi d'objectifs complet et des activités sportives adaptées pour atteindre votre IMC idéal.</p>
-            <div class="actions">
-                <a href="<?= esc(site_url('register')) ?>" class="btn">Commencer maintenant</a>
-                <a href="#features" class="btn btn-secondary">En savoir plus</a>
+            <h1>Votre <span>régime alimentaire</span> personnalisé</h1>
+            <p>Découvrez des régimes adaptés à votre mode de vie et à vos objectifs. Suivi intelligent, résultats concrets.</p>
+            <div class="hero-actions">
+                <a href="<?= site_url('register') ?>" class="btn">Commencer maintenant</a>
+                <a href="<?= site_url('login') ?>" class="btn btn-secondary">Se connecter</a>
             </div>
         </div>
-        <div><!-- Placeholder for hero visual --></div>
+        <img src="<?= base_url('assets/img/hero.png') ?>" alt="Illustration régime" class="hero-img" width="540" height="360">
     </div>
 </section>
 
-<!-- ── Stats bar ── -->
+<!-- ═══ Stats Bar ═══ -->
 <section class="stats-bar">
     <div class="stats-bar-inner">
         <div class="stat-item">
-            <h3>+200</h3>
-            <p>Utilisateurs actifs</p>
-        </div>
-        <div class="stat-item">
-            <h3>+50</h3>
+            <h3>200+</h3>
             <p>Régimes disponibles</p>
         </div>
         <div class="stat-item">
-            <h3>95%</h3>
-            <p>Taux de satisfaction</p>
+            <h3>5 000+</h3>
+            <p>Utilisateurs actifs</p>
+        </div>
+        <div class="stat-item">
+            <h3>98%</h3>
+            <p>Satisfaction client</p>
         </div>
     </div>
 </section>
 
-<!-- ── Features ── -->
-<section class="features-section" id="features">
+<!-- ═══ Features ═══ -->
+<section class="features-section">
     <div class="features-inner">
-        <h2>Tout ce dont vous avez besoin</h2>
-        <p>Une plateforme complète pour gérer votre parcours santé de A à Z.</p>
+        <h2>Pourquoi nous choisir ?</h2>
+        <p>Des outils modernes pour un suivi efficace de votre alimentation.</p>
         <div class="features-grid">
             <div class="feature-card">
-                <div class="feature-icon">
-                    <img src="<?= esc(base_url('assets/icons/apple.svg')) ?>" alt="">
-                </div>
-                <h3>Régimes personnalisés</h3>
-                <p>Choisissez parmi des dizaines de régimes adaptés à vos objectifs : perte de poids, prise de masse, ou maintien de l'IMC idéal.</p>
+                <div class="feature-icon"><img src="<?= base_url('assets/icons/target.svg') ?>" alt=""></div>
+                <h3>Objectifs personnalisés</h3>
+                <p>Définissez vos objectifs de perte ou de prise de poids et laissez notre algorithme trouver le régime adapté.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">
-                    <img src="<?= esc(base_url('assets/icons/target.svg')) ?>" alt="">
-                </div>
-                <h3>Objectifs sur mesure</h3>
-                <p>Définissez vos objectifs et suivez votre progression grâce à un tableau de bord intuitif et des estimations en temps réel.</p>
+                <div class="feature-icon"><img src="<?= base_url('assets/icons/activity.svg') ?>" alt=""></div>
+                <h3>Suivi IMC intelligent</h3>
+                <p>Calculez votre IMC automatiquement et suivez votre progression en temps réel avec des recommandations.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">
-                    <img src="<?= esc(base_url('assets/icons/activity.svg')) ?>" alt="">
-                </div>
-                <h3>Activités sportives</h3>
-                <p>Complétez votre régime avec des activités sportives recommandées et des options personnalisables pour chaque plan.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <img src="<?= esc(base_url('assets/icons/trending-up.svg')) ?>" alt="">
-                </div>
-                <h3>Suivi intelligent</h3>
-                <p>Suivez vos résultats, votre IMC, et vos transactions depuis un tableau de bord clair et intuitif.</p>
+                <div class="feature-icon"><img src="<?= base_url('assets/icons/apple.svg') ?>" alt=""></div>
+                <h3>Composition nutritionnelle</h3>
+                <p>Chaque régime détaille sa répartition viande, poisson et volaille pour une alimentation équilibrée.</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ── How It Works ── -->
+<!-- ═══ How It Works ═══ -->
 <section class="how-section">
     <div class="how-inner">
         <h2>Comment ça marche ?</h2>
-        <p>Trois étapes simples pour démarrer votre parcours santé.</p>
+        <p>Trois étapes simples pour commencer votre transformation.</p>
         <div class="how-steps">
             <div class="how-step">
                 <div class="step-number">1</div>
-                <h3>Créez votre compte</h3>
-                <p>Renseignez vos informations (taille, poids, objectif) et obtenez votre IMC en temps réel.</p>
+                <h3>Créez votre profil</h3>
+                <p>Renseignez vos informations de santé et définissez vos objectifs personnels.</p>
             </div>
             <div class="how-step">
                 <div class="step-number">2</div>
                 <h3>Choisissez un régime</h3>
-                <p>Parcourez les régimes adaptés à votre profil et sélectionnez une durée et des options.</p>
+                <p>Parcourez notre catalogue de régimes filtrés selon vos besoins et votre budget.</p>
             </div>
             <div class="how-step">
                 <div class="step-number">3</div>
-                <h3>Suivez vos progrès</h3>
-                <p>Consultez votre tableau de bord pour voir vos estimations, vos transactions et vos objectifs atteints.</p>
+                <h3>Suivez vos résultats</h3>
+                <p>Consultez votre tableau de bord et ajustez votre plan en fonction de votre progression.</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ── Featured Regimes ── -->
-<?php if (!empty($featuredRegimes)): ?>
-<section class="regimes-section">
-    <div class="regimes-inner">
-        <h2>Nos régimes populaires</h2>
-        <p>Commencez dès maintenant avec l'un de nos régimes les plus demandés.</p>
-        <div class="regimes-grid">
-            <?php foreach ($featuredRegimes as $regime): ?>
-                <div class="regime-card card">
-                    <h3><?= esc($regime['nom_regime']) ?></h3>
-                    <div class="regime-meta">
-                        <?php
-                            $variation = (float) ($regime['variation_mensuelle_kg'] ?? 0);
-                            $typeLabel = $variation < 0 ? 'Perte de poids' : ($variation > 0 ? 'Prise de masse' : 'Maintien');
-                            $typeBadge = $variation < 0 ? 'badge-success' : ($variation > 0 ? 'badge-warning' : 'badge-neutral');
-                        ?>
-                        <span class="badge <?= $typeBadge ?>"><?= $typeLabel ?></span>
-                        <span class="badge badge-neutral"><?= esc($regime['pourcentage_viande']) ?>% viande</span>
-                    </div>
-                    <div class="regime-price">
-                        <?php if (isset($regime['prix_min'])): ?>
-                            <?= number_format((float) $regime['prix_min'], 0, ',', ' ') ?> Ar
-                            <span>/ à partir de</span>
-                        <?php else: ?>
-                            <span>Tarifs disponibles</span>
-                        <?php endif; ?>
-                    </div>
-                    <a href="<?= esc(site_url('register')) ?>" class="btn" style="margin-top: var(--space-4);">Commencer</a>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-<?php endif; ?>
-
-<!-- ── Testimonials ── -->
-<section class="testimonials-section">
-    <div class="testimonials-inner">
-        <h2>Ce que disent nos utilisateurs</h2>
-        <p>Des résultats concrets et des expériences positives.</p>
-        <div class="testimonials-grid">
-            <?php foreach ($testimonials as $t): ?>
-                <div class="testimonial-card">
-                    <p>"<?= esc($t['text']) ?>"</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar"><?= esc($t['initials']) ?></div>
-                        <div>
-                            <strong><?= esc($t['name']) ?></strong>
-                            <span><?= esc($t['role']) ?></span>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+<!-- ═══ Featured Meals ═══ -->
+<section class="features-section">
+    <div class="features-inner">
+        <h2>Nos types de repas</h2>
+        <p>Une variété de repas équilibrés adaptés à chaque régime.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <img src="<?= base_url('assets/img/meal1.png') ?>" alt="Repas 1" class="hero-img">
+                <h3>Repas légers</h3>
+                <p>Salades fraîches et bowls pour une alimentation saine au quotidien.</p>
+            </div>
+            <div class="feature-card">
+                <img src="<?= base_url('assets/img/meal2.png') ?>" alt="Repas 2" class="hero-img">
+                <h3>Repas protéinés</h3>
+                <p>Viandes et poissons grillés pour maintenir votre masse musculaire.</p>
+            </div>
+            <div class="feature-card">
+                <img src="<?= base_url('assets/img/sport.png') ?>" alt="Sport" class="hero-img">
+                <h3>Activité sportive</h3>
+                <p>Nos régimes sont combinés avec des activités sportives pour des résultats optimaux.</p>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- ── Final CTA ── -->
+<!-- ═══ CTA ═══ -->
 <section class="cta-section">
     <div class="cta-inner">
         <h2>Prêt à transformer votre alimentation ?</h2>
-        <p>Rejoignez la communauté Projet Régime et commencez votre parcours vers une meilleure santé dès aujourd'hui.</p>
-        <a href="<?= esc(site_url('register')) ?>" class="btn">Créer mon compte gratuitement</a>
+        <p>Rejoignez des milliers d'utilisateurs qui ont déjà atteint leurs objectifs.</p>
+        <a href="<?= site_url('register') ?>" class="btn">Créer un compte gratuitement</a>
     </div>
 </section>
 
-
-
-<script src="<?= base_url('assets/js/frontoffice.js') ?>"></script>
-</body>
-</html>
+<?= $this->endSection() ?>

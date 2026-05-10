@@ -4,7 +4,7 @@
 
 <?= $this->section('content') ?>
 <?php $validationErrors = session()->getFlashdata('errors') ?? []; ?>
-<section class="stack" style="max-width:980px; margin: 0 auto;">
+<section class="stack">
     <div class="hero"><h1>Modifier mon profil</h1><p class="sub">Mettez a jour vos informations avec verification locale claire.</p></div>
 
     <form method="POST" action="<?= site_url('/profile/update') ?>" class="stack" data-ajax-form="true" id="profile-edit-form">

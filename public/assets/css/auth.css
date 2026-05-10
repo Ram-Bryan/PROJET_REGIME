@@ -1,55 +1,137 @@
 /* ==========================================================
    AUTH STYLES — auth.css
-   Login, register pages specific styles.
+   Login, register, admin login. Green theme.
    ========================================================== */
 
-/* ── Auth shell ── */
+/* ── Page Wrapper ── */
+.auth-page {
+  background:
+    radial-gradient(circle at top left, rgba(31, 143, 106, 0.08), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(21, 116, 84, 0.06), transparent 30%),
+    linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.auth-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  animation: authSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes authSlideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ── Split Layout Shell ── */
 .auth-shell {
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 0;
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
 
-/* ── Auth grid (split layout) ── */
+/* ── Side-by-side Grid ── */
 .auth-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.1fr 0.9fr;
   min-height: 100%;
 }
 
+/* ── Promo Panel (left) ── */
 .auth-promo {
-  padding: 28px;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.96), rgba(59, 130, 246, 0.78));
+  padding: 30px 28px;
+  background: linear-gradient(135deg, rgba(31, 143, 106, 0.96), rgba(21, 116, 84, 0.82));
   color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: var(--space-6);
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-promo::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 70%);
+  top: -100px;
+  right: -100px;
+  border-radius: 50%;
+}
+
+.auth-promo h1 {
+  margin: 0;
+  font-size: clamp(22px, 2.5vw, 30px);
+  line-height: 1.15;
 }
 
 .auth-promo .sub { color: rgba(255, 255, 255, 0.84); }
-.auth-promo .badge {
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.18);
+
+.auth-promo-footer {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
 }
 
-.auth-form-panel { padding: 28px; }
+/* ── Form Panel (right) ── */
+.auth-form-panel {
+  padding: 30px 28px;
+}
 
-/* ── Progress bar ── */
+.auth-form-panel .stack { gap: var(--space-4); }
+
+/* ── Admin Badge ── */
+.auth-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Password Toggle ── */
+.eye-btn {
+  position: absolute;
+  right: 12px;
+  top: 34px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+}
+
+.eye-btn:hover { opacity: 0.9; }
+.eye-btn img { width: 18px; height: 18px; }
+
+/* ── Progress Bar (Registration Steps) ── */
 .auth-progress {
-  padding: 24px 28px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
   background: #fff;
 }
 
 .auth-progress-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
+  font-size: 12px;
+  color: var(--muted);
   margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .auth-progress-bar {
@@ -61,143 +143,103 @@
 
 .auth-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #2563eb, #60a5fa);
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, var(--primary), #5ec4a0);
+  transition: width 0.4s ease;
 }
 
-/* ── Field wrap (password toggle, validation icons) ── */
-.field-wrap { position: relative; }
-.field-wrap input { padding-right: 64px; }
-
-.field-icon {
-  position: absolute;
-  right: 14px;
-  top: 40px;
-  width: 16px;
-  height: 16px;
-  background-repeat: no-repeat;
-  background-size: 16px;
-}
-
-.eye-btn {
-  position: absolute;
-  right: 34px;
-  top: 35px;
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 0;
-}
-
-.eye-btn img { width: 18px; height: 18px; opacity: .75; }
-
-/* ── IMC section ── */
-#imc-pointer {
-  transition: width .45s ease, background-color .45s ease;
-}
-
-/* ── Disabled radio items ── */
-.radio-item.is-disabled {
-  opacity: .45;
-  background: #f2f4f7;
-  cursor: not-allowed;
-}
-
-.invalid-section {
-  border: 1px solid #fda29b !important;
-  background: #fff1f2 !important;
-  border-radius: var(--radius-md);
-  padding: 10px;
-}
-
-/* ── Recap grid (register step 3) ── */
+/* ── Recap Grid (Step 3) ── */
 .recap-grid {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  background: linear-gradient(180deg, #f8fbff, #eef4ff);
-  padding: 14px;
-  border: 1px solid #dbe7ff;
-  border-radius: var(--radius-md);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
 .recap-item {
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 10px;
-  display: grid;
-  gap: 4px;
-  justify-items: start;
-}
-
-.recap-item img { width: 18px; height: 18px; opacity: .85; }
-.recap-item span { font-size: 0.75rem; color: #475467; }
-.recap-item strong { font-size: var(--text-sm); }
-
-/* ── Admin login ── */
-.admin-login-body {
-  background: linear-gradient(135deg, #163449 0%, #1e3a54 50%, #1f8f6a 100%);
-  min-height: 100vh;
+  padding: var(--space-2) var(--space-3);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.admin-login-container { width: 100%; max-width: 420px; padding: 20px; }
+.recap-item img { width: 18px; height: 18px; margin-bottom: 4px; }
+.recap-item span { font-size: 12px; color: var(--muted); }
+.recap-item strong { color: var(--text); font-weight: 700; font-size: 14px; }
 
-.admin-login-card {
-  background: #fff;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+/* ── Field Icon States ── */
+.field-icon { display: none; }
+.field-icon.ok,
+.field-icon.err { display: inline; position: absolute; right: 12px; top: 36px; font-size: 14px; }
+.field-icon.ok::before  { content: "✓"; color: var(--success-text); }
+.field-icon.err::before { content: "✗"; color: var(--error-text); }
+
+/* ── IMC Card ── */
+.imc-card {
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.imc-bar {
+  height: 12px;
+  margin-top: 10px;
+  background: #e2e8f0;
+  border-radius: 999px;
   overflow: hidden;
 }
 
-.admin-login-header {
-  background: linear-gradient(135deg, var(--color-nav) 0%, #34495e 100%);
-  color: #fff;
-  padding: 40px 30px;
-  text-align: center;
+.imc-bar-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease, background 0.3s ease;
 }
 
-.admin-login-header h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin: 0 0 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+/* ── Auth page link ── */
+.auth-link {
+  margin-top: 14px;
+  font-size: 14px;
 }
 
-.admin-login-header h1 img { width: 24px; height: 24px; filter: brightness(0) invert(1); opacity: 0.8; }
-.admin-login-header p { margin: 0; font-size: var(--text-sm); opacity: 0.9; }
-
-.admin-login-body-inner { padding: 40px 30px; }
-
-.admin-login-footer {
-  text-align: center;
-  padding: 20px 30px;
-  background: #f8f9fa;
-  font-size: 0.8125rem;
-  color: #7f8c8d;
+.auth-link a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
 }
 
-.admin-login-footer p { margin: 0; }
+.auth-link a:hover { text-decoration: underline; }
+
+/* ── Invalid section highlight ── */
+.invalid-section {
+  border: 1px solid #fecdca;
+  background: var(--error-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
 
 /* ── Responsive ── */
-@media (max-width: 800px) {
-  .auth-grid { grid-template-columns: 1fr; }
-  .auth-shell { border-radius: var(--radius-md); }
-  .recap-grid { grid-template-columns: 1fr; }
-}
+@media (max-width: 768px) {
+  .auth-grid {
+    grid-template-columns: 1fr;
+  }
 
-@media (max-width: 480px) {
-  .admin-login-container { padding: 16px; }
-  .admin-login-header { padding: 30px 20px; }
-  .admin-login-header h1 { font-size: 1.5rem; }
-  .admin-login-body-inner { padding: 30px 20px; }
-  .admin-login-footer { padding: 15px 20px; }
+  .auth-promo {
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .auth-form-panel {
+    padding: 24px 20px;
+  }
+
+  .auth-shell {
+    max-width: 100%;
+  }
+
+  .recap-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -1,59 +1,85 @@
-# UI Structure & Views State (Projet Regime)
+# Frontoffice Structure
 
-This document lists the state and architectural behavior of all active UI views across the web application. It acts as a reference point for any upcoming UI refactoring.
+The Frontoffice is aimed at our clients. It follows a clean `frontoffice/layout.php` template which dynamically requires the navigation and footer.
 
-## 1. Global CSS & Layout Architecture
-The project currently does **NOT** use external CSS frameworks like Bootstrap or Tailwind CSS (except for `admin/login.php` which imports Bootstrap via CDN) but relies entirely on a **vanilla CSS and Custom Custom Variables** based system tightly coupled with the views.
+### Layout Details (`frontoffice/layout.php`)
+- **Partials Used**: `frontoffice/partials/navbar.php` (Header) and `frontoffice/partials/footer.php` (Footer).
+- **CSS Linked**: `global.css`, `frontoffice.css`.
+- **Purpose**: Wraps all client-facing pages logically, injecting `$title` and `$activeNav`. 
 
-### 1.1 layout/main.php (Public/User Layout)
-- **Purpose**: This is the master wrapper for all public-facing and authenticated user views (Dashboard, Profil, Regime, Transactions). 
-- **CSS**: Contains a massive `<style>` block (approx. 650 lines) that defines global root variables (`--bg`, `--primary`, `--success-bg`, etc.), global typography (Inter font family), responsive grids (`.grid`, `.metric-grid`), customized forms (`input`, `.radio-item`), utility `.card` classes, and animations (`.form-feedback`, modals).
-- **Core Sections defined via CodeIgniter `extend()`**:
-    - `title`: Meta page title.
-    - `head`: Additional inline styles specific to a child view.
-    - `content`: The main wrapper block (`<main class="shell stack">`).
-    - `scripts`: Page-specific JS.
+### Home (`home/index.php`)
+- **Purpose**: Landing page explaining the business and showcasing top diets.
+- **Sections**: 
+  - Hero Section (Call to Action, visual hook).
+  - Featured Regimes (Cards showing minimum price, variation info).
+  - Value Proposition (Why choose us).
 
-### 1.2 admin/layout.php (Admin Layout)
-- **Purpose**: Wrapping layout for the entire Admin backend panel (`/admin/*`).
-- **CSS**: Contains its own massive `<style>` block (~550 lines) completely separated from `layout/main.php`. It defines a unique sidebar-based interface with distinct color token names (`--nav`, `--accent`, `--surface-soft`) and utility classes like `.admin-shell`, `.sidebar`, `.content`.
-- **Core Sections defined**:
-    - `title`: Meta page title.
-    - `head`: Embedded custom CSS.
-    - `page_title`: Output via `<h1>` inside the top content wrapper.
-    - `page_subtitle`: Description text for the current view.
-    - `page_actions`: E.g., "Add new item" button placed right next to the title.
-    - `content`: Flash messages auto-displayed inside`.flash-stack`, followed by the custom HTML.
-    - `scripts`: Embedded custom JS.
+### Dashboard (`dashboard/index.php`)
+- **Purpose**: Primary hub for logged-in clients. 
+- **Sections**: 
+  - Welcome Banner with User summary.
+  - Active Diet Display.
+  - Quick action buttons (My Profile, Code Promo).
+  
+### Regimes (`regime/`)
+- `index.php`: List of all available diets (Cards/Grid layout) with filtering capabilities.
+- `show.php`: Deep-dive into a specific diet's composition and duration pricing. 
+- `purchase.php`: Checkout page to confirm buying a diet.
+- `my_regimes.php`: List of previously purchased/active diets for the user.
+- `my_regime_detail.php`: Drill-down tracking view of a currently active diet.
+
+### Options & Promo (`options/`, `promo/`)
+- `options/index.php`: Viewing and purchasing meal delivery frequency (Portefeuille/Delivery).
+- `promo/index.php`: Input field and history of promo code submissions by the user.
+
+### Transactions (`transactions/index.php`)
+- **Purpose**: Account wallet management.
+- **Sections**: History of deposits/withdrawals, current wallet balance.
 
 ---
 
-## 2. Directory & View Breakdown
+# Backoffice Structure 
 
-### 2.1 Auth Views (`app/Views/auth/`)
-- **Files**: `login.php`, `register_personal.php`, `register_health.php`
-- **Layout used**: `layouts/main.php`
-- **Structure**: 
-  - Uses a split-grid container (`.auth-grid`) displaying marketing text/badges on the left, and standard HTML forms with `.form-feedback` driven validation on the right. 
-  - JS injected into `scripts` to toggle password visibility.
+The Backoffice is designed for administrators to govern content and users. Built around `backoffice/layout.php`.
 
-### 2.2 Client User Interface (`app/Views/profile/`, `app/Views/regime/`, `app/Views/transactions/`, `dashboard.php`)
-- **Layout used**: `layouts/main.php`
-- **Structure**:
-  - Follows a consistent layout with a Hero header at the top (`.hero`, `.page-header`, `.hero-actions`).
-  - Below the hero, `.metric-grid` is heavily utilized to show KPIs (e.g. Profil user stats, Dashboard current IMC).
-  - Data listing is usually rendered inside `.card` wrappers with standard HTML `<table>` structures.
-  - Page specific styles (e.g. radio buttons UI adjustments or metrics overlapping) are stored directly inside the `head` section of the corresponding files.
+### Layout Details (`backoffice/layout.php`)
+- **Partials Used**: `backoffice/partials/sidebar.php` (Sidebar collapsing navigation).
+- **CSS Linked**: `global.css`, `backoffice.css`.
+- **Purpose**: A two-column admin design housing the main content on the right and navigation on the left.
 
-### 2.3 Admin Application (`app/Views/admin/`)
-- **Sub-folders**: `activites`, `options`, `promos`, `regimes`, `utilisateurs`, `imc`
-- **Layout used**: `admin/layout.php` (except `admin/login.php` which uses raw HTML + Bootstrap CDN).
-- **Structure**:
-  - **CRUD Index Views** (`admin/*/index.php`): Typically render a `.card` wrapper encompassing an HTML `<table>`. Often leverages `.badge` classes for displaying status elements (like Gold, Normal etc).
-  - **CRUD Edit/Form/Show Views** (`admin/*/form.php`, `show.php`, etc.): Wrap forms with live JS feedback. They use `.grid-2`, `.grid-3` to manage inputs elegantly. 
+### Dashboard (`dashboard/index.php`)
+- **Purpose**: High-level statistical overview of platform health.
+- **Sections**:
+  - Key Performance Indicators (Total Users, Gold Members, Revenue).
+  - Charts (Objective Distribution Pie, Revenue Trend Chart).
 
-## 3. Pain Points & Refactor Target
-- **CSS Duplication**: There are two massive chunks of CSS in two separate `layout` files. They share very similar designs but distinct token variables.
-- **Inline Head Styling**: Each view dumps inline CSS inside `<style>` tags directly into the `<head>` component.
-- **Third-Party Inclusion**: `admin/login.php` forces Bootstrap inclusion out of nowhere causing UI fragmentation compared to the rest of the Vanilla CSS project.
-- **Responsiveness**: Hardcoded grids mapping `grid-2` break on intermediate viewport widths if not strictly maintained.
+### CRUD Resources (Regimes, Activites, Options, IMC)
+- Each entity has three primary UI states:
+  - `index.php`: Data Table listing all records, often featuring quick filters and an "Add New" button.
+  - `form.php`: Combined Create/Edit forms utilizing unified backend validation blocks.
+  - `show.php`: Detailed view mapping relationships (e.g., viewing an Activity shows which Regimes use it).
+
+### Utilisateur Management (`utilisateur/`)
+- `index.php`: Data table of all standard users.
+- `show.php`: Detailed drill-down of a user, displaying their current wallet, IMC status, and complete order history.
+
+### Promo Validation (`promo/validate.php`)
+- **Purpose**: Administrative tool to approve/deny requested promo codes from users. 
+
+---
+
+# Auth Structure
+
+The Authentication module routes the initial user entry. Found in the `auth/` directory.
+
+### Layout Details
+- Standalone pages designed for maximum conversion without distraction. Only link authentication styles.
+- **CSS Linked**: `global.css`, `auth.css`.
+
+### Login (`login.php` & `admin_login.php`)
+- Clean, centered authentications cards.
+- **Sections**: Email/Password inputs, login buttons, links to registration.
+
+### Registration (`register_personal.php` & `register_health.php`)
+- Multi-step registration flow.
+- Health metrics tracking (Target Weight, IMC Calculation setup).
