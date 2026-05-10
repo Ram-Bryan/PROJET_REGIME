@@ -739,3 +739,294 @@ in SYSTEMPATH/Database/MySQLi/Connection.php on line 300.
 11 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
 12 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
 13 SYSTEMPATH/rewrite.php(44): require_once('/home/ianjara/dossier_personnel/ITU/L2/s4/PROJET_REGIME/public/index.php')
+ERROR - 2026-05-10 13:29:50 --> Table 'regime_db.admin' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('SELECT *
+FROM `admin`
+WHERE `email` = \'jean@gmail.com\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `admin`
+WHERE `email` = \'jean@gmail.com\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `admin`
+WHERE `email` = \'jean@gmail.com\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admin`
+WHERE `email` = :email:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\AdminModel.php(17): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\AdminController.php(19): App\Models\AdminModel->checkAdmin('jean@gmail.com', 'jean123')
+ 9 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->authenticate()
+10 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 13:29:50 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'regime_db.admin' doesn't exist
+[Method: POST, Route: admin/authenticate]
+in SYSTEMPATH\Database\BaseConnection.php on line 865.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admin`
+WHERE `email` = :email:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Models\AdminModel.php(17): CodeIgniter\BaseModel->first()
+ 5 APPPATH\Controllers\AdminController.php(19): App\Models\AdminModel->checkAdmin('jean@gmail.com', 'jean123')
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->authenticate()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 13:29:50 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'regime_db.admin' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 310.
+ 1 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `admin`
+WHERE `email` = \'jean@gmail.com\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `admin`
+WHERE `email` = \'jean@gmail.com\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admin`
+WHERE `email` = :email:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Models\AdminModel.php(17): CodeIgniter\BaseModel->first()
+ 7 APPPATH\Controllers\AdminController.php(19): App\Models\AdminModel->checkAdmin('jean@gmail.com', 'jean123')
+ 8 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->authenticate()
+ 9 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 13:29:50 --> [Caused by] mysqli_sql_exception: Table 'regime_db.admin' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('SELECT *
+FROM `admin`
+WHERE `email` = \'jean@gmail.com\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `admin`
+WHERE `email` = \'jean@gmail.com\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `admin`
+WHERE `email` = \'jean@gmail.com\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admin`
+WHERE `email` = :email:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\AdminModel.php(17): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\AdminController.php(19): App\Models\AdminModel->checkAdmin('jean@gmail.com', 'jean123')
+ 9 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->authenticate()
+10 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+ERROR - 2026-05-10 13:30:27 --> Table 'regime_db.admin' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('SELECT *
+FROM `admin`
+WHERE `email` = \'admin@gmail.com\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `admin`
+WHERE `email` = \'admin@gmail.com\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `admin`
+WHERE `email` = \'admin@gmail.com\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admin`
+WHERE `email` = :email:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\AdminModel.php(17): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\AdminController.php(19): App\Models\AdminModel->checkAdmin('admin@gmail.com', 'admin123')
+ 9 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->authenticate()
+10 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 13:30:27 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'regime_db.admin' doesn't exist
+[Method: POST, Route: admin/authenticate]
+in SYSTEMPATH\Database\BaseConnection.php on line 865.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admin`
+WHERE `email` = :email:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Models\AdminModel.php(17): CodeIgniter\BaseModel->first()
+ 5 APPPATH\Controllers\AdminController.php(19): App\Models\AdminModel->checkAdmin('admin@gmail.com', 'admin123')
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->authenticate()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 13:30:27 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'regime_db.admin' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 310.
+ 1 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `admin`
+WHERE `email` = \'admin@gmail.com\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `admin`
+WHERE `email` = \'admin@gmail.com\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admin`
+WHERE `email` = :email:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Models\AdminModel.php(17): CodeIgniter\BaseModel->first()
+ 7 APPPATH\Controllers\AdminController.php(19): App\Models\AdminModel->checkAdmin('admin@gmail.com', 'admin123')
+ 8 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->authenticate()
+ 9 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 13:30:27 --> [Caused by] mysqli_sql_exception: Table 'regime_db.admin' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('SELECT *
+FROM `admin`
+WHERE `email` = \'admin@gmail.com\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `admin`
+WHERE `email` = \'admin@gmail.com\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `admin`
+WHERE `email` = \'admin@gmail.com\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `admin`
+WHERE `email` = :email:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\AdminModel.php(17): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\AdminController.php(19): App\Models\AdminModel->checkAdmin('admin@gmail.com', 'admin123')
+ 9 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->authenticate()
+10 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+ERROR - 2026-05-10 13:33:54 --> Unknown column 'r.variation_poids' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC', [], false)
+ 5 APPPATH\Controllers\AdminRegimeController.php(70): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminRegimeController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminRegimeController))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 13:33:54 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'r.variation_poids' in 'field list'
+[Method: GET, Route: admin/regimes]
+in SYSTEMPATH\Database\BaseConnection.php on line 865.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC', [], false)
+ 2 APPPATH\Controllers\AdminRegimeController.php(70): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminRegimeController->index()
+ 4 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminRegimeController))
+ 5 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ 9 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 13:33:54 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'r.variation_poids' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 310.
+ 1 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC', [], false)
+ 4 APPPATH\Controllers\AdminRegimeController.php(70): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminRegimeController->index()
+ 6 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminRegimeController))
+ 7 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 13:33:54 --> [Caused by] mysqli_sql_exception: Unknown column 'r.variation_poids' in 'field list'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `r`.`id_regime`, `r`.`nom_regime`, `r`.`variation_poids`, `r`.`pourcentage_viande`, `r`.`pourcentage_poisson`, `r`.`pourcentage_volaille`, `d`.`id_duree_regime`, `d`.`nb_jours`, `d`.`prix`
+FROM `regime` `r`
+LEFT JOIN `duree_regime` `d` ON `d`.`id_regime` = `r`.`id_regime`
+ORDER BY `r`.`id_regime` DESC, `d`.`nb_jours` ASC', [], false)
+ 5 APPPATH\Controllers\AdminRegimeController.php(70): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminRegimeController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminRegimeController))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')

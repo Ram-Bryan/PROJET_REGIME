@@ -162,3 +162,87 @@ USe CodeIgniter validation capacity for datas of Utilisateur
 No CDN
 
 I want professional SOC MVC code. Respeect UX rules and code profesionalism rules
+
+
+
+
+
+When I want to login as admin it does a Whoops error. 
+Also remove the se souvenir de moi checkbox and the mot de passe oublie
+
+
+Utilisateur cards, on enelve le compte des admin, Donc normalemetn c est jsut 6.
+
+
+GOLD: panel de voir offre et acheter Gold 
+
+
+
+Read conception.md for context. You're now a profesional web dev with years of experience
+We will do work on backoffice admin side:
+We will first work on CRUD regime whic is related to CRUD DUree Regime and CRUD activite sortiive: 
+Columns (keep it clean)
+Nom du régime
+Variation mensuelle (kg / mois)
+Composition (viande / poisson / volaille)
+Nb d’activités liées
+Nb de durées disponibles
+
+👉 Avoid dumping raw DB fields. Focus on decision info.
+
+1. Regime Create / Edit page
+
+This is where most logic lives.
+
+Fields
+Nom régime
+Variation mensuelle (kg/month)
+⚠️ clarify label: “kg / mois”, not “kg” alone
+Composition:
+% viande
+% poisson
+% volaille
+Relations (important)
+Activités sportives (multi-select)
+Musculation, Running, etc.
+Durées + prix (VERY IMPORTANT PART)
+Add multiple rows:
+nb_jours
+prix
+👉 This should be a dynamic table (add/remove rows)
+3. Regime Detail page (READ ONLY)
+
+This is where you show EVERYTHING structured:
+
+Sections
+🥗 Nutrition
+Composition %
+📉 Effet sur le poids
+Variation mensuelle
+Estimation perte/prise en 30/60/90 jours
+🏃 Activités associées
+List of sports
+⏳ Durées disponibles
+30 jours → 50 000 Ar
+60 jours → 90 000 Ar
+(etc.)
+👤 Suggested users (optional advanced)
+suited for “perdre du poids”
+suited for “prise de masse”
+suited for IMC ideal
+
+
+Every page should still display teh sidebar in the left
+Dont use CDN, use public\assets\icons
+
+Side bar has utf 8 accents prob;eme, Dont use accent 
+
+
+
+
+
+CRUD Duree-Prix 
+CRUD Options
+CRUD IMC 
+
+No CDN

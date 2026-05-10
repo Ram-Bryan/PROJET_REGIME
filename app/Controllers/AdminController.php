@@ -19,8 +19,8 @@ class AdminController extends BaseController
         $admin = $adminModel->checkAdmin($email, $mot_de_passe);
 
         if ($admin) {
-            session()->set('admin_id', $admin['id_admin']);
-            session()->set('admin_name', $admin['prenom'] . ' ' . $admin['nom']);
+            session()->set('admin_id', $admin['id_utilisateur']);
+            session()->set('admin_name', $admin['nom']);
             return redirect()->to('/admin/dashboard');
         } else {
             session()->setFlashdata('error', 'Email ou mot de passe incorrect.');

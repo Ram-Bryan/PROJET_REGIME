@@ -33,16 +33,16 @@ $routes->get('mes-regimes/(:num)/export-pdf', 'RegimeController::exportRegimePdf
 
 $routes->post('/admin/authenticate', 'AdminController::authenticate');
 $routes->get('/admin/dashboard', 'AdminController::dashboard');
+$routes->get('/admin', 'AdminController::login');
+$routes->get('/admin/login', 'AdminController::login');
+$routes->get('/admin/logout', 'AdminController::logout');
 $routes->get('/admin/regimes', 'AdminRegimeController::index');
 $routes->get('/admin/regimes/create', 'AdminRegimeController::create');
 $routes->post('/admin/regimes/store', 'AdminRegimeController::store');
+$routes->get('/admin/regimes/view/(:num)', 'AdminRegimeController::show/$1');
 $routes->get('/admin/regimes/edit/(:num)', 'AdminRegimeController::edit/$1');
 $routes->post('/admin/regimes/update/(:num)', 'AdminRegimeController::update/$1');
 $routes->post('/admin/regimes/delete/(:num)', 'AdminRegimeController::delete/$1');
-$routes->get('/admin/regimes/(:num)/durees', 'AdminRegimeController::durees/$1');
-$routes->post('/admin/regimes/(:num)/durees', 'AdminRegimeController::storeDuree/$1');
-$routes->post('/admin/regimes/durees/update/(:num)', 'AdminRegimeController::updateDuree/$1');
-$routes->post('/admin/regimes/durees/delete/(:num)', 'AdminRegimeController::deleteDuree/$1');
 $routes->get('/admin/activites', 'AdminActiviteController::index');
 $routes->get('/admin/activites/create', 'AdminActiviteController::create');
 $routes->post('/admin/activites/store', 'AdminActiviteController::store');

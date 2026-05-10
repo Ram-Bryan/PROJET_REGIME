@@ -446,7 +446,7 @@
             <p>Panneau d'administration</p>
         </div>
 
-        <ul class="sidebar-menu">
+                <ul class="sidebar-menu">
             <li>
                 <a href="<?= base_url('admin/dashboard') ?>" class="active">
                     <i class="fas fa-home"></i>
@@ -454,45 +454,21 @@
                 </a>
             </li>
             <li>
-                <a href="<?= base_url('admin/utilisateurs') ?>">
-                    <i class="fas fa-users"></i>
-                    <span>Utilisateurs</span>
-                </a>
-            </li>
-            <li>
                 <a href="<?= base_url('admin/regimes') ?>">
                     <i class="fas fa-apple-alt"></i>
-                    <span>R√©gimes</span>
+                    <span>RÈgimes</span>
                 </a>
             </li>
             <li>
                 <a href="<?= base_url('admin/activites') ?>">
                     <i class="fas fa-running"></i>
-                    <span>Activit√©s</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?= base_url('admin/objectifs') ?>">
-                    <i class="fas fa-bullseye"></i>
-                    <span>Objectifs</span>
+                    <span>ActivitÈs</span>
                 </a>
             </li>
             <li>
                 <a href="<?= base_url('admin/promos') ?>">
                     <i class="fas fa-ticket-alt"></i>
                     <span>Promos</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?= base_url('admin/imc') ?>">
-                    <i class="fas fa-calculator"></i>
-                    <span>IMC</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?= base_url('admin/parametres') ?>">
-                    <i class="fas fa-cog"></i>
-                    <span>Param√®tres</span>
                 </a>
             </li>
         </ul>
@@ -739,3 +715,4 @@
     </script>
 </body>
 </html>
+

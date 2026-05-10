@@ -690,6 +690,7 @@
             <?php else: ?>
                 <a class="<?= $isActive(['login']) ? 'active' : '' ?>" href="<?= esc(site_url('login')) ?>">Connexion</a>
                 <a class="<?= $isActive(['register']) ? 'active' : '' ?>" href="<?= esc(site_url('register')) ?>">Inscription</a>
+                <a class="<?= $isActive(['admin', 'admin/login']) ? 'active' : '' ?>" href="<?= esc(site_url('admin/login')) ?>">Admin</a>
             <?php endif; ?>
         </nav>
     </div>

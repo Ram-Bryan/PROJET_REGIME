@@ -319,22 +319,6 @@
                         </div>
                     </div>
 
-                    <!-- Se souvenir et mot de passe oublié -->
-                    <div class="remember-forgot">
-                        <div class="form-check">
-                            <input 
-                                type="checkbox" 
-                                class="form-check-input" 
-                                id="rememberMe" 
-                                name="rememberMe"
-                            >
-                            <label class="form-check-label" for="rememberMe">
-                                Se souvenir de moi
-                            </label>
-                        </div>
-                        <a href="#" class="forgot-password">Mot de passe oublié ?</a>
-                    </div>
-
                     <!-- Bouton de connexion -->
                     <button type="submit" class="btn btn-login">
                         <i class="fas fa-spinner loading-spinner" id="loadingSpinner"></i>
