@@ -4,17 +4,28 @@
 
 <?= $this->section('content') ?>
 <?php $validationErrors = session()->getFlashdata('errors') ?? []; ?>
-<section class="stack" style="max-width:900px; margin: 0 auto;">
-    <div class="page-header">
-        <h1>Modifier mon profil</h1>
-        <p class="sub">Mettez à jour vos informations en toute sécurité.</p>
+<section class="stack" style="max-width:980px; margin: 0 auto;">
+    <div class="hero">
+        <div class="page-header" style="position:relative; z-index:1;">
+            <h1>Modifier mon profil</h1>
+            <p class="sub">Mettez à jour vos informations en toute sécurité avec un parcours clair et sans friction.</p>
+        </div>
+        <div class="hero-actions" style="position:relative; z-index:1;">
+            <a href="<?= site_url('/profile') ?>" class="btn btn-secondary">Retour au profil</a>
+            <a href="<?= site_url('/dashboard') ?>" class="btn btn-secondary">Dashboard</a>
+        </div>
     </div>
 
     <form method="POST" action="<?= site_url('/profile/update') ?>" class="stack">
         <?= csrf_field() ?>
 
         <div class="card stack">
-            <h2 style="margin:0; font-size:18px;">Informations personnelles</h2>
+            <div class="section-title">
+                <div>
+                    <h2>Informations personnelles</h2>
+                    <p class="sub">Les champs de base de votre identité.</p>
+                </div>
+            </div>
             <div>
                 <label for="nom">Nom *</label>
                 <input type="text" id="nom" name="nom" minlength="2" maxlength="80" autocomplete="name" value="<?= old('nom', esc($user['nom'])) ?>" required>
@@ -39,7 +50,12 @@
         </div>
 
         <div class="card stack">
-            <h2 style="margin:0; font-size:18px;">Informations santé</h2>
+            <div class="section-title">
+                <div>
+                    <h2>Informations santé</h2>
+                    <p class="sub">Votre base pour les recommandations et le calcul d’IMC.</p>
+                </div>
+            </div>
             <div class="grid">
                 <div>
                     <label for="taille_cm">Taille (cm) *</label>
@@ -74,7 +90,12 @@
         </div>
 
         <div class="card stack">
-            <h2 style="margin:0; font-size:18px;">Vérification identité</h2>
+            <div class="section-title">
+                <div>
+                    <h2>Vérification identité</h2>
+                    <p class="sub">Confirmez vos modifications avec votre mot de passe.</p>
+                </div>
+            </div>
             <div>
                 <label for="current_password">Mot de passe actuel *</label>
                 <input type="password" id="current_password" name="current_password" required>

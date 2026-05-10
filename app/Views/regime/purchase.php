@@ -13,30 +13,32 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<section class="stack" style="max-width:860px; margin:0 auto;">
-    <div class="page-header">
-        <h1>Acheter un régime</h1>
-        <p class="sub">Sélectionnez une durée pour le régime <?= esc($regime['nom_regime']) ?>.</p>
+<section class="stack" style="max-width:980px; margin:0 auto;">
+    <div class="hero">
+        <div class="page-header" style="position:relative; z-index:1;">
+            <h1>Acheter un régime</h1>
+            <p class="sub">Sélectionnez une durée pour le régime <?= esc($regime['nom_regime']) ?> et validez une seule fois votre achat.</p>
+        </div>
     </div>
 
     <div class="card stack">
-        <div class="grid">
-            <div class="box">
-                <div class="kv-title">Régime</div>
-                <div class="kv-value"><?= esc($regime['nom_regime']) ?></div>
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label">Régime</div>
+                <div class="metric-value small"><?= esc($regime['nom_regime']) ?></div>
             </div>
-            <div class="box">
-                <div class="kv-title">Variation poids</div>
-                <div class="kv-value"><?= esc($regime['variation_poids']) ?> kg</div>
+            <div class="metric-card">
+                <div class="metric-label">Variation poids</div>
+                <div class="metric-value"><?= esc($regime['variation_poids']) ?> kg</div>
             </div>
-            <div class="box">
-                <div class="kv-title">Mode d'accès</div>
-                <div class="kv-value"><?= $isGold ? 'Gold' : 'Standard' ?></div>
+            <div class="metric-card">
+                <div class="metric-label">Mode d'accès</div>
+                <div class="metric-value"><?= $isGold ? 'Gold' : 'Standard' ?></div>
                 <div class="sub">Réduction : <?= esc((string) $discountPercent) ?>%</div>
             </div>
-            <div class="box">
-                <div class="kv-title">Solde disponible</div>
-                <div class="kv-value"><?= esc((string) $argent) ?> Ar</div>
+            <div class="metric-card">
+                <div class="metric-label">Solde disponible</div>
+                <div class="metric-value"><?= esc((string) $argent) ?> Ar</div>
             </div>
         </div>
 

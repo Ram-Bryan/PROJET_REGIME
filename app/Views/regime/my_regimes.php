@@ -13,16 +13,19 @@
 
 <?= $this->section('content') ?>
 <section class="stack">
-    <div class="page-header">
-        <h1>Mes régimes</h1>
-        <p class="sub">Historique de vos achats et régimes actifs.</p>
+    <div class="hero">
+        <div class="page-header" style="position:relative; z-index:1;">
+            <h1>Mes régimes</h1>
+            <p class="sub">Historique de vos achats, avec accès rapide à chaque détail et export PDF.</p>
+        </div>
     </div>
 
     <div class="card">
         <?php if (empty($purchases)) : ?>
             <div class="empty">Aucun régime acheté pour le moment.</div>
         <?php else : ?>
-            <table>
+            <div class="table-wrap">
+                <table>
                     <thead>
                         <tr>
                             <th>Régime</th>
@@ -47,7 +50,8 @@
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
-            </table>
+                </table>
+            </div>
         <?php endif; ?>
     </div>
 </section>

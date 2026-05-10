@@ -4,15 +4,18 @@
 
 <?= $this->section('content') ?>
 <section class="stack">
-    <div class="page-header">
-        <h1>Historique des transactions</h1>
-        <p class="sub">Retrouvez toutes vos commandes passées.</p>
+    <div class="hero">
+        <div class="page-header" style="position:relative; z-index:1;">
+            <h1>Historique des transactions</h1>
+            <p class="sub">Retrouvez toutes vos commandes passées, le détail des durées et les montants associés.</p>
+        </div>
     </div>
 
     <div class="card">
         <?php if (empty($transactions)): ?>
             <div class="empty">Aucune transaction trouvée pour le moment.</div>
         <?php else: ?>
+            <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
@@ -35,6 +38,7 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
         <?php endif; ?>
     </div>
 </section>
