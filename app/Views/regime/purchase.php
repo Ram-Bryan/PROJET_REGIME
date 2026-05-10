@@ -13,6 +13,11 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<?php
+    $formatPrice = static function (float $price): string {
+        return number_format($price, 0, ',', ' ');
+    };
+?>
 <section class="stack" style="max-width:980px; margin:0 auto;">
     <div class="hero">
         <div class="page-header" style="position:relative; z-index:1;">
@@ -54,14 +59,14 @@
                         <option value="">-- Choisir une durée --</option>
                         <?php foreach ($durees as $duree): ?>
                             <option value="<?= esc($duree['id_duree_regime']) ?>" <?= old('id_duree_regime') === (string) $duree['id_duree_regime'] ? 'selected' : '' ?>>
-                                <?= esc($duree['nb_jours']) ?> jours - <?= esc($duree['prix_final']) ?> Ar
+                                <?= esc($duree['nb_jours']) ?> jours - <?= esc($formatPrice((float) $duree['prix_final'])) ?> Ar
                                 <?php if ($isGold): ?>
-                                    (au lieu de <?= esc($duree['prix']) ?> Ar)
+                                    (au lieu de <?= esc($formatPrice((float) $duree['prix'])) ?> Ar)
                                 <?php endif; ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                        <div class="field-error" data-field-error="id_duree_regime"></div>
+                    <div class="field-error" data-field-error="id_duree_regime"></div>
                 </div>
 
                 <div class="actions">
