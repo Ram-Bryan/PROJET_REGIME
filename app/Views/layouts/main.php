@@ -135,6 +135,18 @@
             font-size: 14px;
         }
 
+        input:focus, select:focus {
+            outline: none;
+            border-color: #9db4ff;
+            box-shadow: 0 0 0 3px rgba(43, 89, 255, 0.15);
+        }
+
+        .field-hint {
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -260,7 +272,7 @@
                 <a class="<?= $isActive(['mes-regimes']) ? 'active' : '' ?>" href="<?= esc(site_url('mes-regimes')) ?>">Mes régimes</a>
                 <a class="<?= $isActive(['transactions']) ? 'active' : '' ?>" href="<?= esc(site_url('transactions')) ?>">Transactions</a>
                 <a class="<?= $isActive(['promo']) ? 'active' : '' ?>" href="<?= esc(site_url('promo')) ?>">Code promo</a>
-                <a href="<?= esc(site_url('logout')) ?>">Déconnexion</a>
+                <a href="<?= esc(site_url('logout')) ?>" data-confirm-message="Voulez-vous vraiment vous déconnecter ?">Déconnexion</a>
             <?php else: ?>
                 <a class="<?= $isActive(['login']) ? 'active' : '' ?>" href="<?= esc(site_url('login')) ?>">Connexion</a>
                 <a class="<?= $isActive(['register']) ? 'active' : '' ?>" href="<?= esc(site_url('register')) ?>">Inscription</a>
@@ -279,6 +291,37 @@
 
     <?= $this->renderSection('content') ?>
 </main>
+
+<script>
+    (function () {
+        document.querySelectorAll('[data-confirm-message]').forEach((element) => {
+            element.addEventListener('click', function (event) {
+                const message = this.getAttribute('data-confirm-message') || 'Confirmer cette action ?';
+                if (!window.confirm(message)) {
+                    event.preventDefault();
+                }
+            });
+        });
+
+        document.querySelectorAll('form').forEach((form) => {
+            form.addEventListener('submit', function () {
+                const submit = this.querySelector('button[type="submit"], input[type="submit"]');
+                if (!submit) {
+                    return;
+                }
+
+                const original = submit.dataset.originalText || submit.textContent || submit.value || 'Envoyer';
+                submit.dataset.originalText = original;
+                if (submit.tagName.toLowerCase() === 'button') {
+                    submit.textContent = 'Traitement...';
+                } else {
+                    submit.value = 'Traitement...';
+                }
+                submit.disabled = true;
+            });
+        });
+    })();
+</script>
 
 <?= $this->renderSection('scripts') ?>
 </body>

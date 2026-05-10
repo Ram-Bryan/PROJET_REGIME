@@ -25,18 +25,19 @@
         <div class="grid">
             <div>
                 <label for="nom">Nom complet</label>
-                <input type="text" id="nom" name="nom" value="<?= esc(old('nom')) ?>" required>
+                <input type="text" id="nom" name="nom" minlength="2" maxlength="80" autocomplete="name" value="<?= esc(old('nom')) ?>" required>
             </div>
             <div>
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?= esc(old('email')) ?>" required>
+                <input type="email" id="email" name="email" maxlength="120" autocomplete="email" value="<?= esc(old('email')) ?>" required>
             </div>
         </div>
 
         <div class="grid">
             <div>
                 <label for="mot_de_passe">Mot de passe</label>
-                <input type="password" id="mot_de_passe" name="mot_de_passe" minlength="6" required>
+                <input type="password" id="mot_de_passe" name="mot_de_passe" minlength="6" maxlength="72" autocomplete="new-password" required>
+                <p class="field-hint">Minimum 6 caractères.</p>
             </div>
             <div>
                 <label for="genre">Genre</label>

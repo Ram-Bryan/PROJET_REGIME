@@ -17,7 +17,7 @@
             <h2 style="margin:0; font-size:18px;">Informations personnelles</h2>
             <div>
                 <label for="nom">Nom *</label>
-                <input type="text" id="nom" name="nom" value="<?= old('nom', esc($user['nom'])) ?>" required>
+                <input type="text" id="nom" name="nom" minlength="2" maxlength="80" autocomplete="name" value="<?= old('nom', esc($user['nom'])) ?>" required>
                 <?php if (isset($validationErrors['nom'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['nom']) ?></div><?php endif; ?>
             </div>
             <div class="grid">
@@ -43,19 +43,19 @@
             <div class="grid">
                 <div>
                     <label for="taille_cm">Taille (cm) *</label>
-                    <input type="number" step="0.01" id="taille_cm" name="taille_cm" value="<?= old('taille_cm', esc($user['taille_cm'])) ?>" required>
+                    <input type="number" step="0.01" min="50" max="260" id="taille_cm" name="taille_cm" value="<?= old('taille_cm', esc($user['taille_cm'])) ?>" required>
                     <?php if (isset($validationErrors['taille_cm'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['taille_cm']) ?></div><?php endif; ?>
                 </div>
                 <div>
                     <label for="poids_kg">Poids actuel (kg) *</label>
-                    <input type="number" step="0.01" id="poids_kg" name="poids_kg" value="<?= old('poids_kg', esc($user['poids_kg'])) ?>" required>
+                    <input type="number" step="0.01" min="20" max="350" id="poids_kg" name="poids_kg" value="<?= old('poids_kg', esc($user['poids_kg'])) ?>" required>
                     <?php if (isset($validationErrors['poids_kg'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['poids_kg']) ?></div><?php endif; ?>
                 </div>
             </div>
             <div class="grid">
                 <div>
                     <label for="poids_objectif">Poids objectif (kg) *</label>
-                    <input type="number" step="0.01" id="poids_objectif" name="poids_objectif" value="<?= old('poids_objectif', esc($user['poids_objectif'] ?? '')) ?>" required>
+                    <input type="number" step="0.01" min="20" max="350" id="poids_objectif" name="poids_objectif" value="<?= old('poids_objectif', esc($user['poids_objectif'] ?? '')) ?>" required>
                     <?php if (isset($validationErrors['poids_objectif'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['poids_objectif']) ?></div><?php endif; ?>
                 </div>
                 <div>

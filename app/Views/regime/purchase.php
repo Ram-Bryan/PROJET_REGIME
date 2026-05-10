@@ -61,7 +61,7 @@
                 </div>
 
                 <div class="actions">
-                    <button type="submit" class="btn">Confirmer l'achat</button>
+                    <button type="submit" class="btn" data-confirm-message="Voulez-vous confirmer cet achat ?">Confirmer l'achat</button>
                     <a href="<?= site_url('/regimes') ?>" class="btn btn-secondary">Retour aux régimes</a>
                 </div>
             </form>

@@ -13,7 +13,8 @@
         <?= csrf_field() ?>
         <div>
             <label for="code_promo">Code promo</label>
-            <input type="text" id="code_promo" name="code_promo" value="<?= esc(old('code_promo')) ?>" required>
+            <input type="text" id="code_promo" name="code_promo" minlength="3" maxlength="30" style="text-transform: uppercase;" value="<?= esc(old('code_promo')) ?>" required>
+            <p class="field-hint">Exemple: WELCOME2026</p>
         </div>
         <button type="submit" class="btn">Valider le code</button>
     </form>

@@ -14,12 +14,13 @@
 
         <div>
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="<?= esc(old('email')) ?>" required>
+            <input type="email" id="email" name="email" maxlength="120" autocomplete="email" value="<?= esc(old('email')) ?>" required>
         </div>
 
         <div>
             <label for="mot_de_passe">Mot de passe</label>
-            <input type="password" id="mot_de_passe" name="mot_de_passe" required>
+            <input type="password" id="mot_de_passe" name="mot_de_passe" minlength="6" autocomplete="current-password" required>
+            <p class="field-hint">Minimum 6 caractères.</p>
         </div>
 
         <button type="submit" class="btn">Se connecter</button>

@@ -126,7 +126,7 @@
                     <div id="objectif-status" class="success" style="display:none; margin-top: 8px;">✅ Objectif atteint</div>
                     <div id="objectif-status-fail" class="danger" style="display:none; margin-top: 8px;">❌ Objectif non atteint</div>
                     <div style="margin-top: 16px;">
-                        <button class="btn" type="submit">Commander</button>
+                        <button class="btn" type="submit" data-confirm-message="Confirmer cet achat de régime ?">Commander</button>
                     </div>
                 </form>
             <?php endif; ?>
