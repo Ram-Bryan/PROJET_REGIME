@@ -31,7 +31,7 @@ class OptionController extends BaseController
         $canUnlock = $gold !== null && $purchaseCount >= $requiredPurchases;
         $hasEnoughBalance = $gold !== null && (float) ($user['argent'] ?? 0) >= (float) ($gold['prix_unique'] ?? 0);
 
-        return view('options/index', [
+        return view('frontoffice/options/index', [
             'gold' => $gold,
             'user' => $user,
             'purchaseCount' => $purchaseCount,

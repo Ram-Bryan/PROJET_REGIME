@@ -41,7 +41,7 @@ class CommandeController extends BaseController
             ];
         }, $durees);
 
-        return view('regime/purchase', [
+        return view('frontoffice/regime/purchase', [
             'regime' => $regime,
             'durees' => $dureesAffichees,
             'isGold' => $isGold,

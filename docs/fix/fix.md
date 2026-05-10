@@ -326,3 +326,12 @@ I want clean very simple and pro code. MVC and SOC style
 
 
 Now do the CRUD of parametre IMC (look the table IMC). We cant add but we can only change the values. There are validaiton checks of intervalls. UX and UI first. 
+
+
+Okay now I want to completely refractor this project and upgrade the UI. To do so. I want you to create a STRUCTURE.md inside docs folder. List inside how is the state of each UI of each views pages. So list all the pages views inside (like whats the secitons and whats inside and stuff like that, whats the CSS, what is this page for also). Just do this. Very detail so tha ti can review the refracorisation
+
+
+Okay Opus just messed up. The ui is so gross.
+we're on the backoffice lets fix it:
+
+now is it okay to have logic of display isnide model ?

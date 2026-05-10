@@ -37,4 +37,22 @@ class RegimeActiviteModel extends Model
 
         return $counts;
     }
+
+    public function getAssignedActivites(int $idRegime): array
+    {
+        return $this->db->table('regime_activite ra')
+            ->select('ra.id_regime_activite, a.id_activite, a.label_activite, a.nb_par_semaine')
+            ->join('activite_sportive a', 'a.id_activite = ra.id_activite')
+            ->where('ra.id_regime', $idRegime)
+            ->orderBy('a.label_activite', 'ASC')
+            ->get()
+            ->getResultArray();
+    }
+
+    public function existsLink(int $regimeId, int $activiteId): bool
+    {
+        return $this->where('id_regime', $regimeId)
+            ->where('id_activite', $activiteId)
+            ->countAllResults() > 0;
+    }
 }

@@ -34,7 +34,7 @@ class AdminRegimeController extends BaseController
             'prix_max' => $this->request->getGet('prix_max'),
         ];
 
-        return view('admin/regimes/index', [
+        return view('backoffice/regime/index', [
             'regimes' => $this->getRegimeListing($filters),
             'filters' => $filters,
             'regimeDurations' => (new DureeRegimeModel())->getAllGroupedByRegime(),
@@ -48,7 +48,7 @@ class AdminRegimeController extends BaseController
             return $redirect;
         }
 
-        return view('admin/regimes/form', [
+        return view('backoffice/regime/form', [
             'title' => 'Creer un regime',
             'action' => base_url('admin/regimes/store'),
             'regime' => null,
@@ -82,20 +82,15 @@ class AdminRegimeController extends BaseController
         }
 
         $regimeModel = new RegimeModel();
-        $db = db_connect();
-
-        $db->transStart();
-
-        $regimeId = $regimeModel->insert([
-            ...$this->buildRegimePayload($formData),
-        ], true);
-
-        $this->syncRelations((int) $regimeId, $formData['activite_ids'], $formData['duration_rows']);
-
-        $db->transComplete();
-
-        if (! $db->transStatus()) {
-            return redirect()->back()->withInput()->with('error', 'Impossible de creer ce regime pour le moment.');
+        
+        try {
+            $regimeModel->createRegimeWithRelations(
+                $this->buildRegimePayload($formData),
+                $formData['activite_ids'],
+                $formData['duration_rows']
+            );
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->withInput()->with('error', 'Impossible de creer ce regime pour le moment. ' . $e->getMessage());
         }
 
         return redirect()->to('/admin/regimes')->with('success', 'Regime cree avec succes.');
@@ -113,7 +108,7 @@ class AdminRegimeController extends BaseController
             return redirect()->to('/admin/regimes')->with('error', 'Regime introuvable.');
         }
 
-        return view('admin/regimes/show', [
+        return view('backoffice/regime/show', [
             'regime' => $regime,
             'estimates' => $this->buildWeightEstimates((float) $regime['variation_mensuelle_kg']),
             'suggestedUsers' => $this->buildSuggestedUsers((float) $regime['variation_mensuelle_kg']),
@@ -136,7 +131,7 @@ class AdminRegimeController extends BaseController
 
         $regimeActiviteModel = new RegimeActiviteModel();
 
-        return view('admin/regimes/form', [
+        return view('backoffice/regime/form', [
             'title' => 'Modifier un regime',
             'action' => base_url('admin/regimes/update/' . $id),
             'regime' => $regime,
@@ -177,23 +172,15 @@ class AdminRegimeController extends BaseController
                 ->with('form_errors', $formErrors);
         }
 
-        $db = db_connect();
-        $db->transStart();
-
-        $regimeModel->update($id, $this->buildRegimePayload($formData));
-
         try {
-            $this->syncRelations($id, $formData['activite_ids'], $formData['duration_rows']);
+            $regimeModel->updateRegimeWithRelations(
+                $id,
+                $this->buildRegimePayload($formData),
+                $formData['activite_ids'],
+                $formData['duration_rows']
+            );
         } catch (\RuntimeException $exception) {
-            $db->transRollback();
-
             return redirect()->back()->withInput()->with('error', $exception->getMessage());
-        }
-
-        $db->transComplete();
-
-        if (! $db->transStatus()) {
-            return redirect()->back()->withInput()->with('error', 'Impossible de mettre a jour ce regime pour le moment.');
         }
 
         return redirect()->to('/admin/regimes')->with('success', 'Regime mis a jour avec succes.');
@@ -212,7 +199,6 @@ class AdminRegimeController extends BaseController
             return redirect()->to('/admin/regimes')->with('error', 'Regime introuvable.');
         }
 
-        $db = db_connect();
         $lockedDurations = $this->getLockedDurationLabels($id);
         if ($lockedDurations !== []) {
             return redirect()->to('/admin/regimes')->with(
@@ -221,15 +207,7 @@ class AdminRegimeController extends BaseController
             );
         }
 
-        $db->transStart();
-
-        (new RegimeActiviteModel())->where('id_regime', $id)->delete();
-        (new DureeRegimeModel())->where('id_regime', $id)->delete();
-        $regimeModel->delete($id);
-
-        $db->transComplete();
-
-        if (! $db->transStatus()) {
+        if (! $regimeModel->deleteWithRelations($id)) {
             return redirect()->to('/admin/regimes')->with('error', 'Suppression impossible pour le moment.');
         }
 
@@ -357,186 +335,16 @@ class AdminRegimeController extends BaseController
         return array_values(array_unique($errors));
     }
 
-    private function syncRelations(int $regimeId, array $activityIds, array $durationRows): void
-    {
-        $db = db_connect();
-        $regimeActiviteModel = new RegimeActiviteModel();
-        $dureeRegimeModel = new DureeRegimeModel();
 
-        $regimeActiviteModel->where('id_regime', $regimeId)->delete();
-        if ($activityIds !== []) {
-            $regimeActiviteModel->insertBatch(array_map(
-                static fn (int $activityId): array => [
-                    'id_regime' => $regimeId,
-                    'id_activite' => $activityId,
-                ],
-                $activityIds
-            ));
-        }
-
-        $existingRows = $dureeRegimeModel
-            ->where('id_regime', $regimeId)
-            ->findAll();
-
-        $existingById = [];
-        foreach ($existingRows as $existingRow) {
-            $existingById[(int) $existingRow['id_duree_regime']] = $existingRow;
-        }
-
-        $submittedIds = [];
-        foreach ($durationRows as $row) {
-            $durationId = (int) ($row['id_duree_regime'] ?? 0);
-            if ($durationId > 0) {
-                $submittedIds[] = $durationId;
-            }
-        }
-
-        $rowsToDelete = array_diff(array_keys($existingById), $submittedIds);
-        $lockedLabels = [];
-        foreach ($rowsToDelete as $durationId) {
-            if ($this->durationHasDependencies((int) $durationId)) {
-                $lockedLabels[] = (int) ($existingById[$durationId]['nb_jours'] ?? 0) . ' jours';
-            }
-        }
-
-        if ($lockedLabels !== []) {
-            throw new \RuntimeException(
-                'Impossible de retirer les durees deja utilisees ou historisees: ' . implode(', ', $lockedLabels) . '.'
-            );
-        }
-
-        foreach ($durationRows as $row) {
-            $payload = [
-                'id_regime' => $regimeId,
-                'nb_jours' => (int) $row['nb_jours'],
-                'prix' => (float) $row['prix'],
-            ];
-            $durationId = (int) ($row['id_duree_regime'] ?? 0);
-
-            if ($durationId > 0 && isset($existingById[$durationId])) {
-                $existingRow = $existingById[$durationId];
-                if (
-                    $this->durationHasDependencies($durationId)
-                    && (
-                        (int) ($existingRow['nb_jours'] ?? 0) !== $payload['nb_jours']
-                        || (float) ($existingRow['prix'] ?? 0) !== $payload['prix']
-                    )
-                ) {
-                    throw new \RuntimeException(
-                        'La duree ' . (int) ($existingRow['nb_jours'] ?? 0) . ' jours est deja utilisee et ne peut plus etre modifiee.'
-                    );
-                }
-
-                $dureeRegimeModel->update($durationId, $payload);
-                continue;
-            }
-
-            $dureeRegimeModel->insert($payload);
-        }
-
-        foreach ($rowsToDelete as $durationId) {
-            $db->table('duree_regime')->where('id_duree_regime', (int) $durationId)->delete();
-        }
-    }
 
     private function getRegimeListing(array $filters): array
     {
-        $db = db_connect();
-        $variationColumn = $this->getVariationColumn();
-
-        $builder = $db->table('regime r');
-        $builder->select([
-            'r.id_regime',
-            'r.nom_regime',
-            'r.' . $variationColumn . ' AS variation_mensuelle_kg',
-            'r.pourcentage_viande',
-            'r.pourcentage_poisson',
-            'r.pourcentage_volaille',
-            'COUNT(DISTINCT ra.id_regime_activite) AS nb_activites',
-            'COUNT(DISTINCT d_all.id_duree_regime) AS nb_durees',
-        ]);
-        $builder->join('regime_activite ra', 'ra.id_regime = r.id_regime', 'left');
-        $builder->join('duree_regime d_all', 'd_all.id_regime = r.id_regime', 'left');
-
-        if ($filters['nom_regime'] !== '') {
-            $builder->like('r.nom_regime', $filters['nom_regime']);
-        }
-
-        if ($filters['variation_min'] !== null && $filters['variation_min'] !== '') {
-            $builder->where('r.' . $variationColumn . ' >=', (float) $filters['variation_min']);
-        }
-
-        if ($filters['variation_max'] !== null && $filters['variation_max'] !== '') {
-            $builder->where('r.' . $variationColumn . ' <=', (float) $filters['variation_max']);
-        }
-
-        if (
-            ($filters['duree_min'] !== null && $filters['duree_min'] !== '')
-            || ($filters['duree_max'] !== null && $filters['duree_max'] !== '')
-            || ($filters['prix_min'] !== null && $filters['prix_min'] !== '')
-            || ($filters['prix_max'] !== null && $filters['prix_max'] !== '')
-        ) {
-            $existsConditions = ['d_filter.id_regime = r.id_regime'];
-
-            if ($filters['duree_min'] !== null && $filters['duree_min'] !== '') {
-                $existsConditions[] = 'd_filter.nb_jours >= ' . (int) $filters['duree_min'];
-            }
-
-            if ($filters['duree_max'] !== null && $filters['duree_max'] !== '') {
-                $existsConditions[] = 'd_filter.nb_jours <= ' . (int) $filters['duree_max'];
-            }
-
-            if ($filters['prix_min'] !== null && $filters['prix_min'] !== '') {
-                $existsConditions[] = 'd_filter.prix >= ' . (float) $filters['prix_min'];
-            }
-
-            if ($filters['prix_max'] !== null && $filters['prix_max'] !== '') {
-                $existsConditions[] = 'd_filter.prix <= ' . (float) $filters['prix_max'];
-            }
-
-            $builder->where(
-                'EXISTS (SELECT 1 FROM duree_regime d_filter WHERE ' . implode(' AND ', $existsConditions) . ')',
-                null,
-                false
-            );
-        }
-
-        $builder->groupBy([
-            'r.id_regime',
-            'r.nom_regime',
-            'r.' . $variationColumn,
-            'r.pourcentage_viande',
-            'r.pourcentage_poisson',
-            'r.pourcentage_volaille',
-        ]);
-        $builder->orderBy('r.nom_regime', 'ASC');
-
-        return $builder->get()->getResultArray();
+        return (new RegimeModel())->getAdminRegimeListing($filters);
     }
 
     private function getRegimeDetail(int $id): ?array
     {
-        $regimeModel = new RegimeModel();
-        $regime = $regimeModel->find($id);
-
-        if (! $regime) {
-            return null;
-        }
-
-        $db = db_connect();
-        $regime['activities'] = $db->table('regime_activite ra')
-            ->select('a.id_activite, a.label_activite, a.nb_par_semaine')
-            ->join('activite_sportive a', 'a.id_activite = ra.id_activite')
-            ->where('ra.id_regime', $id)
-            ->orderBy('a.label_activite', 'ASC')
-            ->get()
-            ->getResultArray();
-        $regime['durations'] = (new DureeRegimeModel())
-            ->where('id_regime', $id)
-            ->orderBy('nb_jours', 'ASC')
-            ->findAll();
-
-        return $regime;
+        return (new RegimeModel())->getAdminRegimeDetail($id);
     }
 
     private function resolveDurationRows(?int $regimeId = null): array
@@ -630,9 +438,10 @@ class AdminRegimeController extends BaseController
             ->findAll();
 
         $ids = [];
+        $regimeModel = new RegimeModel();
         foreach ($rows as $row) {
             $durationId = (int) ($row['id_duree_regime'] ?? 0);
-            if ($durationId > 0 && $this->durationHasDependencies($durationId)) {
+            if ($durationId > 0 && $regimeModel->durationHasDependencies($durationId)) {
                 $ids[] = $durationId;
             }
         }
@@ -648,9 +457,10 @@ class AdminRegimeController extends BaseController
             ->findAll();
 
         $labels = [];
+        $regimeModel = new RegimeModel();
         foreach ($rows as $row) {
             $durationId = (int) ($row['id_duree_regime'] ?? 0);
-            if ($durationId > 0 && $this->durationHasDependencies($durationId)) {
+            if ($durationId > 0 && $regimeModel->durationHasDependencies($durationId)) {
                 $labels[] = (int) ($row['nb_jours'] ?? 0) . ' jours';
             }
         }
@@ -658,24 +468,5 @@ class AdminRegimeController extends BaseController
         return $labels;
     }
 
-    private function durationHasDependencies(int $durationId): bool
-    {
-        $db = db_connect();
 
-        $hasCommandes = $db->table('commande')
-            ->where('id_duree_regime', $durationId)
-            ->countAllResults() > 0;
-
-        if ($hasCommandes) {
-            return true;
-        }
-
-        if (! $db->tableExists('duree_regime_prix')) {
-            return false;
-        }
-
-        return $db->table('duree_regime_prix')
-            ->where('id_duree_regime', $durationId)
-            ->countAllResults() > 0;
-    }
 }

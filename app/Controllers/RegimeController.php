@@ -65,7 +65,7 @@ class RegimeController extends BaseController
             ]);
         }
 
-        return view('regime/index', [
+        return view('frontoffice/regime/index', [
             'regimes' => $regimes,
             'regimeDurees' => $regimeDurees,
             'dureeOptions' => $dureeOptions,
@@ -112,7 +112,7 @@ class RegimeController extends BaseController
         $imcIdealMin = $imcIdeal !== null ? (float) $imcIdeal['imc_min'] : null;
         $imcIdealMax = $imcIdeal !== null ? (float) $imcIdeal['imc_max'] : null;
 
-        return view('regime/show', [
+        return view('frontoffice/regime/show', [
             'regime' => $regime,
             'durees' => $durees,
             'activites' => $activites,
@@ -324,7 +324,7 @@ class RegimeController extends BaseController
             return $purchase;
         }, $purchases);
 
-        return view('regime/my_regimes', [
+        return view('frontoffice/regime/my_regimes', [
             'purchases' => $purchases,
         ]);
     }
@@ -356,7 +356,7 @@ class RegimeController extends BaseController
 
         $user = $userModel->find($userId);
 
-        return view('regime/my_regime_detail', [
+        return view('frontoffice/regime/my_regime_detail', [
             'purchase' => $purchase,
             'activites' => $activites,
             'user' => $user,

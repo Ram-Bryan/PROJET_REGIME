@@ -12,7 +12,7 @@ class AdminImcController extends BaseController
         $imcModel = new ImcModel();
         $imcs = $imcModel->orderBy('imc_min', 'ASC')->findAll();
 
-        return view('admin/imc/index', [
+        return view('backoffice/imc/index', [
             'imcs'      => $imcs,
             'activeNav' => 'imc'
         ]);
@@ -32,7 +32,7 @@ class AdminImcController extends BaseController
 
         $otherImcs = $imcModel->where('id_imc !=', $id)->findAll();
 
-        return view('admin/imc/edit', [
+        return view('backoffice/imc/edit', [
             'imc'       => $imc,
             'otherImcs' => $otherImcs,
             'activeNav' => 'imc'

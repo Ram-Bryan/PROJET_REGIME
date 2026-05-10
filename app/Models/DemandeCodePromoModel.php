@@ -59,4 +59,36 @@ class DemandeCodePromoModel extends Model
             ->orderBy('date_demande', 'DESC')
             ->findAll();
     }
+
+    public function approveRequestTransaction(int $demandeId, array $demande, array $promo, array $user, int $adminId): void
+    {
+        $userModel = new UtilisateurModel();
+        $promoModel = new CodePromoModel();
+
+        $newArgent = (float) ($user['argent'] ?? 0) + (float) ($promo['montant'] ?? 0);
+
+        $this->db->transStart();
+
+        $userModel->update((int) $user['id_utilisateur'], [
+            'argent' => $newArgent,
+        ]);
+
+        $promoModel->update((int) $promo['id_code'], [
+            'deja_utilise' => true,
+            'id_utilisateur_utilisation' => (int) $user['id_utilisateur'],
+        ]);
+
+        $this->update($demandeId, [
+            'statut' => 'accepte',
+            'id_admin_traitement' => $adminId,
+            'note_admin' => 'Code promo accepte.',
+            'date_traitement' => date('Y-m-d H:i:s'),
+        ]);
+
+        $this->db->transComplete();
+
+        if (! $this->db->transStatus()) {
+            throw new \RuntimeException('La validation a echoue. Merci de reessayer.');
+        }
+    }
 }

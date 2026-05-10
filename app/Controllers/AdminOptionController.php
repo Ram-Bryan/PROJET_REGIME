@@ -27,7 +27,7 @@ class AdminOptionController extends BaseController
         $utilisateurModel = new UtilisateurModel();
         $options = $optionModel->getAdminListing();
 
-        return view('admin/options/index', [
+        return view('backoffice/option/index', [
             'options' => $options,
             'goldMembersCount' => count($utilisateurModel->getGoldMembers()),
             'activeNav' => 'options',
@@ -49,7 +49,7 @@ class AdminOptionController extends BaseController
             return redirect()->to('/admin/options')->with('error', 'Option introuvable.');
         }
 
-        return view('admin/options/show', [
+        return view('backoffice/option/show', [
             'option' => $option,
             'historique' => $historiqueModel->getByOptionId($id),
             'goldMembers' => strtolower((string) ($option['nom_option'] ?? '')) === 'gold' ? $utilisateurModel->getGoldMembers() : [],
@@ -63,7 +63,7 @@ class AdminOptionController extends BaseController
             return $redirect;
         }
 
-        return view('admin/options/form', [
+        return view('backoffice/option/form', [
             'title' => 'Creer une option',
             'action' => base_url('admin/options/store'),
             'option' => null,
@@ -111,7 +111,7 @@ class AdminOptionController extends BaseController
             return redirect()->to('/admin/options')->with('error', 'Option introuvable.');
         }
 
-        return view('admin/options/form', [
+        return view('backoffice/option/form', [
             'title' => 'Modifier une option',
             'action' => base_url('admin/options/update/' . $id),
             'option' => $option,

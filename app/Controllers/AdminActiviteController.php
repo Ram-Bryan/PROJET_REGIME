@@ -28,7 +28,7 @@ class AdminActiviteController extends BaseController
             'frequence_max' => $this->request->getGet('frequence_max'),
         ];
 
-        return view('admin/activites/index', [
+        return view('backoffice/activite/index', [
             'activites' => $this->getActivityListing($filters),
             'filters' => $filters,
             'activeNav' => 'activites',
@@ -41,7 +41,7 @@ class AdminActiviteController extends BaseController
             return $redirect;
         }
 
-        return view('admin/activites/form', [
+        return view('backoffice/activite/form', [
             'title' => 'Creer une activite sportive',
             'action' => base_url('admin/activites/store'),
             'activite' => null,
@@ -86,7 +86,7 @@ class AdminActiviteController extends BaseController
             return redirect()->to('/admin/activites')->with('error', 'Activite introuvable.');
         }
 
-        return view('admin/activites/show', [
+        return view('backoffice/activite/show', [
             'activite' => $activite,
             'linkedRegimes' => $this->getLinkedRegimes($id),
             'activeNav' => 'activites',
@@ -106,7 +106,7 @@ class AdminActiviteController extends BaseController
             return redirect()->to('/admin/activites')->with('error', 'Activite introuvable.');
         }
 
-        return view('admin/activites/form', [
+        return view('backoffice/activite/form', [
             'title' => 'Modifier une activite sportive',
             'action' => base_url('admin/activites/update/' . $id),
             'activite' => $activite,
@@ -156,7 +156,7 @@ class AdminActiviteController extends BaseController
             return redirect()->to('/admin/activites')->with('error', 'Activite introuvable.');
         }
 
-        $linkedCount = db_connect()->table('regime_activite')
+        $linkedCount = (new \App\Models\RegimeActiviteModel())
             ->where('id_activite', $id)
             ->countAllResults();
 
@@ -183,14 +183,7 @@ class AdminActiviteController extends BaseController
             return $this->response->setJSON(['status' => 'error', 'message' => 'Regime introuvable.'])->setStatusCode(404);
         }
 
-        $db = db_connect();
-        $assigned = $db->table('regime_activite ra')
-            ->select('ra.id_regime_activite, a.id_activite, a.label_activite, a.nb_par_semaine')
-            ->join('activite_sportive a', 'a.id_activite = ra.id_activite')
-            ->where('ra.id_regime', $regimeId)
-            ->orderBy('a.label_activite', 'ASC')
-            ->get()
-            ->getResultArray();
+        $assigned = (new \App\Models\RegimeActiviteModel())->getAssignedActivites($regimeId);
 
         return $this->response->setJSON([
             'status' => 'success',
@@ -214,18 +207,13 @@ class AdminActiviteController extends BaseController
         }
 
         $activiteId = (int) $this->request->getPost('id_activite');
-        $db = db_connect();
+        $regimeActiviteModel = new \App\Models\RegimeActiviteModel();
 
-        $exists = $db->table('regime_activite')
-            ->where('id_regime', $regimeId)
-            ->where('id_activite', $activiteId)
-            ->countAllResults();
-
-        if ($exists > 0) {
+        if ($regimeActiviteModel->existsLink($regimeId, $activiteId)) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'Cette activite est deja liee a ce regime.'])->setStatusCode(409);
         }
 
-        $db->table('regime_activite')->insert([
+        $regimeActiviteModel->insert([
             'id_regime' => $regimeId,
             'id_activite' => $activiteId,
         ]);
@@ -239,68 +227,25 @@ class AdminActiviteController extends BaseController
             return $redirect;
         }
 
-        $db = db_connect();
-        $row = $db->table('regime_activite')->where('id_regime_activite', $id)->get()->getRowArray();
+        $regimeActiviteModel = new \App\Models\RegimeActiviteModel();
+        $row = $regimeActiviteModel->find($id);
 
         if (! $row) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'Lien introuvable.'])->setStatusCode(404);
         }
 
-        $db->table('regime_activite')->where('id_regime_activite', $id)->delete();
+        $regimeActiviteModel->delete($id);
 
         return $this->response->setJSON(['status' => 'success', 'message' => 'Lien supprime.']);
     }
 
     private function getActivityListing(array $filters): array
     {
-        $builder = db_connect()->table('activite_sportive a');
-        $builder->select([
-            'a.id_activite',
-            'a.label_activite',
-            'a.nb_par_semaine',
-            'COUNT(DISTINCT ra.id_regime_activite) AS nb_regimes',
-        ]);
-        $builder->join('regime_activite ra', 'ra.id_activite = a.id_activite', 'left');
-
-        if ($filters['label_activite'] !== '') {
-            $builder->like('a.label_activite', $filters['label_activite']);
-        }
-
-        if ($filters['frequence_min'] !== null && $filters['frequence_min'] !== '') {
-            $builder->where('a.nb_par_semaine >=', (int) $filters['frequence_min']);
-        }
-
-        if ($filters['frequence_max'] !== null && $filters['frequence_max'] !== '') {
-            $builder->where('a.nb_par_semaine <=', (int) $filters['frequence_max']);
-        }
-
-        $builder->groupBy([
-            'a.id_activite',
-            'a.label_activite',
-            'a.nb_par_semaine',
-        ]);
-        $builder->orderBy('a.label_activite', 'ASC');
-
-        return $builder->get()->getResultArray();
+        return (new ActiviteSportiveModel())->getActivityListing($filters);
     }
 
     private function getLinkedRegimes(int $activityId): array
     {
-        $db = db_connect();
-        $variationColumn = $db->fieldExists('variation_mensuelle_kg', 'regime')
-            ? 'variation_mensuelle_kg'
-            : 'variation_poids';
-
-        return $db->table('regime_activite ra')
-            ->select([
-                'r.id_regime',
-                'r.nom_regime',
-                'r.' . $variationColumn . ' AS variation_mensuelle_kg',
-            ])
-            ->join('regime r', 'r.id_regime = ra.id_regime')
-            ->where('ra.id_activite', $activityId)
-            ->orderBy('r.nom_regime', 'ASC')
-            ->get()
-            ->getResultArray();
+        return (new ActiviteSportiveModel())->getLinkedRegimes($activityId);
     }
 }

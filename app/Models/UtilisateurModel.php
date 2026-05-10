@@ -80,4 +80,12 @@ class UtilisateurModel extends Model
             ->get()
             ->getResultArray();
     }
+    public function getUserCommandes(int $userId): array
+    {
+        return $this->db->table('v_commande_regime')
+            ->where('id_utilisateur', $userId)
+            ->orderBy('date_achat', 'DESC')
+            ->get()
+            ->getResultArray();
+    }
 }

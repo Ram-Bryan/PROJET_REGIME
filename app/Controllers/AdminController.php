@@ -8,9 +8,20 @@ use App\Models\UtilisateurModel;
 
 class AdminController extends BaseController
 {
+    protected AdminModel $adminModel;
+    protected UtilisateurModel $utilisateurModel;
+    protected ObjectifModel $objectifModel;
+
+    public function __construct()
+    {
+        $this->adminModel = model(AdminModel::class);
+        $this->utilisateurModel = model(UtilisateurModel::class);
+        $this->objectifModel = model(ObjectifModel::class);
+    }
+
     public function login()
     {
-        return view('admin/login');
+        return view('auth/admin_login');
     }
 
     public function authenticate()
@@ -18,8 +29,7 @@ class AdminController extends BaseController
         $email = $this->request->getPost('email');
         $motDePasse = $this->request->getPost('mot_de_passe');
 
-        $adminModel = new AdminModel();
-        $admin = $adminModel->checkAdmin($email, $motDePasse);
+        $admin = $this->adminModel->checkAdmin($email, $motDePasse);
 
         if ($admin) {
             session()->set('admin_id', $admin['id_utilisateur']);
@@ -39,39 +49,20 @@ class AdminController extends BaseController
             return redirect()->to('/admin/login');
         }
 
-        $utilisateurModel = new UtilisateurModel();
-        $objectifModel = new ObjectifModel();
-        $db = db_connect();
+        $stats = $this->adminModel->getDashboardStats();
 
-        $usersCount = $utilisateurModel->countAllResults();
-        $goldCount = $utilisateurModel->where('is_gold', 1)->countAllResults();
-        $salesCount = $db->table('commande')->countAllResults();
-        $objectivesCount = $objectifModel->countAllResults();
-        $regimesCount = $db->table('regime')->countAllResults();
-        $chiffreAffaireRow = $db->table('commande')->selectSum('montant_paye')->get()->getRowArray();
-        $chiffreAffaire = empty($chiffreAffaireRow['montant_paye']) ? 0 : $chiffreAffaireRow['montant_paye'];
-
-        $objectifs = $objectifModel
-            ->select('objectif.id_objectif, objectif.label_objectif, COUNT(utilisateur.id_utilisateur) AS total', false)
-            ->join('utilisateur', 'utilisateur.id_objectif = objectif.id_objectif', 'left')
-            ->groupBy('objectif.id_objectif')
-            ->orderBy('objectif.id_objectif', 'ASC')
-            ->findAll();
-
-        $recentUsers = $utilisateurModel
-            ->select('nom, email')
-            ->orderBy('id_utilisateur', 'DESC')
-            ->findAll(5);
-
-        return view('admin/dashboard', [
-            'usersCount' => $usersCount,
-            'goldCount' => $goldCount,
-            'salesCount' => $salesCount,
-            'objectivesCount' => $objectivesCount,
-            'regimesCount' => $regimesCount,
-            'chiffreAffaire' => $chiffreAffaire,
-            'objectifs' => $objectifs,
-            'recentUsers' => $recentUsers,
+        return view('backoffice/dashboard/index', [
+            'usersCount' => $stats['usersCount'],
+            'goldCount' => $stats['goldCount'],
+            'salesCount' => $stats['salesCount'],
+            'objectivesCount' => $stats['objectivesCount'],
+            'regimesCount' => $stats['regimesCount'],
+            'chiffreAffaire' => $stats['chiffreAffaire'],
+            'objectifs' => $stats['objectifs'],
+            'recentUsers' => $stats['recentUsers'],
+            'pieData' => $stats['pieData'],
+            'trendLabels' => $stats['trendLabels'],
+            'trendValues' => $stats['trendValues'],
             'activeNav' => 'dashboard',
         ]);
     }

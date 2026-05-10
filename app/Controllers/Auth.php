@@ -232,7 +232,7 @@ class Auth extends BaseController
             $this->refreshUserSessionData($user);
         }
 
-        return view('dashboard', [
+        return view('frontoffice/dashboard/index', [
             'nom' => (string) session()->get('nom'),
             'email' => (string) session()->get('email'),
             'role' => (string) session()->get('role'),
@@ -251,7 +251,7 @@ class Auth extends BaseController
         $commandeModel = new CommandeModel();
         $transactions = $commandeModel->getHistoryByUserId((int) session()->get('id_utilisateur'));
 
-        return view('transactions/index', [
+        return view('frontoffice/transactions/index', [
             'transactions' => $transactions,
         ]);
     }
@@ -266,7 +266,7 @@ class Auth extends BaseController
         $user = $userModel->find((int) session()->get('id_utilisateur'));
         $demandeModel = new DemandeCodePromoModel();
 
-        return view('promo/index', [
+        return view('frontoffice/promo/index', [
             'argent' => (float) ($user['argent'] ?? session()->get('argent') ?? 0),
             'demandes' => $demandeModel->getUserHistory((int) session()->get('id_utilisateur')),
         ]);
@@ -405,7 +405,7 @@ class Auth extends BaseController
 
         $imc = $userModel->calculateImc((float) $user['poids_kg'], (float) $user['taille_cm']);
 
-        return view('profile/view', [
+        return view('frontoffice/profile/view', [
             'user' => $user,
             'objectif' => $objectif,
             'imc' => $imc,
@@ -427,7 +427,7 @@ class Auth extends BaseController
 
         $objectifModel = new ObjectifModel();
 
-        return view('profile/edit', [
+        return view('frontoffice/profile/edit', [
             'user' => $user,
             'objectifs' => $objectifModel->findAll(),
         ]);

@@ -34,7 +34,7 @@ class AdminPromoController extends BaseController
             $filters['etat'] = 'tous';
         }
 
-        return view('admin/promos/index', [
+        return view('backoffice/promo/index', [
             'promos' => $promoModel->getAdminListing($filters),
             'filters' => $filters,
             'activeNav' => 'promos',
@@ -47,7 +47,7 @@ class AdminPromoController extends BaseController
             return $redirect;
         }
 
-        return view('admin/promos/form', [
+        return view('backoffice/promo/form', [
             'title' => 'Creer un code promo',
             'action' => base_url('admin/promos/store'),
             'promo' => null,
@@ -95,7 +95,7 @@ class AdminPromoController extends BaseController
             return redirect()->to('/admin/promos')->with('error', 'Code promo introuvable.');
         }
 
-        return view('admin/promos/form', [
+        return view('backoffice/promo/form', [
             'title' => 'Modifier un code promo',
             'action' => base_url('admin/promos/update/' . $id),
             'promo' => $promo,
@@ -189,7 +189,7 @@ class AdminPromoController extends BaseController
         }
         unset($demande);
 
-        return view('admin/promos/validate', [
+        return view('backoffice/promo/validate', [
             'demandes' => $demandes,
             'stats' => $stats,
             'activeNav' => 'promos',
@@ -225,31 +225,10 @@ class AdminPromoController extends BaseController
             return redirect()->to('/admin/promos/validate')->with('error', 'Utilisateur introuvable pour cette demande.');
         }
 
-        $newArgent = (float) ($user['argent'] ?? 0) + (float) ($promo['montant'] ?? 0);
-        $db = db_connect();
-
-        $db->transStart();
-
-        $userModel->update((int) $user['id_utilisateur'], [
-            'argent' => $newArgent,
-        ]);
-
-        $promoModel->update((int) $promo['id_code'], [
-            'deja_utilise' => true,
-            'id_utilisateur_utilisation' => (int) $user['id_utilisateur'],
-        ]);
-
-        $demandeModel->update($id, [
-            'statut' => 'accepte',
-            'id_admin_traitement' => (int) session()->get('admin_id'),
-            'note_admin' => 'Code promo accepte.',
-            'date_traitement' => date('Y-m-d H:i:s'),
-        ]);
-
-        $db->transComplete();
-
-        if (! $db->transStatus()) {
-            return redirect()->to('/admin/promos/validate')->with('error', 'La validation a echoue. Merci de reessayer.');
+        try {
+            $demandeModel->approveRequestTransaction($id, $demande, $promo, $user, (int) session()->get('admin_id'));
+        } catch (\RuntimeException $exception) {
+            return redirect()->to('/admin/promos/validate')->with('error', $exception->getMessage());
         }
 
         return redirect()->to('/admin/promos/validate')->with('success', 'La demande a ete acceptee et le solde du client a ete credite.');

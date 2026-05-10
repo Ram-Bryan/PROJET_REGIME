@@ -19,7 +19,7 @@ class AdminUtilisateurController extends BaseController
                                          ->orderBy('id_utilisateur', 'DESC')
                                          ->findAll();
 
-        return view('admin/utilisateurs/index', [
+        return view('backoffice/utilisateur/index', [
             'utilisateurs' => $utilisateurs,
             'activeNav'    => 'utilisateurs',
         ]);
@@ -40,14 +40,9 @@ class AdminUtilisateurController extends BaseController
             return redirect()->to('/admin/utilisateurs');
         }
 
-        $db = db_connect();
-        $commandes = $db->table('v_commande_regime')
-                        ->where('id_utilisateur', $id)
-                        ->orderBy('date_achat', 'DESC')
-                        ->get()
-                        ->getResultArray();
+        $commandes = $utilisateurModel->getUserCommandes($id);
 
-        return view('admin/utilisateurs/show', [
+        return view('backoffice/utilisateur/show', [
             'user'      => $user,
             'commandes' => $commandes,
             'activeNav' => 'utilisateurs',

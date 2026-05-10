@@ -1855,3 +1855,84 @@ ORDER BY CASE WHEN d.statut = \'en_attente\' THEN 0 ELSE 1 END, `d`.`date_demand
 11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 13 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+ERROR - 2026-05-10 22:05:54 --> Unknown column 'date_commande' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = \'2025-12\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = \'2025-12\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = \'2025-12\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = :DATE_FORMAT(date_commande, \'%Y-%m\'):', [...], false)
+ 5 APPPATH\Models\AdminModel.php(72): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\AdminController.php(52): App\Models\AdminModel->getDashboardStats()
+ 7 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->dashboard()
+ 8 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 9 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 22:05:54 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'date_commande' in 'where clause'
+[Method: GET, Route: admin/dashboard]
+in SYSTEMPATH\Database\BaseConnection.php on line 865.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = :DATE_FORMAT(date_commande, \'%Y-%m\'):', [...], false)
+ 2 APPPATH\Models\AdminModel.php(72): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\AdminController.php(52): App\Models\AdminModel->getDashboardStats()
+ 4 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->dashboard()
+ 5 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 6 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 22:05:54 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'date_commande' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 310.
+ 1 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = \'2025-12\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = \'2025-12\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = :DATE_FORMAT(date_commande, \'%Y-%m\'):', [...], false)
+ 4 APPPATH\Models\AdminModel.php(72): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\AdminController.php(52): App\Models\AdminModel->getDashboardStats()
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->dashboard()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
+CRITICAL - 2026-05-10 22:05:54 --> [Caused by] mysqli_sql_exception: Unknown column 'date_commande' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = \'2025-12\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(910): CodeIgniter\Database\MySQLi\Connection->execute('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = \'2025-12\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = \'2025-12\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT SUM(`montant_paye`) AS `montant_paye`
+FROM `commande`
+WHERE DATE_FORMAT(date_commande, \'%Y-%m\') = :DATE_FORMAT(date_commande, \'%Y-%m\'):', [...], false)
+ 5 APPPATH\Models\AdminModel.php(72): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\AdminController.php(52): App\Models\AdminModel->getDashboardStats()
+ 7 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\AdminController->dashboard()
+ 8 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 9 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('E:\\Dossier_Bryan\\ITU\\S4\\SI\\PROJET_REGIME\\public\\index.php')
