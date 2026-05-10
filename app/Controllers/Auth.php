@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\CodePromoModel;
+use App\Models\DemandeCodePromoModel;
 use App\Models\CommandeModel;
 use App\Models\ImcModel;
 use App\Models\ObjectifModel;
@@ -263,13 +264,70 @@ class Auth extends BaseController
 
         $userModel = new UtilisateurModel();
         $user = $userModel->find((int) session()->get('id_utilisateur'));
+        $demandeModel = new DemandeCodePromoModel();
 
         return view('promo/index', [
             'argent' => (float) ($user['argent'] ?? session()->get('argent') ?? 0),
+            'demandes' => $demandeModel->getUserHistory((int) session()->get('id_utilisateur')),
         ]);
     }
 
     public function applyPromo()
+    {
+        if (! session()->get('is_logged_in')) {
+            return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');
+        }
+
+        $rules = [
+            'code_promo' => 'required|min_length[3]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return $this->validationErrorResponse(
+                'Veuillez saisir un code promo valide.',
+                $this->validator->getErrors()
+            );
+        }
+
+        $code = strtoupper(trim((string) $this->request->getPost('code_promo')));
+        $promoModel = new CodePromoModel();
+        $promo = $promoModel->findByCode($code);
+
+        if ($promo !== null && (bool) ($promo['deja_utilise'] ?? false)) {
+            return $this->validationErrorResponse('Ce code promo a deja ete utilise.', [
+                'code_promo' => 'Ce code promo a deja ete utilise.',
+            ]);
+        }
+
+        $userId = (int) session()->get('id_utilisateur');
+        $userModel = new UtilisateurModel();
+        $currentUser = $userModel->find($userId);
+
+        if ($currentUser === null) {
+            return $this->errorResponse('Utilisateur introuvable.', '/login');
+        }
+
+        $demandeModel = new DemandeCodePromoModel();
+        if (! $demandeModel->hasPendingRequest($userId, $code)) {
+            $demandeModel->insert([
+                'id_utilisateur' => $userId,
+                'code_saisi' => $code,
+                'statut' => 'en_attente',
+                'date_demande' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Votre code promo a ete envoye. Un administrateur doit maintenant le valider.',
+            ]);
+        }
+
+        return redirect()->to('/promo')->with('success', 'Votre code promo a ete envoye pour validation.');
+    }
+
+    private function applyPromoLegacy()
     {
         if (! session()->get('is_logged_in')) {
             return redirect()->to('/login')->with('error', 'Veuillez vous connecter.');

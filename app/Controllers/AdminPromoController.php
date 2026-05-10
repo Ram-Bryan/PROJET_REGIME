@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\CodePromoModel;
+use App\Models\DemandeCodePromoModel;
+use App\Models\UtilisateurModel;
 
 class AdminPromoController extends BaseController
 {
@@ -22,9 +24,19 @@ class AdminPromoController extends BaseController
         }
 
         $promoModel = new CodePromoModel();
+        $filters = [
+            'montant_min' => trim((string) $this->request->getGet('montant_min')),
+            'montant_max' => trim((string) $this->request->getGet('montant_max')),
+            'etat' => trim((string) ($this->request->getGet('etat') ?? 'tous')),
+        ];
+
+        if (! in_array($filters['etat'], ['tous', 'disponible', 'utilise'], true)) {
+            $filters['etat'] = 'tous';
+        }
 
         return view('admin/promos/index', [
-            'promos' => $promoModel->orderBy('id_code', 'DESC')->findAll(),
+            'promos' => $promoModel->getAdminListing($filters),
+            'filters' => $filters,
             'activeNav' => 'promos',
         ]);
     }
@@ -63,7 +75,7 @@ class AdminPromoController extends BaseController
         $promoModel->insert([
             'code' => strtoupper(trim((string) $this->request->getPost('code'))),
             'montant' => $this->request->getPost('montant'),
-            'deja_utilise' => (bool) $this->request->getPost('deja_utilise'),
+            'deja_utilise' => false,
             'id_utilisateur_utilisation' => null,
         ]);
 
@@ -117,7 +129,6 @@ class AdminPromoController extends BaseController
         $promoModel->update($id, [
             'code' => strtoupper(trim((string) $this->request->getPost('code'))),
             'montant' => $this->request->getPost('montant'),
-            'deja_utilise' => (bool) $this->request->getPost('deja_utilise'),
         ]);
 
         return redirect()->to('/admin/promos')->with('success', 'Code promo mis a jour avec succes.');
@@ -130,8 +141,13 @@ class AdminPromoController extends BaseController
         }
 
         $promoModel = new CodePromoModel();
-        if (! $promoModel->find($id)) {
+        $promo = $promoModel->find($id);
+        if (! $promo) {
             return redirect()->to('/admin/promos')->with('error', 'Code promo introuvable.');
+        }
+
+        if ((int) ($promo['deja_utilise'] ?? 0) === 1) {
+            return redirect()->to('/admin/promos')->with('error', 'Impossible de supprimer un code promo deja utilise.');
         }
 
         $promoModel->delete($id);
@@ -145,50 +161,123 @@ class AdminPromoController extends BaseController
             return $redirect;
         }
 
+        $demandeModel = new DemandeCodePromoModel();
+        $promoModel = new CodePromoModel();
+        $demandes = $demandeModel->getPendingAdminListing();
+        $codeMap = [];
+        foreach ($promoModel->select('id_code, code, montant, deja_utilise')->findAll() as $promo) {
+            $codeMap[strtoupper((string) $promo['code'])] = $promo;
+        }
+
+        $stats = [
+            'en_attente' => count($demandes),
+            'codes_existants' => 0,
+            'codes_inexistants' => 0,
+        ];
+
+        foreach ($demandes as &$demande) {
+            $code = strtoupper(trim((string) ($demande['code_saisi'] ?? '')));
+            $promo = $codeMap[$code] ?? null;
+            $demande['promo_match'] = $promo;
+            $demande['code_existe'] = $promo !== null;
+
+            if ($promo !== null) {
+                $stats['codes_existants']++;
+            } else {
+                $stats['codes_inexistants']++;
+            }
+        }
+        unset($demande);
+
         return view('admin/promos/validate', [
-            'result' => session()->getFlashdata('promo_result'),
-            'validation' => session()->getFlashdata('validation'),
+            'demandes' => $demandes,
+            'stats' => $stats,
             'activeNav' => 'promos',
         ]);
     }
 
-    public function validateCode()
+    public function approveRequest(int $id)
     {
         if ($redirect = $this->requireAdmin()) {
             return $redirect;
         }
 
-        $rules = [
-            'code' => 'required|min_length[3]|max_length[50]',
-        ];
-
-        if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('validation', $this->validator);
-        }
-
-        $code = strtoupper(trim((string) $this->request->getPost('code')));
+        $demandeModel = new DemandeCodePromoModel();
         $promoModel = new CodePromoModel();
-        $promo = $promoModel->where('code', $code)->first();
+        $userModel = new UtilisateurModel();
 
-        if (! $promo) {
-            return redirect()->back()->withInput()->with('promo_result', [
-                'status' => 'error',
-                'message' => 'Code promo introuvable.',
-            ]);
+        $demande = $demandeModel->find($id);
+        if (! $demande) {
+            return redirect()->to('/admin/promos/validate')->with('error', 'Demande de code promo introuvable.');
         }
 
-        if ((int) ($promo['deja_utilise'] ?? 0) === 1) {
-            return redirect()->back()->withInput()->with('promo_result', [
-                'status' => 'error',
-                'message' => 'Ce code promo a deja ete utilise.',
-                'promo' => $promo,
-            ]);
+        if (($demande['statut'] ?? '') !== 'en_attente') {
+            return redirect()->to('/admin/promos/validate')->with('error', 'Cette demande n\'est plus en attente.');
         }
 
-        return redirect()->back()->withInput()->with('promo_result', [
-            'status' => 'success',
-            'message' => 'Code promo valide.',
-            'promo' => $promo,
+        $promo = $promoModel->findAvailableByCode((string) ($demande['code_saisi'] ?? ''));
+        if ($promo === null) {
+            return redirect()->to('/admin/promos/validate')->with('error', 'Ce code n\'existe pas ou il a deja ete utilise.');
+        }
+
+        $user = $userModel->find((int) $demande['id_utilisateur']);
+        if ($user === null) {
+            return redirect()->to('/admin/promos/validate')->with('error', 'Utilisateur introuvable pour cette demande.');
+        }
+
+        $newArgent = (float) ($user['argent'] ?? 0) + (float) ($promo['montant'] ?? 0);
+        $db = db_connect();
+
+        $db->transStart();
+
+        $userModel->update((int) $user['id_utilisateur'], [
+            'argent' => $newArgent,
         ]);
+
+        $promoModel->update((int) $promo['id_code'], [
+            'deja_utilise' => true,
+            'id_utilisateur_utilisation' => (int) $user['id_utilisateur'],
+        ]);
+
+        $demandeModel->update($id, [
+            'statut' => 'accepte',
+            'id_admin_traitement' => (int) session()->get('admin_id'),
+            'note_admin' => 'Code promo accepte.',
+            'date_traitement' => date('Y-m-d H:i:s'),
+        ]);
+
+        $db->transComplete();
+
+        if (! $db->transStatus()) {
+            return redirect()->to('/admin/promos/validate')->with('error', 'La validation a echoue. Merci de reessayer.');
+        }
+
+        return redirect()->to('/admin/promos/validate')->with('success', 'La demande a ete acceptee et le solde du client a ete credite.');
+    }
+
+    public function rejectRequest(int $id)
+    {
+        if ($redirect = $this->requireAdmin()) {
+            return $redirect;
+        }
+
+        $demandeModel = new DemandeCodePromoModel();
+        $demande = $demandeModel->find($id);
+        if (! $demande) {
+            return redirect()->to('/admin/promos/validate')->with('error', 'Demande de code promo introuvable.');
+        }
+
+        if (($demande['statut'] ?? '') !== 'en_attente') {
+            return redirect()->to('/admin/promos/validate')->with('error', 'Cette demande n\'est plus en attente.');
+        }
+
+        $demandeModel->update($id, [
+            'statut' => 'refuse',
+            'id_admin_traitement' => (int) session()->get('admin_id'),
+            'note_admin' => 'Code promo refuse.',
+            'date_traitement' => date('Y-m-d H:i:s'),
+        ]);
+
+        return redirect()->to('/admin/promos/validate')->with('success', 'La demande a ete refusee.');
     }
 }

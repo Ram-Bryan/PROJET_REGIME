@@ -60,4 +60,5 @@ $routes->get('/admin/promos/edit/(:num)', 'AdminPromoController::edit/$1');
 $routes->post('/admin/promos/update/(:num)', 'AdminPromoController::update/$1');
 $routes->post('/admin/promos/delete/(:num)', 'AdminPromoController::delete/$1');
 $routes->get('/admin/promos/validate', 'AdminPromoController::validatePage');
-$routes->post('/admin/promos/validate', 'AdminPromoController::validateCode');
+$routes->post('/admin/promos/validate/approve/(:num)', 'AdminPromoController::approveRequest/$1');
+$routes->post('/admin/promos/validate/reject/(:num)', 'AdminPromoController::rejectRequest/$1');

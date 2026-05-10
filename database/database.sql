@@ -142,6 +142,27 @@ CREATE TABLE code_promo (
 );
 
 -- =========================================================
+-- TABLE DEMANDE_CODE_PROMO
+-- =========================================================
+
+CREATE TABLE demande_code_promo (
+    id_demande_code_promo INT AUTO_INCREMENT PRIMARY KEY,
+    id_utilisateur INT NOT NULL,
+    code_saisi VARCHAR(50) NOT NULL,
+    statut VARCHAR(20) NOT NULL DEFAULT 'en_attente',
+    id_admin_traitement INT NULL,
+    note_admin VARCHAR(255) NULL,
+    date_demande DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_traitement DATETIME NULL,
+
+    FOREIGN KEY (id_utilisateur)
+        REFERENCES utilisateur(id_utilisateur),
+
+    FOREIGN KEY (id_admin_traitement)
+        REFERENCES utilisateur(id_utilisateur)
+);
+
+-- =========================================================
 -- TABLE OPTION
 -- =========================================================
 
