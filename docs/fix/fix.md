@@ -17,10 +17,6 @@ Eye sur le mdp
 Cards confirmer achat ou encore deconexion.
 
 
-tode miditra ao anaty index.php ilay izy
-
-
-
 
 Login page: 
 Remove the "Minimum 6 caractere" and the funcitonality of this. Normally we dont show these in the a login page.
@@ -49,7 +45,7 @@ Better UX Flow
 1. User enters
 Taille
 Poids actuel
-2. User chooses ONE objective
+1. User chooses ONE objective
 
 Radio:
 

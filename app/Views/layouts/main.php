@@ -495,7 +495,42 @@
             background: var(--error-bg);
             color: var(--error-text);
             border-color: #fecdca;
+            border-left: 4px solid #f04438;
+            font-weight: 600;
         }
+        .confirm-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 6, 23, .55);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            padding: 16px;
+        }
+        .confirm-modal.open { display: flex; }
+        .confirm-card {
+            width: min(460px, 100%);
+            border-radius: 16px;
+            background: #fff;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: confirmIn .18s ease-out;
+        }
+        .confirm-head {
+            padding: 16px 18px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #f8fbff, #fff);
+        }
+        .confirm-head img { width: 18px; height: 18px; }
+        .confirm-body { padding: 16px 18px; color: #334155; }
+        .confirm-actions { padding: 14px 18px; display: flex; gap: 10px; justify-content: flex-end; }
+        @keyframes confirmIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         .field-error {
             min-height: 16px;
@@ -670,6 +705,19 @@
 
     <?= $this->renderSection('content') ?>
 </main>
+<div class="confirm-modal" id="confirm-modal" aria-hidden="true">
+    <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="confirm-head">
+            <img src="<?= esc(base_url('assets/icons/shield-alert.svg')) ?>" alt="">
+            <strong id="confirm-title">Confirmation</strong>
+        </div>
+        <div class="confirm-body" id="confirm-message">Confirmer cette action ?</div>
+        <div class="confirm-actions">
+            <button type="button" class="btn btn-secondary" id="confirm-cancel">Annuler</button>
+            <button type="button" class="btn" id="confirm-ok">Confirmer</button>
+        </div>
+    </div>
+</div>
 
 <script>
     (function () {
@@ -692,8 +740,11 @@
 
             const errorEntries = Object.entries(errors || {});
             if (type === 'error' && errorEntries.length) {
-                const list = errorEntries.map(([, value]) => `<li>${String(value)}</li>`).join('');
-                feedback.innerHTML = `<strong>${message}</strong><ul style="margin:8px 0 0; padding-left:18px;">${list}</ul>`;
+                const unique = [...new Set(errorEntries.map(([, value]) => String(value)))].filter((value) => value !== String(message || ''));
+                const list = unique.map((value) => `<li>${value}</li>`).join('');
+                feedback.innerHTML = list
+                    ? `<strong>${message}</strong><ul style="margin:8px 0 0; padding-left:18px;">${list}</ul>`
+                    : `<strong>${message}</strong>`;
             } else {
                 feedback.textContent = message || '';
             }
@@ -735,11 +786,50 @@
             }
         };
 
+        const modal = document.getElementById('confirm-modal');
+        const modalMessage = document.getElementById('confirm-message');
+        const modalOk = document.getElementById('confirm-ok');
+        const modalCancel = document.getElementById('confirm-cancel');
+        let pendingAction = null;
+
+        const closeModal = () => {
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden', 'true');
+            pendingAction = null;
+        };
+
+        modalCancel?.addEventListener('click', closeModal);
+        modal?.addEventListener('click', (event) => {
+            if (event.target === modal) closeModal();
+        });
+        modalOk?.addEventListener('click', () => {
+            if (!pendingAction) return closeModal();
+            const action = pendingAction;
+            closeModal();
+            if (action.type === 'link') {
+                window.location.href = action.href;
+            } else if (action.type === 'submit') {
+                if (typeof action.form.requestSubmit === 'function') {
+                    action.form.requestSubmit(action.submitter || undefined);
+                } else if (action.submitter) {
+                    action.submitter.click();
+                } else {
+                    action.form.submit();
+                }
+            }
+        });
+
         document.querySelectorAll('[data-confirm-message]').forEach((element) => {
             element.addEventListener('click', function (event) {
+                event.preventDefault();
                 const message = this.getAttribute('data-confirm-message') || 'Confirmer cette action ?';
-                if (!window.confirm(message)) {
-                    event.preventDefault();
+                modalMessage.textContent = message;
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden', 'false');
+                if (this.tagName.toLowerCase() === 'a') {
+                    pendingAction = { type: 'link', href: this.getAttribute('href') };
+                } else if (this.type === 'submit' && this.form) {
+                    pendingAction = { type: 'submit', form: this.form, submitter: this };
                 }
             });
         });
@@ -785,17 +875,13 @@
                     const data = await response.json();
 
                     if (!response.ok || !data.success) {
-                        const hasFieldErrors = data.errors && Object.keys(data.errors).length > 0;
-                        if (hasFieldErrors) {
-                            const feedback = form.querySelector('[data-form-feedback]');
-                            if (feedback) {
-                                feedback.className = 'form-feedback';
-                                feedback.textContent = '';
-                            }
-                        } else {
-                            setFeedback(form, 'error', data.message || 'Veuillez vérifier les champs du formulaire.', data.errors || {});
+                        setFeedback(form, 'error', data.message || 'Veuillez vérifier les champs du formulaire.', data.errors || {});
+                        const errors = data.errors || {};
+                        const messages = Object.values(errors).map((v) => String(v));
+                        const allSameAsTop = messages.length > 0 && messages.every((m) => m === String(data.message || ''));
+                        if (!allSameAsTop) {
+                            showFieldErrors(form, errors);
                         }
-                        showFieldErrors(form, data.errors || {});
                         setLoading(submit, false);
                         return;
                     }

@@ -69,12 +69,6 @@
             </div>
         </div>
 
-        <div class="card stack">
-            <label for="current_password">Mot de passe actuel *</label>
-            <input type="password" id="current_password" name="current_password" required>
-            <div class="field-error" data-field-error="current_password"><?php if (isset($validationErrors['current_password'])): ?><?= esc($validationErrors['current_password']) ?><?php endif; ?></div>
-        </div>
-
         <div class="actions">
             <button type="submit" class="btn">Enregistrer</button>
             <a href="<?= site_url('/profile') ?>" class="btn btn-secondary">Annuler</a>

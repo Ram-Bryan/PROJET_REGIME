@@ -504,7 +504,8 @@ class Auth extends BaseController
             ]);
         }
 
-        return redirect()->back()->withInput()->with('error', $message)->with('errors', $errors);
+        // Avoid repeating the same message in both global flash and field-level errors.
+        return redirect()->back()->withInput()->with('errors', $errors);
     }
 
     private function refreshUserSessionData(array $user): void

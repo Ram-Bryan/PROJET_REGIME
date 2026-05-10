@@ -1,6 +1,20 @@
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('title') ?>Dashboard<?= $this->endSection() ?>
+<?= $this->section('head') ?>
+<style>
+.metric-card { position: relative; overflow: hidden; }
+.metric-card::after {
+    content: '';
+    position: absolute; inset: auto -30% -60% auto;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(37,99,235,.12), transparent 70%);
+}
+.metric-with-icon { display:flex; align-items:center; gap:10px; }
+.metric-with-icon img { width:18px; height:18px; opacity:.85; }
+@media (max-width: 720px) { .hero-actions .btn { width: 100%; } }
+</style>
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 <section class="stack">
@@ -25,23 +39,23 @@
 
     <div class="metric-grid">
         <div class="metric-card">
-            <div class="metric-label">Email</div>
+            <div class="metric-label metric-with-icon"><img src="<?= esc(base_url('assets/icons/mail.svg')) ?>" alt="">Email</div>
             <div class="metric-value small"><?= esc($email) ?></div>
         </div>
         <div class="metric-card">
-            <div class="metric-label">Rôle</div>
+            <div class="metric-label metric-with-icon"><img src="<?= esc(base_url('assets/icons/user-round.svg')) ?>" alt="">Rôle</div>
             <div class="metric-value"><?= esc($role) ?></div>
         </div>
         <div class="metric-card">
-            <div class="metric-label">IMC</div>
+            <div class="metric-label metric-with-icon"><img src="<?= esc(base_url('assets/icons/activity.svg')) ?>" alt="">IMC</div>
             <div class="metric-value"><?= session()->get('imc') !== null ? esc((string) session()->get('imc')) : 'N/A' ?></div>
         </div>
         <div class="metric-card">
-            <div class="metric-label">Objectif</div>
+            <div class="metric-label metric-with-icon"><img src="<?= esc(base_url('assets/icons/target.svg')) ?>" alt="">Objectif</div>
             <div class="metric-value small"><?= esc((string) (session()->get('objectif_label') ?? 'N/A')) ?></div>
         </div>
         <div class="metric-card">
-            <div class="metric-label">Solde</div>
+            <div class="metric-label metric-with-icon"><img src="<?= esc(base_url('assets/icons/wallet.svg')) ?>" alt="">Solde</div>
             <div class="metric-value"><?= esc((string) (session()->get('argent') ?? 0)) ?> Ar</div>
         </div>
         <div class="metric-card">
