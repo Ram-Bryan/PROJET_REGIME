@@ -41,12 +41,20 @@
 
 <?= $this->section('content') ?>
 <section class="stack">
-    <div class="page-header">
-        <h1>Régimes</h1>
-        <p class="sub">Liste des régimes disponibles avec filtres.</p>
+    <div class="hero">
+        <div class="page-header" style="position:relative; z-index:1;">
+            <h1>Régimes</h1>
+            <p class="sub">Explorez les formules disponibles, filtrez par durée ou objectif, et visualisez rapidement les durées et activités associées.</p>
+        </div>
     </div>
 
     <div class="card">
+        <div class="section-title">
+            <div>
+                <h2>Filtres</h2>
+                <p class="sub">Affinez la liste selon votre besoin.</p>
+            </div>
+        </div>
         <form method="get" class="filters" id="filters">
                 <div class="filter-group">
                     <label for="duree">Durée disponible</label>
@@ -78,6 +86,7 @@
         <?php if (empty($regimes)) : ?>
             <div class="empty">Aucun régime disponible.</div>
         <?php else : ?>
+            <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
@@ -121,6 +130,7 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
         <?php endif; ?>
     </div>
 </section>
