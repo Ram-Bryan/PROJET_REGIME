@@ -31,7 +31,7 @@ class CommandeController extends BaseController
         }
 
         $isGold = (bool) ($user['is_gold'] ?? false);
-        $discountPercent = $isGold ? 15.0 : 0.0;
+        $discountPercent = $this->getGoldDiscountPercent($isGold);
         $dureesAffichees = array_map(static function (array $duree) use ($discountPercent): array {
             $prixBase = (float) $duree['prix'];
             return $duree + [
@@ -96,8 +96,10 @@ class CommandeController extends BaseController
             ]);
         }
 
+        $isGold = (bool) ($user['is_gold'] ?? false);
+        $discountPercent = $this->getGoldDiscountPercent($isGold);
         $argent = (float) ($user['argent'] ?? 0);
-        $prix = (float) $duree['prix'];
+        $prix = $this->calculateFinalPrice((float) $duree['prix'], $discountPercent);
         if ($argent < $prix) {
             return $this->validationErrorResponse('Solde insuffisant pour acheter ce régime.', [
                 'id_duree_regime' => 'Solde insuffisant pour acheter ce régime.',
@@ -171,5 +173,19 @@ class CommandeController extends BaseController
         }
 
         return redirect()->back()->withInput()->with('error', $message)->with('errors', $errors);
+    }
+
+    private function getGoldDiscountPercent(bool $isGold): float
+    {
+        return $isGold ? 15.0 : 0.0;
+    }
+
+    private function calculateFinalPrice(float $basePrice, float $discountPercent): float
+    {
+        if ($discountPercent <= 0) {
+            return $basePrice;
+        }
+
+        return round($basePrice * (1 - ($discountPercent / 100)), 2);
     }
 }

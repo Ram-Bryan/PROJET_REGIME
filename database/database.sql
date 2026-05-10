@@ -402,7 +402,7 @@ INSERT INTO code_promo(
 (9000,'CODE012',FALSE,NULL),
 (3000,'CODE013',FALSE,NULL),
 (11000,'CODE014',FALSE,NULL),
-(13000,'CODE015',FALSE,NULL);
+(130000,'CODE015',FALSE,NULL);
 -- =========================================================
 -- INSERTION OPTIONS
 -- =========================================================

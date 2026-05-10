@@ -53,6 +53,16 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<?php
+    $isGold = ! empty($user['is_gold']);
+    $discountPercent = $isGold ? 15.0 : 0.0;
+    $formatPrice = static function (float $price): string {
+        return number_format($price, 0, ',', ' ');
+    };
+    $getFinalPrice = static function (float $price, float $discountPercent): float {
+        return $discountPercent > 0 ? round($price * (1 - ($discountPercent / 100)), 2) : $price;
+    };
+?>
 <section class="stack">
     <div class="page-header">
         <h1><?= esc($regime['nom_regime']) ?> <span class="badge"><?= esc($regime['variation_label']) ?></span></h1>
@@ -124,6 +134,7 @@
             <?php else : ?>
                 <form id="commande-form" method="post" action="<?= esc(site_url('regimes/purchase/' . $regime['id_regime'])) ?>" data-ajax-form="true">
                     <?php foreach ($durees as $index => $duree) : ?>
+                        <?php $prixFinal = $getFinalPrice((float) $duree['prix'], $discountPercent); ?>
                         <label class="option-card">
                             <div class="option-header">
                                 <input
@@ -131,12 +142,20 @@
                                     name="id_duree_regime"
                                     value="<?= esc($duree['id_duree_regime']) ?>"
                                     data-days="<?= esc($duree['nb_jours']) ?>"
-                                    data-price="<?= esc($duree['prix']) ?>"
+                                    data-price="<?= esc($prixFinal) ?>"
                                     <?= $index === 0 ? 'checked' : '' ?>
                                 >
                                 <?= esc($duree['nb_jours']) ?> jours
                             </div>
-                            <div class="option-meta">→ <?= esc(number_format((float) $duree['prix'], 0, ',', ' ')) ?> Ar</div>
+                            <div class="option-meta">
+                                → <?= esc($formatPrice($prixFinal)) ?> Ar
+                                <?php if ($isGold): ?>
+                                    <span style="text-decoration: line-through; margin-left: 6px; color: var(--muted);">
+                                        <?= esc($formatPrice((float) $duree['prix'])) ?> Ar
+                                    </span>
+                                    <span class="badge badge-success" style="margin-left: 6px;">-15%</span>
+                                <?php endif; ?>
+                            </div>
                             <div class="option-meta">→ Résultat estimé: <span class="estimate" data-days="<?= esc($duree['nb_jours']) ?>"></span></div>
                         </label>
                     <?php endforeach; ?>
