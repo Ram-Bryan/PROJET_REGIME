@@ -575,6 +575,10 @@
                     <img class="icon" src="<?= esc(base_url('assets/icons/layout-dashboard.svg')) ?>" alt="">
                     <span>Tableau de bord</span>
                 </a>
+                <a href="<?= base_url('admin/utilisateurs') ?>" class="<?= $navClass('utilisateurs') ?>">
+                    <img class="icon" src="<?= esc(base_url('assets/icons/users.svg')) ?>" alt="">
+                    <span>Utilisateurs</span>
+                </a>
                 <a href="<?= base_url('admin/regimes') ?>" class="<?= $navClass('regimes') ?>">
                     <img class="icon" src="<?= esc(base_url('assets/icons/apple.svg')) ?>" alt="">
                     <span>Regimes</span>
@@ -590,6 +594,10 @@
                 <a href="<?= base_url('admin/options') ?>" class="<?= $navClass('options') ?>">
                     <img class="icon" src="<?= esc(base_url('assets/icons/crown.svg')) ?>" alt="">
                     <span>Options</span>
+                </a>
+                <a href="<?= base_url('admin/imc') ?>" class="<?= $navClass('imc') ?>">
+                    <img class="icon" src="<?= esc(base_url('assets/icons/scale.svg')) ?>" alt="">
+                    <span>Parametres IMC</span>
                 </a>
             </nav>
 

@@ -34,7 +34,7 @@
         .stats-grid {
             display: grid;
             gap: 16px;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
         .stat-box {
@@ -42,6 +42,8 @@
             border-radius: 20px;
             color: #ffffff;
             box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
         }
 
         .stat-box h4 {
@@ -63,51 +65,44 @@
         .stat-b { background: linear-gradient(135deg, #7c3aed, #4f46e5); }
         .stat-c { background: linear-gradient(135deg, #1f8f6a, #157454); }
         .stat-d { background: linear-gradient(135deg, #d97706, #b45309); }
+        .stat-e { background: linear-gradient(135deg, #e11d48, #be123c); }
+        .stat-f { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
 
-        .objectif-bars {
-            display: grid;
-            gap: 14px;
-        }
-
-        .objectif-row {
-            display: grid;
-            gap: 8px;
-        }
-
-        .objectif-meta {
+        .pie-chart-container {
             display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            font-weight: 700;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            padding: 20px 0;
         }
 
-        .objectif-track {
-            height: 12px;
-            border-radius: 999px;
-            background: #e9eef3;
-            overflow: hidden;
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(var(--pie-gradients));
+            box-shadow: var(--shadow);
+            border: 4px solid var(--surface);
         }
 
-        .objectif-fill {
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, #1f8f6a, #2f6f88);
-        }
-
-        .quick-list {
-            display: grid;
-            gap: 12px;
-        }
-
-        .quick-item {
+        .pie-legend {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             gap: 12px;
-            padding: 14px 16px;
-            border-radius: 16px;
-            background: var(--surface-soft);
-            border: 1px solid var(--line);
-            font-weight: 700;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
         }
 
         @media (max-width: 980px) {
@@ -133,6 +128,14 @@
     </div>
 
     <div class="stats-grid" style="margin-top:18px;">
+        <div class="stat-box stat-e">
+            <h4>Chiffre d'affaire</h4>
+            <p><?= number_format((float)$chiffreAffaire, 0, ',', ' ') ?> Ar</p>
+        </div>
+        <div class="stat-box stat-c">
+            <h4>Ventes</h4>
+            <p><?= esc((string) $salesCount) ?></p>
+        </div>
         <div class="stat-box stat-a">
             <h4>Utilisateurs</h4>
             <p><?= esc((string) $usersCount) ?></p>
@@ -141,51 +144,58 @@
             <h4>Comptes Gold</h4>
             <p><?= esc((string) $goldCount) ?></p>
         </div>
-        <div class="stat-box stat-c">
-            <h4>Ventes</h4>
-            <p><?= esc((string) $salesCount) ?></p>
-        </div>
         <div class="stat-box stat-d">
             <h4>Objectifs</h4>
             <p><?= esc((string) $objectivesCount) ?></p>
         </div>
+        <div class="stat-box stat-f">
+            <h4>Nombre de regimes</h4>
+            <p><?= esc((string) $regimesCount) ?></p>
+        </div>
     </div>
 
     <div class="grid-2" style="margin-top:18px;">
-        <div class="card">
+        <div class="card" style="grid-column: 1 / -1;">
             <h3 class="section-title">Repartition des objectifs</h3>
-            <p class="section-subtitle">Lecture sans CDN ni librairie externe.</p>
+            <p class="section-subtitle">Graphique circulaire des objectifs choisis par les utilisateurs.</p>
 
             <?php if ($objectifs !== []): ?>
-                <div class="objectif-bars">
-                    <?php foreach ($objectifs as $objectif): ?>
-                        <?php $total = (int) ($objectif['total'] ?? 0); ?>
-                        <div class="objectif-row">
-                            <div class="objectif-meta">
-                                <span><?= esc($objectif['label_objectif'] ?? 'Objectif') ?></span>
-                                <span><?= esc((string) $total) ?></span>
+                <?php
+                    $colors = ['#1f8f6a', '#183247', '#7c3aed', '#d97706', '#e11d48', '#0ea5e9'];
+                    $totalUsersWithGoals = array_sum(array_column($objectifs, 'total'));
+                    $pieGradients = [];
+                    $cumulativePercent = 0;
+                    
+                    if ($totalUsersWithGoals > 0):
+                        foreach ($objectifs as $index => $objectif) {
+                            $percent = ((int) $objectif['total'] / $totalUsersWithGoals) * 100;
+                            if ($percent == 0) continue;
+                            
+                            $color = $colors[$index % count($colors)];
+                            $nextPercent = $cumulativePercent + $percent;
+                            $pieGradients[] = "{$color} {$cumulativePercent}% {$nextPercent}%";
+                            $cumulativePercent = $nextPercent;
+                        }
+                    endif;
+                    $pieGradientStr = implode(', ', $pieGradients);
+                ?>
+                <div class="pie-chart-container" style="--pie-gradients: <?= $totalUsersWithGoals > 0 ? $pieGradientStr : '#e9eef3 0% 100%' ?>">
+                    <div class="pie-chart"></div>
+                    <div class="pie-legend">
+                        <?php foreach ($objectifs as $index => $objectif): ?>
+                            <?php $total = (int) ($objectif['total'] ?? 0); ?>
+                            <?php if ($total > 0): ?>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: <?= $colors[$index % count($colors)] ?>;"></span>
+                                <span><?= esc($objectif['label_objectif'] ?? 'Objectif') ?> (<?= $total ?>)</span>
                             </div>
-                            <div class="objectif-track">
-                                <div class="objectif-fill" style="width: <?= esc((string) round(($total / $maxObjectif) * 100, 2)) ?>%;"></div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             <?php else: ?>
                 <p class="hint">Aucune donnee disponible.</p>
             <?php endif; ?>
-        </div>
-
-        <div class="card">
-            <h3 class="section-title">Indicateurs rapides</h3>
-            <p class="section-subtitle">Resume des chiffres principaux.</p>
-
-            <div class="quick-list">
-                <div class="quick-item"><span>Utilisateurs</span><strong><?= esc((string) $usersCount) ?></strong></div>
-                <div class="quick-item"><span>Gold</span><strong><?= esc((string) $goldCount) ?></strong></div>
-                <div class="quick-item"><span>Ventes</span><strong><?= esc((string) $salesCount) ?></strong></div>
-                <div class="quick-item"><span>Objectifs</span><strong><?= esc((string) $objectivesCount) ?></strong></div>
-            </div>
         </div>
     </div>
 

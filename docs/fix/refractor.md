@@ -49,3 +49,5 @@ Opus can remove some classes of html to totally rebuild the whole thing, It can 
 Why sometime it add index.php and osmetimes it doesnt ? 
 Some stuff are hardcoded in conrollers and in frontend views. 
 
+You can use a lot of css q
+

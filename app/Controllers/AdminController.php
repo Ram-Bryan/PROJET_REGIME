@@ -47,6 +47,9 @@ class AdminController extends BaseController
         $goldCount = $utilisateurModel->where('is_gold', 1)->countAllResults();
         $salesCount = $db->table('commande')->countAllResults();
         $objectivesCount = $objectifModel->countAllResults();
+        $regimesCount = $db->table('regime')->countAllResults();
+        $chiffreAffaireRow = $db->table('commande')->selectSum('montant_paye')->get()->getRowArray();
+        $chiffreAffaire = empty($chiffreAffaireRow['montant_paye']) ? 0 : $chiffreAffaireRow['montant_paye'];
 
         $objectifs = $objectifModel
             ->select('objectif.id_objectif, objectif.label_objectif, COUNT(utilisateur.id_utilisateur) AS total', false)
@@ -65,6 +68,8 @@ class AdminController extends BaseController
             'goldCount' => $goldCount,
             'salesCount' => $salesCount,
             'objectivesCount' => $objectivesCount,
+            'regimesCount' => $regimesCount,
+            'chiffreAffaire' => $chiffreAffaire,
             'objectifs' => $objectifs,
             'recentUsers' => $recentUsers,
             'activeNav' => 'dashboard',

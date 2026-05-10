@@ -307,6 +307,22 @@ Do a CRUD of GOLD. INside we see Gold specs of Gold And then when we view we see
 Still in Gold logic: the frontoffcie still hasnt the "Buy the Gold" logic. IN te frontofffic thelogic there is when we buy the requested amount of Gold then we become GOld. THis is wrong. NOrmally, we should acces hte gold and not become gold imediately. SO there is like a page Opption of Godl and we see Gold and icons specs and stuff of gold in a card. If avalible the card is like fading adn button buy is disable and like there is a message syaing that "Vouz devez acheter X regimes puor puovoir acceder au Gold". Sinon, le truc n est plus fade et on peut l acheter
 
 
-NOw we do CRUD utilisateur:
+You're a pro web dev with 30 years of experience.
+Read conception.md and databse.sql for context.
+BAckoffice:
+NOw we do CRUD utilisateur :
 CRUD utilisateur: 
-list of utilisateur without the admin in it. Cant add or anything just listing and viewing Ig. And when we view we see the regimes they got and other infos of them. Use ICons
+list of utilisateur without the admin in it. Cant add or anything just listing and viewing Ig. And when we view we see the regimes they got and other infos of them. Use ICons.
+NO cdn public\assets\icon use
+
+About dashboard:
+Add Chiffre d;affiare inside Tableau de bor dchiffre.
+And infos about Nb of regime too.
+Make the Repartition des objectifs as a circular graph.
+
+And remove seciton indicateur rapides
+
+I want clean very simple and pro code. MVC and SOC style
+
+
+Now do the CRUD of parametre IMC (look the table IMC). We cant add but we can only change the values. There are validaiton checks of intervalls. UX and UI first. 
