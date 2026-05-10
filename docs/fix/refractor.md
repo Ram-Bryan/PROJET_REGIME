@@ -43,5 +43,13 @@ app/
 
 This is not the real structure but I want a structure like this. Like frontoffic and backoffice with partials or Idk and auth all separted. 
 
-    
+
 Opus can remove some classes of html to totally rebuild the whole thing, It can even empty the hoel page to rebuild it form scratch. 
+
+Why sometime it add index.php and osmetimes it doesnt ? 
+
+
+
+
+
+OKay now we're in the CRUD 

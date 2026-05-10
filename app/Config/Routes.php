@@ -46,6 +46,7 @@ $routes->post('/admin/regimes/delete/(:num)', 'AdminRegimeController::delete/$1'
 $routes->get('/admin/activites', 'AdminActiviteController::index');
 $routes->get('/admin/activites/create', 'AdminActiviteController::create');
 $routes->post('/admin/activites/store', 'AdminActiviteController::store');
+$routes->get('/admin/activites/view/(:num)', 'AdminActiviteController::show/$1');
 $routes->get('/admin/activites/edit/(:num)', 'AdminActiviteController::edit/$1');
 $routes->post('/admin/activites/update/(:num)', 'AdminActiviteController::update/$1');
 $routes->post('/admin/activites/delete/(:num)', 'AdminActiviteController::delete/$1');

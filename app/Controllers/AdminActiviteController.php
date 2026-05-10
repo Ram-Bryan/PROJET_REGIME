@@ -22,12 +22,15 @@ class AdminActiviteController extends BaseController
             return $redirect;
         }
 
-        $activiteModel = new ActiviteSportiveModel();
-        $regimeModel = new RegimeModel();
+        $filters = [
+            'label_activite' => trim((string) $this->request->getGet('label_activite')),
+            'frequence_min' => $this->request->getGet('frequence_min'),
+            'frequence_max' => $this->request->getGet('frequence_max'),
+        ];
 
         return view('admin/activites/index', [
-            'activites' => $activiteModel->orderBy('id_activite', 'DESC')->findAll(),
-            'regimes' => $regimeModel->select('id_regime, nom_regime')->orderBy('nom_regime', 'ASC')->findAll(),
+            'activites' => $this->getActivityListing($filters),
+            'filters' => $filters,
             'activeNav' => 'activites',
         ]);
     }
@@ -64,11 +67,30 @@ class AdminActiviteController extends BaseController
 
         $activiteModel = new ActiviteSportiveModel();
         $activiteModel->insert([
-            'label_activite' => $this->request->getPost('label_activite'),
+            'label_activite' => trim((string) $this->request->getPost('label_activite')),
             'nb_par_semaine' => (int) $this->request->getPost('nb_par_semaine'),
         ]);
 
         return redirect()->to('/admin/activites')->with('success', 'Activite sportive creee avec succes.');
+    }
+
+    public function show(int $id)
+    {
+        if ($redirect = $this->requireAdmin()) {
+            return $redirect;
+        }
+
+        $activite = (new ActiviteSportiveModel())->find($id);
+
+        if (! $activite) {
+            return redirect()->to('/admin/activites')->with('error', 'Activite introuvable.');
+        }
+
+        return view('admin/activites/show', [
+            'activite' => $activite,
+            'linkedRegimes' => $this->getLinkedRegimes($id),
+            'activeNav' => 'activites',
+        ]);
     }
 
     public function edit(int $id)
@@ -114,7 +136,7 @@ class AdminActiviteController extends BaseController
         }
 
         $activiteModel->update($id, [
-            'label_activite' => $this->request->getPost('label_activite'),
+            'label_activite' => trim((string) $this->request->getPost('label_activite')),
             'nb_par_semaine' => (int) $this->request->getPost('nb_par_semaine'),
         ]);
 
@@ -128,8 +150,21 @@ class AdminActiviteController extends BaseController
         }
 
         $activiteModel = new ActiviteSportiveModel();
-        if (! $activiteModel->find($id)) {
+        $activite = $activiteModel->find($id);
+
+        if (! $activite) {
             return redirect()->to('/admin/activites')->with('error', 'Activite introuvable.');
+        }
+
+        $linkedCount = db_connect()->table('regime_activite')
+            ->where('id_activite', $id)
+            ->countAllResults();
+
+        if ($linkedCount > 0) {
+            return redirect()->to('/admin/activites')->with(
+                'error',
+                'Suppression impossible: cette activite est liee a ' . $linkedCount . ' regime(s).'
+            );
         }
 
         $activiteModel->delete($id);
@@ -214,5 +249,58 @@ class AdminActiviteController extends BaseController
         $db->table('regime_activite')->where('id_regime_activite', $id)->delete();
 
         return $this->response->setJSON(['status' => 'success', 'message' => 'Lien supprime.']);
+    }
+
+    private function getActivityListing(array $filters): array
+    {
+        $builder = db_connect()->table('activite_sportive a');
+        $builder->select([
+            'a.id_activite',
+            'a.label_activite',
+            'a.nb_par_semaine',
+            'COUNT(DISTINCT ra.id_regime_activite) AS nb_regimes',
+        ]);
+        $builder->join('regime_activite ra', 'ra.id_activite = a.id_activite', 'left');
+
+        if ($filters['label_activite'] !== '') {
+            $builder->like('a.label_activite', $filters['label_activite']);
+        }
+
+        if ($filters['frequence_min'] !== null && $filters['frequence_min'] !== '') {
+            $builder->where('a.nb_par_semaine >=', (int) $filters['frequence_min']);
+        }
+
+        if ($filters['frequence_max'] !== null && $filters['frequence_max'] !== '') {
+            $builder->where('a.nb_par_semaine <=', (int) $filters['frequence_max']);
+        }
+
+        $builder->groupBy([
+            'a.id_activite',
+            'a.label_activite',
+            'a.nb_par_semaine',
+        ]);
+        $builder->orderBy('a.label_activite', 'ASC');
+
+        return $builder->get()->getResultArray();
+    }
+
+    private function getLinkedRegimes(int $activityId): array
+    {
+        $db = db_connect();
+        $variationColumn = $db->fieldExists('variation_mensuelle_kg', 'regime')
+            ? 'variation_mensuelle_kg'
+            : 'variation_poids';
+
+        return $db->table('regime_activite ra')
+            ->select([
+                'r.id_regime',
+                'r.nom_regime',
+                'r.' . $variationColumn . ' AS variation_mensuelle_kg',
+            ])
+            ->join('regime r', 'r.id_regime = ra.id_regime')
+            ->where('ra.id_activite', $activityId)
+            ->orderBy('r.nom_regime', 'ASC')
+            ->get()
+            ->getResultArray();
     }
 }

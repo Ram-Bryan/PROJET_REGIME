@@ -216,9 +216,6 @@
         <span class="badge <?= $variation < 0 ? 'warn' : 'success' ?>">
             Variation: <?= $variation > 0 ? '+' : '' ?><?= esc(number_format($variation, 2, ',', ' ')) ?> kg / mois
         </span>
-        <?php foreach ($suggestedUsers as $suggestion): ?>
-            <span class="badge <?= esc($suggestion['tone'] ?? 'neutral') ?>"><?= esc($suggestion['label'] ?? '') ?></span>
-        <?php endforeach; ?>
     </div>
 
     <div class="card">
