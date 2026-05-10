@@ -209,11 +209,13 @@ INSERT INTO objectif(label_objectif) VALUES
 
 nom/mdp
 
-Jean/jean
-Marie/marie
-Lucas/lucas
-Sofia/sofia
-Admin/admin
+Jean/jean123
+Marie/marie123
+Lucas/lucas123
+Sofia/sofia123
+Admin/admin123
+
+php -r "echo password_hash('lucas123', PASSWORD_DEFAULT) . PHP_EOL;"
 
 */
 INSERT INTO utilisateur(
@@ -233,7 +235,7 @@ INSERT INTO utilisateur(
 (
     'Jean Rakoto',
     'jean@gmail.com',
-    '$2y$10$rcrtywe7bsumDQgGP.lffuU2b4KIGTs.KqACqF/mWImYK7pC1foOC',
+    '$2y$10$f3jDT.THIYmuaS.InxodN.IoTiPTs67tBuSpCqVya7t3Tv7hcOMam',
     'Homme',
     175,
     72,
@@ -247,7 +249,7 @@ INSERT INTO utilisateur(
 (
     'Marie Ranaivo',
     'marie@gmail.com',
-    '$2y$10$bhqH3OlGH46EAKRruC5XjuyORlyzx70m.N8frH36utJ44QHAP3jrW',
+    '$2y$10$jTZZiHEExlm8jldPFPV7T.06wzSvfYxZmtAXh14z5ICd8nSOh4jQa',
     'Femme',
     165,
     58,
@@ -261,7 +263,7 @@ INSERT INTO utilisateur(
 (
     'Lucas Andry',
     'lucas@gmail.com',
-    '$2y$10$pj4MlDW6Mbg/2QlChmFFhePzl5EwXGff5RC1Ssab0e7IVFDT6DfGG',
+    '$2y$10$pyOvnFPzfqAg/6wgwwt4QOELVmWisvqS7NcSwB5Lx41bG1RIMmW2m',
     'Homme',
     180,
     98,
@@ -275,7 +277,7 @@ INSERT INTO utilisateur(
 (
     'Sofia Noro',
     'sofia@gmail.com',
-    "$2y$10$HiC1BJu.NVL6MUl0zU2MoOtLdDN/JWcXfXaCWs/i9BDYzo2ksQF1y",
+    "$2y$10$Zo8RQVDZGrtaeTjIiOzIFugi7jBkzhTPAuucF8zvD6KK5uk9EzoCW",
     'Femme',
     170,
     65,
@@ -289,7 +291,7 @@ INSERT INTO utilisateur(
 (
     'Admin Principal',
     'admin@gmail.com',
-    '$2y$10$IOi401GlEa88FYCK.txYt.22oczHoyG52bZbQESY3d1uET9b2Fkj',
+    '$2y$10$0uS9UTGA/AHNvzDk1NBeH.7WsvAy0fomcXXp75j2PF7CsML8ywOQC',
     'Homme',
     178,
     75,
