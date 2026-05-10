@@ -1,64 +1,63 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription - Infos personnelles</title>
-</head>
-<body>
-    <h1>Inscription - Étape 1 : Informations personnelles</h1>
+<?= $this->extend('layouts/main') ?>
 
-    <?php if (session()->getFlashdata('error')): ?>
-        <p style="color: red;"><?= esc(session()->getFlashdata('error')) ?></p>
-    <?php endif; ?>
+<?= $this->section('title') ?>Inscription - Étape 1<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
+<section class="card" style="max-width:700px; margin: 0 auto;">
+    <div class="page-header" style="margin-bottom:16px;">
+        <h1>Inscription - Étape 1</h1>
+        <p class="sub">Renseignez vos informations personnelles.</p>
+    </div>
 
     <?php if (session('errors')): ?>
-        <ul style="color: red;">
-            <?php foreach (session('errors') as $error): ?>
-                <li><?= esc($error) ?></li>
-            <?php endforeach; ?>
-        </ul>
+        <div class="alert alert-error">
+            <ul style="margin:0; padding-left:18px;">
+                <?php foreach (session('errors') as $error): ?>
+                    <li><?= esc($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     <?php endif; ?>
 
-    <?php if (session()->getFlashdata('success')): ?>
-        <p style="color: green;"><?= esc(session()->getFlashdata('success')) ?></p>
-    <?php endif; ?>
-
-    <form action="<?= site_url('/register') ?>" method="post">
+    <form action="<?= site_url('/register') ?>" method="post" class="stack">
         <?= csrf_field() ?>
 
-        <div>
-            <label for="nom">Nom complet</label><br>
-            <input type="text" id="nom" name="nom" value="<?= esc(old('nom')) ?>" required>
+        <div class="grid">
+            <div>
+                <label for="nom">Nom complet</label>
+                <input type="text" id="nom" name="nom" value="<?= esc(old('nom')) ?>" required>
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="<?= esc(old('email')) ?>" required>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div>
+                <label for="mot_de_passe">Mot de passe</label>
+                <input type="password" id="mot_de_passe" name="mot_de_passe" minlength="6" required>
+            </div>
+            <div>
+                <label for="genre">Genre</label>
+                <select id="genre" name="genre" required>
+                    <option value="">-- Choisir --</option>
+                    <option value="Homme" <?= old('genre') === 'Homme' ? 'selected' : '' ?>>Homme</option>
+                    <option value="Femme" <?= old('genre') === 'Femme' ? 'selected' : '' ?>>Femme</option>
+                </select>
+            </div>
         </div>
 
         <div>
-            <label for="email">Email</label><br>
-            <input type="email" id="email" name="email" value="<?= esc(old('email')) ?>" required>
-        </div>
-
-        <div>
-            <label for="mot_de_passe">Mot de passe</label><br>
-            <input type="password" id="mot_de_passe" name="mot_de_passe" minlength="6" required>
-        </div>
-
-        <div>
-            <label for="genre">Genre</label><br>
-            <select id="genre" name="genre" required>
-                <option value="">-- Choisir --</option>
-                <option value="Homme" <?= old('genre') === 'Homme' ? 'selected' : '' ?>>Homme</option>
-                <option value="Femme" <?= old('genre') === 'Femme' ? 'selected' : '' ?>>Femme</option>
-            </select>
-        </div>
-
-        <div>
-            <label for="date_naissance">Date de naissance</label><br>
+            <label for="date_naissance">Date de naissance</label>
             <input type="date" id="date_naissance" name="date_naissance" value="<?= esc(old('date_naissance')) ?>" required>
         </div>
 
-        <button type="submit">Continuer</button>
+        <div class="actions">
+            <button type="submit" class="btn">Continuer</button>
+        </div>
     </form>
 
-    <p><a href="<?= site_url('/login') ?>">Déjà un compte ? Se connecter</a></p>
-</body>
-</html>
+    <p style="margin-top:14px;">Déjà un compte ? <a href="<?= site_url('/login') ?>">Se connecter</a></p>
+</section>
+<?= $this->endSection() ?>

@@ -1,181 +1,60 @@
-<!doctype html>
-<html lang="fr">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= esc($regime['nom_regime']) ?> - Détails</title>
-    <style>
-        :root {
-            color-scheme: light;
-            --bg: #f6f7fb;
-            --card: #ffffff;
-            --text: #101828;
-            --muted: #667085;
-            --border: #eaecf0;
-            --primary: #2b59ff;
-            --primary-weak: #e8eeff;
-        }
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-        }
-        .container {
-            max-width: 960px;
-            margin: 48px auto;
-            padding: 0 20px;
-        }
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-        .header h1 {
-            font-size: 28px;
-            margin: 0;
-        }
-        .sub {
-            color: var(--muted);
-            margin: 6px 0 0;
-            font-size: 14px;
-        }
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 18px 20px;
-            box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06);
-            margin-bottom: 20px;
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: var(--primary-weak);
-            color: var(--primary);
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
-        }
-        .item-title {
-            font-size: 12px;
-            color: var(--muted);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .item-value {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            text-align: left;
-            padding: 12px 10px;
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 16px;
-            border-radius: 10px;
-            border: 1px solid var(--primary);
-            background: var(--primary);
-            color: #fff;
-            font-weight: 600;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        th {
-            color: var(--muted);
-            font-weight: 600;
-        }
-        tr:last-child td { border-bottom: none; }
-        .back {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .empty {
-            text-align: center;
-            padding: 32px 16px;
-            color: var(--muted);
-            font-size: 14px;
-        }
-        .option-card {
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            display: grid;
-            gap: 6px;
-        }
-        .option-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-        }
-        .option-meta {
-            color: var(--muted);
-            font-size: 13px;
-        }
-        .success {
-            color: #027a48;
-            font-weight: 600;
-            font-size: 13px;
-        }
-        .danger {
-            color: #b42318;
-            font-weight: 600;
-            font-size: 13px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div>
-                <a class="back" href="<?= esc(site_url('regimes')) ?>">← Retour aux régimes</a>
-                <h1><?= esc($regime['nom_regime']) ?></h1>
-                <p class="sub">Détails complets du régime et objectifs attendus</p>
-            </div>
-            <div class="header-actions">
-                <div class="badge"><?= esc($regime['variation_label']) ?></div>
-            </div>
-        </div>
+<?= $this->extend('layouts/main') ?>
+
+<?= $this->section('title') ?><?= esc($regime['nom_regime']) ?> - Détails<?= $this->endSection() ?>
+
+<?= $this->section('head') ?>
+<style>
+    .option-card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        display: grid;
+        gap: 6px;
+    }
+    .option-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+    }
+    .option-meta {
+        color: var(--muted);
+        font-size: 13px;
+    }
+    .success {
+        color: #027a48;
+        font-weight: 600;
+        font-size: 13px;
+    }
+    .danger {
+        color: #b42318;
+        font-weight: 600;
+        font-size: 13px;
+    }
+</style>
+<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
+<section class="stack">
+    <div class="page-header">
+        <h1><?= esc($regime['nom_regime']) ?> <span class="badge"><?= esc($regime['variation_label']) ?></span></h1>
+        <p class="sub">Détails complets du régime et objectifs attendus.</p>
+    </div>
 
         <div class="card">
             <div class="grid">
                 <div>
-                    <div class="item-title">Variation de poids</div>
-                    <div class="item-value"><?= esc($regime['variation_label']) ?></div>
+                    <div class="kv-title">Variation de poids</div>
+                    <div class="kv-value"><?= esc($regime['variation_label']) ?></div>
                 </div>
                 <div>
-                    <div class="item-title">Objectif</div>
-                    <div class="item-value"><?= esc($objectiveLabel) ?></div>
+                    <div class="kv-title">Objectif</div>
+                    <div class="kv-value"><?= esc($objectiveLabel) ?></div>
                 </div>
                 <div>
-                    <div class="item-title">Composition</div>
-                    <div class="item-value">
+                    <div class="kv-title">Composition</div>
+                    <div class="kv-value" style="font-size:14px;">
                         <?= esc($regime['pourcentage_viande']) ?>% viande ·
                         <?= esc($regime['pourcentage_poisson']) ?>% poisson ·
                         <?= esc($regime['pourcentage_volaille']) ?>% volaille
@@ -252,8 +131,11 @@
                 </form>
             <?php endif; ?>
         </div>
-    </div>
-    <script>
+</section>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
         (function() {
             const form = document.getElementById('commande-form');
             if (!form) return;
@@ -331,6 +213,5 @@
             updateObjectiveStatus();
             form.addEventListener('change', updateObjectiveStatus);
         })();
-    </script>
-</body>
-</html>
+</script>
+<?= $this->endSection() ?>

@@ -1,34 +1,52 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-</head>
-<body>
-    <h1>Dashboard</h1>
-    <p>Bienvenue, <strong><?= esc($nom) ?></strong></p>
-    <p>Email: <?= esc($email) ?></p>
-    <p>Rôle: <?= esc($role) ?></p>
+<?= $this->extend('layouts/main') ?>
 
-    <?php if (session()->get('imc') !== null): ?>
-        <p>IMC: <?= esc((string) session()->get('imc')) ?></p>
-    <?php endif; ?>
+<?= $this->section('title') ?>Dashboard<?= $this->endSection() ?>
 
-    <?php if (session()->get('objectif_label')): ?>
-        <p>Objectif: <?= esc((string) session()->get('objectif_label')) ?></p>
-    <?php endif; ?>
-
-    <p>Argent: <?= esc((string) (session()->get('argent') ?? 0)) ?> Ar</p>
-
-    <div style="margin: 16px 0;">
-        <a href="<?= site_url('/profile') ?>">Voir mon profil</a> |
-        <a href="<?= site_url('/profile/edit') ?>">Modifier mon profil</a>
-        | <a href="<?= site_url('/transactions') ?>">Historique des transactions</a>
-        | <a href="<?= site_url('/promo') ?>">Ajouter un code promo</a>
-        | <a href="<?= site_url('/regimes') ?>">Voir les régimes</a>
+<?= $this->section('content') ?>
+<section class="stack">
+    <div class="page-header">
+        <h1>Dashboard</h1>
+        <p class="sub">Bienvenue, <?= esc($nom) ?>.</p>
     </div>
 
-    <a href="<?= site_url('/logout') ?>">Se déconnecter</a>
-</body>
-</html>
+    <div class="grid">
+        <div class="card">
+            <div class="kv-title">Email</div>
+            <div class="kv-value" style="font-size:14px;"><?= esc($email) ?></div>
+        </div>
+        <div class="card">
+            <div class="kv-title">Rôle</div>
+            <div class="kv-value"><?= esc($role) ?></div>
+        </div>
+        <div class="card">
+            <div class="kv-title">IMC</div>
+            <div class="kv-value"><?= session()->get('imc') !== null ? esc((string) session()->get('imc')) : 'N/A' ?></div>
+        </div>
+        <div class="card">
+            <div class="kv-title">Objectif</div>
+            <div class="kv-value" style="font-size:14px;"><?= esc((string) (session()->get('objectif_label') ?? 'N/A')) ?></div>
+        </div>
+        <div class="card">
+            <div class="kv-title">Solde</div>
+            <div class="kv-value"><?= esc((string) (session()->get('argent') ?? 0)) ?> Ar</div>
+        </div>
+        <div class="card">
+            <div class="kv-title">Statut</div>
+            <div class="kv-value">
+                <?= session()->get('is_gold') ? '<span class="badge">Gold</span>' : 'Standard' ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 style="margin:0 0 10px; font-size:18px;">Accès rapide</h2>
+        <div class="actions" style="margin-top:0;">
+            <a href="<?= site_url('/profile') ?>" class="btn btn-secondary">Mon profil</a>
+            <a href="<?= site_url('/regimes') ?>" class="btn btn-secondary">Régimes</a>
+            <a href="<?= site_url('/mes-regimes') ?>" class="btn btn-secondary">Mes régimes</a>
+            <a href="<?= site_url('/transactions') ?>" class="btn btn-secondary">Transactions</a>
+            <a href="<?= site_url('/promo') ?>" class="btn btn-secondary">Code promo</a>
+        </div>
+    </div>
+</section>
+<?= $this->endSection() ?>

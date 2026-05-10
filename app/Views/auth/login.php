@@ -1,37 +1,30 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
-</head>
-<body>
-    <h1>Connexion</h1>
+<?= $this->extend('layouts/main') ?>
 
-    <?php if (session()->getFlashdata('error')): ?>
-        <p style="color: red;"><?= esc(session()->getFlashdata('error')) ?></p>
-    <?php endif; ?>
+<?= $this->section('title') ?>Connexion<?= $this->endSection() ?>
 
-    <?php if (session()->getFlashdata('success')): ?>
-        <p style="color: green;"><?= esc(session()->getFlashdata('success')) ?></p>
-    <?php endif; ?>
+<?= $this->section('content') ?>
+<section class="card" style="max-width:520px; margin: 0 auto;">
+    <div class="page-header" style="margin-bottom: 16px;">
+        <h1>Connexion</h1>
+        <p class="sub">Accédez à votre espace personnel.</p>
+    </div>
 
-    <form action="<?= site_url('/login') ?>" method="post">
+    <form action="<?= site_url('/login') ?>" method="post" class="stack">
         <?= csrf_field() ?>
 
         <div>
-            <label for="email">Email</label><br>
+            <label for="email">Email</label>
             <input type="email" id="email" name="email" value="<?= esc(old('email')) ?>" required>
         </div>
 
         <div>
-            <label for="mot_de_passe">Mot de passe</label><br>
+            <label for="mot_de_passe">Mot de passe</label>
             <input type="password" id="mot_de_passe" name="mot_de_passe" required>
         </div>
 
-        <button type="submit">Se connecter</button>
+        <button type="submit" class="btn">Se connecter</button>
     </form>
 
-    <p><a href="<?= site_url('/register') ?>">Créer un compte</a></p>
-</body>
-</html>
+    <p style="margin-top: 14px;">Pas encore de compte ? <a href="<?= site_url('/register') ?>">Créer un compte</a></p>
+</section>
+<?= $this->endSection() ?>
