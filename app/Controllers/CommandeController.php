@@ -79,5 +79,25 @@ class CommandeController extends BaseController
         ]);
 
         return redirect()->to('/mes-regimes')->with('success', 'Régime acheté avec succès.');
+            $newSolde = $argent - $prix;
+            $userModel->update($userId, ['argent' => $newSolde]);
+            session()->set('argent', $newSolde);
+
+            $commandeModel->insert([
+                'id_utilisateur' => $userId,
+                'id_regime' => $regimeId,
+                'id_duree_regime' => $dureeId,
+                'montant_paye' => $prix,
+            ]);
+
+            // Check if user should unlock Gold membership (after 3rd purchase)
+            $purchaseCount = $commandeModel->countUserPurchases($userId);
+            if ($purchaseCount >= 3 && !(bool) ($user['is_gold'] ?? false)) {
+                $userModel->update($userId, ['is_gold' => true]);
+                session()->set('is_gold', true);
+                return redirect()->to('/mes-regimes')->with('success', 'Régime acheté avec succès. 🎉 Vous avez déverrouillé le statut Gold!');
+            }
+
+            return redirect()->to('/mes-regimes')->with('success', 'Régime acheté avec succès.');
     }
 }

@@ -119,6 +119,13 @@ class CommandeModel extends Model
         return false;
     }
 
+    public function countUserPurchases(int $userId): int
+    {
+        return $this->db->table('commande')
+            ->where('id_utilisateur', $userId)
+            ->countAllResults();
+    }
+
     private function basePurchaseBuilder()
     {
         return $this->db->table('commande c')
