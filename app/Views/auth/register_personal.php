@@ -27,17 +27,20 @@
                 </div>
             <?php endif; ?>
 
-            <form action="<?= site_url('/register') ?>" method="post" class="stack">
+            <form action="<?= site_url('/register') ?>" method="post" class="stack" data-ajax-form="true">
                 <?= csrf_field() ?>
+                <div class="form-feedback" data-form-feedback></div>
 
                 <div class="grid">
                     <div>
                         <label for="nom">Nom complet</label>
                         <input type="text" id="nom" name="nom" minlength="2" maxlength="80" autocomplete="name" value="<?= esc(old('nom')) ?>" required>
+                        <div class="field-error" data-field-error="nom"></div>
                     </div>
                     <div>
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" maxlength="120" autocomplete="email" value="<?= esc(old('email')) ?>" required>
+                        <div class="field-error" data-field-error="email"></div>
                     </div>
                 </div>
 
@@ -46,6 +49,7 @@
                         <label for="mot_de_passe">Mot de passe</label>
                         <input type="password" id="mot_de_passe" name="mot_de_passe" minlength="6" maxlength="72" autocomplete="new-password" required>
                         <p class="field-hint">Minimum 6 caractères.</p>
+                        <div class="field-error" data-field-error="mot_de_passe"></div>
                     </div>
                     <div>
                         <label for="genre">Genre</label>
@@ -54,12 +58,14 @@
                             <option value="Homme" <?= old('genre') === 'Homme' ? 'selected' : '' ?>>Homme</option>
                             <option value="Femme" <?= old('genre') === 'Femme' ? 'selected' : '' ?>>Femme</option>
                         </select>
+                        <div class="field-error" data-field-error="genre"></div>
                     </div>
                 </div>
 
                 <div>
                     <label for="date_naissance">Date de naissance</label>
                     <input type="date" id="date_naissance" name="date_naissance" value="<?= esc(old('date_naissance')) ?>" required>
+                    <div class="field-error" data-field-error="date_naissance"></div>
                 </div>
 
                 <div class="actions">

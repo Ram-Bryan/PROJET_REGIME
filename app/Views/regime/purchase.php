@@ -45,8 +45,9 @@
         <?php if (empty($durees)): ?>
             <div class="empty">Aucune durée disponible pour ce régime.</div>
         <?php else: ?>
-            <form method="POST" action="<?= site_url('/regimes/purchase/' . $regime['id_regime']) ?>" class="stack">
+            <form method="POST" action="<?= site_url('/regimes/purchase/' . $regime['id_regime']) ?>" class="stack" data-ajax-form="true">
                 <?= csrf_field() ?>
+                <div class="form-feedback" data-form-feedback></div>
                 <div class="box">
                     <label for="id_duree_regime">Durée du régime</label>
                     <select id="id_duree_regime" name="id_duree_regime" required>
@@ -60,6 +61,7 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
+                        <div class="field-error" data-field-error="id_duree_regime"></div>
                 </div>
 
                 <div class="actions">

@@ -326,6 +326,95 @@
             transform: translateY(-1px);
         }
 
+        .radio-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            overflow-x: auto;
+        }
+
+        .radio-item {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1;
+            min-height: 38px;
+            padding: 9px 14px 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        input[type="radio"].control-radio,
+        .radio-item input[type="radio"],
+        .option-card input[type="radio"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            margin: 0;
+            padding: 0;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            background: #fff;
+            display: grid;
+            place-content: center;
+            flex: 0 0 auto;
+            transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+        }
+
+        input[type="radio"].control-radio::before,
+        .radio-item input[type="radio"]::before,
+        .option-card input[type="radio"]::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+            transform: scale(0);
+            transition: transform .2s ease;
+        }
+
+        .radio-item:hover {
+            border-color: #94a3b8;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, .08);
+        }
+
+        .radio-item:has(input[type="radio"]:checked) {
+            border-color: var(--primary);
+            background: #eff6ff;
+            color: var(--primary);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, .12);
+        }
+
+        input[type="radio"].control-radio:checked,
+        .radio-item input[type="radio"]:checked,
+        .option-card input[type="radio"]:checked {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        input[type="radio"].control-radio:checked::before,
+        .radio-item input[type="radio"]:checked::before,
+        .option-card input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+
+        input[type="radio"].control-radio:focus-visible,
+        .radio-item input[type="radio"]:focus-visible,
+        .option-card input[type="radio"]:focus-visible {
+            outline: 3px solid rgba(37, 99, 235, .22);
+            outline-offset: 2px;
+        }
+
         .field-hint {
             margin-top: 6px;
             font-size: 12px;
@@ -380,6 +469,44 @@
             border: 1px solid;
             font-size: 14px;
             box-shadow: var(--shadow-sm);
+        }
+
+        .form-feedback {
+            display: none;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-feedback.is-visible {
+            display: block;
+        }
+
+        .form-feedback.success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border-color: #abefc6;
+        }
+
+        .form-feedback.error {
+            background: var(--error-bg);
+            color: var(--error-text);
+            border-color: #fecdca;
+        }
+
+        .field-error {
+            min-height: 16px;
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--error-text);
+        }
+
+        .is-invalid {
+            border-color: var(--error-text) !important;
+            box-shadow: 0 0 0 4px rgba(180, 35, 24, 0.10) !important;
         }
 
         .alert-success {
@@ -546,6 +673,68 @@
 
 <script>
     (function () {
+        const resetFieldErrors = (form) => {
+            form.querySelectorAll('.field-error').forEach((node) => {
+                node.textContent = '';
+            });
+            form.querySelectorAll('.is-invalid').forEach((node) => {
+                node.classList.remove('is-invalid');
+            });
+        };
+
+        const setFeedback = (form, type, message, errors = {}) => {
+            const feedback = form.querySelector('[data-form-feedback]');
+            if (!feedback) {
+                return;
+            }
+
+            feedback.className = `form-feedback is-visible ${type}`;
+
+            const errorEntries = Object.entries(errors || {});
+            if (type === 'error' && errorEntries.length) {
+                const list = errorEntries.map(([, value]) => `<li>${String(value)}</li>`).join('');
+                feedback.innerHTML = `<strong>${message}</strong><ul style="margin:8px 0 0; padding-left:18px;">${list}</ul>`;
+            } else {
+                feedback.textContent = message || '';
+            }
+        };
+
+        const showFieldErrors = (form, errors = {}) => {
+            Object.entries(errors || {}).forEach(([fieldName, errorMessage]) => {
+                const errorNode = form.querySelector(`[data-field-error="${fieldName}"]`);
+                const inputNode = form.querySelector(`[name="${fieldName}"]`);
+                if (errorNode) {
+                    errorNode.textContent = errorMessage;
+                }
+                if (inputNode) {
+                    inputNode.classList.add('is-invalid');
+                }
+            });
+        };
+
+        const setLoading = (submit, loading) => {
+            if (!submit) return;
+            if (loading) {
+                submit.dataset.originalText = submit.tagName.toLowerCase() === 'button' ? submit.textContent : submit.value;
+                if (submit.tagName.toLowerCase() === 'button') {
+                    submit.textContent = 'Traitement...';
+                } else {
+                    submit.value = 'Traitement...';
+                }
+                submit.disabled = true;
+            } else {
+                const original = submit.dataset.originalText;
+                if (original) {
+                    if (submit.tagName.toLowerCase() === 'button') {
+                        submit.textContent = original;
+                    } else {
+                        submit.value = original;
+                    }
+                }
+                submit.disabled = false;
+            }
+        };
+
         document.querySelectorAll('[data-confirm-message]').forEach((element) => {
             element.addEventListener('click', function (event) {
                 const message = this.getAttribute('data-confirm-message') || 'Confirmer cette action ?';
@@ -556,20 +745,66 @@
         });
 
         document.querySelectorAll('form').forEach((form) => {
-            form.addEventListener('submit', function () {
-                const submit = this.querySelector('button[type="submit"], input[type="submit"]');
-                if (!submit) {
-                    return;
-                }
+            if (form.dataset.ajaxForm !== 'true') {
+                form.addEventListener('submit', function () {
+                    const submit = this.querySelector('button[type="submit"], input[type="submit"]');
+                    if (!submit) {
+                        return;
+                    }
 
-                const original = submit.dataset.originalText || submit.textContent || submit.value || 'Envoyer';
-                submit.dataset.originalText = original;
-                if (submit.tagName.toLowerCase() === 'button') {
-                    submit.textContent = 'Traitement...';
-                } else {
-                    submit.value = 'Traitement...';
+                    const original = submit.dataset.originalText || submit.textContent || submit.value || 'Envoyer';
+                    submit.dataset.originalText = original;
+                    if (submit.tagName.toLowerCase() === 'button') {
+                        submit.textContent = 'Traitement...';
+                    } else {
+                        submit.value = 'Traitement...';
+                    }
+                    submit.disabled = true;
+                });
+                return;
+            }
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const submit = form.querySelector('button[type="submit"], input[type="submit"]');
+                resetFieldErrors(form);
+                setFeedback(form, 'error', '', {});
+                setLoading(submit, true);
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: (form.method || 'POST').toUpperCase(),
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        },
+                        body: new FormData(form),
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success) {
+                        setFeedback(form, 'error', data.message || 'Veuillez vérifier les champs du formulaire.', data.errors || {});
+                        showFieldErrors(form, data.errors || {});
+                        setLoading(submit, false);
+                        return;
+                    }
+
+                    if (data.message) {
+                        setFeedback(form, 'success', data.message);
+                    }
+
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                        return;
+                    }
+
+                    setLoading(submit, false);
+                } catch (error) {
+                    setFeedback(form, 'error', 'Une erreur est survenue. Merci de réessayer.', {});
+                    setLoading(submit, false);
                 }
-                submit.disabled = true;
             });
         });
     })();

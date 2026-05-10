@@ -11,12 +11,29 @@
         margin-bottom: 12px;
         display: grid;
         gap: 6px;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+    .option-card:hover {
+        border-color: #94a3b8;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, .08);
+        transform: translateY(-1px);
+    }
+    .option-card:has(input[type="radio"]:checked) {
+        border-color: var(--primary);
+        background: #eff6ff;
+        box-shadow: 0 8px 18px rgba(37, 99, 235, .12);
     }
     .option-header {
         display: flex;
         align-items: center;
         gap: 10px;
         font-weight: 600;
+        color: var(--text);
+    }
+    .option-card:has(input[type="radio"]:checked) .option-header {
+        color: var(--primary);
     }
     .option-meta {
         color: var(--muted);
@@ -105,13 +122,13 @@
             <?php if (empty($durees)) : ?>
                 <div class="empty">Aucune durée disponible pour ce régime.</div>
             <?php else : ?>
-                <form id="commande-form" method="post" action="<?= esc(site_url('regimes/purchase/' . $regime['id_regime'])) ?>">
+                <form id="commande-form" method="post" action="<?= esc(site_url('regimes/purchase/' . $regime['id_regime'])) ?>" data-ajax-form="true">
                     <?php foreach ($durees as $index => $duree) : ?>
                         <label class="option-card">
                             <div class="option-header">
                                 <input
                                     type="radio"
-                                    name="duree"
+                                    name="id_duree_regime"
                                     value="<?= esc($duree['id_duree_regime']) ?>"
                                     data-days="<?= esc($duree['nb_jours']) ?>"
                                     data-price="<?= esc($duree['prix']) ?>"
@@ -123,6 +140,8 @@
                             <div class="option-meta">→ Résultat estimé: <span class="estimate" data-days="<?= esc($duree['nb_jours']) ?>"></span></div>
                         </label>
                     <?php endforeach; ?>
+                    <div class="field-error" data-field-error="id_duree_regime"></div>
+                    <div class="form-feedback" data-form-feedback></div>
                     <div id="objectif-status" class="success" style="display:none; margin-top: 8px;">✅ Objectif atteint</div>
                     <div id="objectif-status-fail" class="danger" style="display:none; margin-top: 8px;">❌ Objectif non atteint</div>
                     <div style="margin-top: 16px;">
@@ -190,7 +209,7 @@
             };
 
             const updateObjectiveStatus = () => {
-                const selected = form.querySelector('input[name="duree"]:checked');
+                const selected = form.querySelector('input[name="id_duree_regime"]:checked');
                 if (!selected) return;
                 const days = Number(selected.dataset.days || 0);
                 if (!user) {

@@ -26,16 +26,19 @@
         </div>
 
         <div style="padding:28px;">
-            <form action="<?= site_url('/register/health') ?>" method="post" class="stack">
+            <form action="<?= site_url('/register/health') ?>" method="post" class="stack" data-ajax-form="true">
                 <?= csrf_field() ?>
+                <div class="form-feedback" data-form-feedback></div>
                 <div class="grid">
                     <div>
                         <label for="taille_cm">Taille (cm)</label>
                         <input type="number" step="0.01" min="50" max="260" id="taille_cm" name="taille_cm" value="<?= esc(old('taille_cm')) ?>" required>
+                        <div class="field-error" data-field-error="taille_cm"></div>
                     </div>
                     <div>
                         <label for="poids_kg">Poids actuel (kg)</label>
                         <input type="number" step="0.01" min="20" max="350" id="poids_kg" name="poids_kg" value="<?= esc(old('poids_kg')) ?>" required>
+                        <div class="field-error" data-field-error="poids_kg"></div>
                     </div>
                 </div>
 
@@ -43,6 +46,7 @@
                     <div>
                         <label for="poids_objectif">Poids objectif (kg)</label>
                         <input type="number" step="0.01" min="20" max="350" id="poids_objectif" name="poids_objectif" value="<?= esc(old('poids_objectif')) ?>" required>
+                        <div class="field-error" data-field-error="poids_objectif"></div>
                     </div>
                     <div>
                         <label for="id_objectif">Objectif</label>
@@ -54,6 +58,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                            <div class="field-error" data-field-error="id_objectif"></div>
                     </div>
                 </div>
 

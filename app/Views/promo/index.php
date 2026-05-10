@@ -19,12 +19,14 @@
         </div>
     </div>
 
-    <form method="POST" action="<?= site_url('/promo') ?>" class="stack">
+    <form method="POST" action="<?= site_url('/promo') ?>" class="stack" data-ajax-form="true">
         <?= csrf_field() ?>
+        <div class="form-feedback" data-form-feedback></div>
         <div>
             <label for="code_promo">Code promo</label>
             <input type="text" id="code_promo" name="code_promo" minlength="3" maxlength="30" style="text-transform: uppercase;" value="<?= esc(old('code_promo')) ?>" required>
             <p class="field-hint">Exemple: WELCOME2026</p>
+            <div class="field-error" data-field-error="code_promo"></div>
         </div>
         <div class="actions">
             <button type="submit" class="btn">Valider le code</button>

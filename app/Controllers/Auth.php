@@ -38,15 +38,17 @@ class Auth extends BaseController
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Veuillez compléter correctement les informations personnelles.')
-                ->with('errors', $this->validator->getErrors());
+            return $this->validationErrorResponse(
+                'Veuillez compléter correctement les informations personnelles.',
+                $this->validator->getErrors()
+            );
         }
 
         $userModel = new UtilisateurModel();
         if ($userModel->findByEmail((string) $this->request->getPost('email')) !== null) {
-            return redirect()->back()->withInput()->with('error', 'Cet email est déjà utilisé.');
+            return $this->validationErrorResponse('Cet email est déjà utilisé.', [
+                'email' => 'Cet email est déjà utilisé.',
+            ]);
         }
 
         session()->set('register_step_personal', [
@@ -57,7 +59,10 @@ class Auth extends BaseController
             'date_naissance' => (string) $this->request->getPost('date_naissance'),
         ]);
 
-        return redirect()->to('/register/health')->with('success', 'Infos personnelles enregistrées. Complétez maintenant les informations santé.');
+        return $this->successResponse(
+            'Infos personnelles enregistrées. Complétez maintenant les informations santé.',
+            '/register/health'
+        );
     }
 
     public function registerHealth()
@@ -83,7 +88,7 @@ class Auth extends BaseController
     {
         $personalStep = session()->get('register_step_personal');
         if (! is_array($personalStep)) {
-            return redirect()->to('/register')->with('error', 'Commencez par les informations personnelles.');
+            return $this->errorResponse('Commencez par les informations personnelles.', '/register');
         }
 
         $rules = [
@@ -94,7 +99,10 @@ class Auth extends BaseController
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Veuillez compléter correctement les informations santé.');
+            return $this->validationErrorResponse(
+                'Veuillez compléter correctement les informations santé.',
+                $this->validator->getErrors()
+            );
         }
 
         $userModel = new UtilisateurModel();
@@ -102,7 +110,9 @@ class Auth extends BaseController
         $objectif = $objectifModel->find((int) $this->request->getPost('id_objectif'));
 
         if ($objectif === null) {
-            return redirect()->back()->withInput()->with('error', 'Objectif invalide.');
+            return $this->validationErrorResponse('Objectif invalide.', [
+                'id_objectif' => 'Objectif invalide.',
+            ]);
         }
 
         $tailleCm = (float) $this->request->getPost('taille_cm');
@@ -124,7 +134,7 @@ class Auth extends BaseController
         ], true);
 
         if (! is_int($userId) && ! is_string($userId)) {
-            return redirect()->back()->withInput()->with('error', 'Impossible de créer le compte.');
+            return $this->errorResponse('Impossible de créer le compte.');
         }
 
         $imc = $userModel->calculateImc($poidsKg, $tailleCm);
@@ -141,7 +151,7 @@ class Auth extends BaseController
             'objectif_label' => $objectif['label_objectif'],
         ]);
 
-        return redirect()->to('/dashboard')->with('success', 'Compte créé avec succès.');
+        return $this->successResponse('Compte créé avec succès.', '/dashboard');
     }
 
     public function login()
@@ -157,11 +167,14 @@ class Auth extends BaseController
     {
         $rules = [
             'email' => 'required|valid_email',
-            'mot_de_passe' => 'required|min_length[3]',
+            'mot_de_passe' => 'required|min_length[6]',
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Email ou mot de passe invalide.');
+            return $this->validationErrorResponse(
+                'Email ou mot de passe invalide.',
+                $this->validator->getErrors()
+            );
         }
 
         $email = (string) $this->request->getPost('email');
@@ -171,7 +184,10 @@ class Auth extends BaseController
         $user = $userModel->findByEmail($email);
 
         if ($user === null || ! password_verify($motDePasse, (string) $user['mot_de_passe'])) {
-            return redirect()->back()->withInput()->with('error', 'Identifiants incorrects.');
+            return $this->validationErrorResponse('Identifiants incorrects.', [
+                'email' => 'Identifiants incorrects.',
+                'mot_de_passe' => 'Identifiants incorrects.',
+            ]);
         }
 
         session()->set([
@@ -186,7 +202,7 @@ class Auth extends BaseController
 
         $this->refreshUserSessionData($user);
 
-        return redirect()->to('/dashboard')->with('success', 'Connexion réussie.');
+    return $this->successResponse('Connexion réussie.', '/dashboard');
     }
 
     public function dashboard()
@@ -251,7 +267,10 @@ class Auth extends BaseController
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Veuillez saisir un code promo valide.');
+            return $this->validationErrorResponse(
+                'Veuillez saisir un code promo valide.',
+                $this->validator->getErrors()
+            );
         }
 
         $code = trim((string) $this->request->getPost('code_promo'));
@@ -259,11 +278,15 @@ class Auth extends BaseController
         $promo = $promoModel->findByCode($code);
 
         if ($promo === null) {
-            return redirect()->back()->withInput()->with('error', 'Code promo introuvable.');
+            return $this->validationErrorResponse('Code promo introuvable.', [
+                'code_promo' => 'Code promo introuvable.',
+            ]);
         }
 
         if ((bool) $promo['deja_utilise']) {
-            return redirect()->back()->withInput()->with('error', 'Ce code promo a déjà été utilisé.');
+            return $this->validationErrorResponse('Ce code promo a déjà été utilisé.', [
+                'code_promo' => 'Ce code promo a déjà été utilisé.',
+            ]);
         }
 
         $userId = (int) session()->get('id_utilisateur');
@@ -271,7 +294,7 @@ class Auth extends BaseController
         $currentUser = $userModel->find($userId);
 
         if ($currentUser === null) {
-            return redirect()->to('/login')->with('error', 'Utilisateur introuvable.');
+            return $this->errorResponse('Utilisateur introuvable.', '/login');
         }
 
         $newArgent = (float) ($currentUser['argent'] ?? 0) + (float) $promo['montant'];
@@ -290,7 +313,7 @@ class Auth extends BaseController
             $this->refreshUserSessionData($updatedUser);
         }
 
-        return redirect()->to('/promo')->with('success', 'Code promo appliqué. Votre solde a été crédité.');
+        return $this->successResponse('Code promo appliqué. Votre solde a été crédité.', '/promo');
     }
 
     public function profile()
@@ -355,7 +378,9 @@ class Auth extends BaseController
         // Verify current password before allowing changes
         $currentPassword = (string) $this->request->getPost('current_password');
         if (! password_verify($currentPassword, (string) $currentUser['mot_de_passe'])) {
-            return redirect()->back()->withInput()->with('error', 'Le mot de passe actuel est incorrect.');
+            return $this->validationErrorResponse('Le mot de passe actuel est incorrect.', [
+                'current_password' => 'Le mot de passe actuel est incorrect.',
+            ]);
         }
 
         $rules = [
@@ -369,12 +394,10 @@ class Auth extends BaseController
         ];
 
         if (! $this->validate($rules)) {
-            $errors = $this->validator->getErrors();
-
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Veuillez corriger les champs indiqués.')
-                ->with('errors', $errors);
+            return $this->validationErrorResponse(
+                'Veuillez corriger les champs indiqués.',
+                $this->validator->getErrors()
+            );
         }
 
         $tailleCm = (float) $this->request->getPost('taille_cm');
@@ -385,7 +408,9 @@ class Auth extends BaseController
         $objectifModel = new ObjectifModel();
         $objectif = $objectifModel->find($idObjectif);
         if ($objectif === null) {
-            return redirect()->back()->withInput()->with('error', 'Objectif invalide.');
+            return $this->validationErrorResponse('Objectif invalide.', [
+                'id_objectif' => 'Objectif invalide.',
+            ]);
         }
 
         // Update user in database
@@ -411,7 +436,7 @@ class Auth extends BaseController
             'objectif_label' => $objectif['label_objectif'],
         ]);
 
-        return redirect()->to('/profile')->with('success', 'Profil mis à jour avec succès.');
+        return $this->successResponse('Profil mis à jour avec succès.', '/profile');
     }
 
     public function logout()
@@ -419,6 +444,44 @@ class Auth extends BaseController
         session()->destroy();
 
         return redirect()->to('/login')->with('success', 'Déconnexion effectuée.');
+    }
+
+    private function successResponse(string $message, string $redirectTo)
+    {
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => $message,
+                'redirect' => $redirectTo,
+            ]);
+        }
+
+        return redirect()->to($redirectTo)->with('success', $message);
+    }
+
+    private function errorResponse(string $message, string $redirectTo = '/')
+    {
+        if ($this->request->isAJAX()) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'success' => false,
+                'message' => $message,
+            ]);
+        }
+
+        return redirect()->to($redirectTo)->with('error', $message);
+    }
+
+    private function validationErrorResponse(string $message, array $errors = [])
+    {
+        if ($this->request->isAJAX()) {
+            return $this->response->setStatusCode(422)->setJSON([
+                'success' => false,
+                'message' => $message,
+                'errors' => $errors,
+            ]);
+        }
+
+        return redirect()->back()->withInput()->with('error', $message)->with('errors', $errors);
     }
 
     private function refreshUserSessionData(array $user): void

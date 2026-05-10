@@ -17,18 +17,21 @@
         </div>
 
         <div style="padding: 28px;">
-            <form action="<?= site_url('/login') ?>" method="post" class="stack">
+            <form action="<?= site_url('/login') ?>" method="post" class="stack" data-ajax-form="true">
                 <?= csrf_field() ?>
+                <div class="form-feedback" data-form-feedback></div>
 
                 <div>
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" maxlength="120" autocomplete="email" value="<?= esc(old('email')) ?>" required>
+                    <div class="field-error" data-field-error="email"></div>
                 </div>
 
                 <div>
                     <label for="mot_de_passe">Mot de passe</label>
                     <input type="password" id="mot_de_passe" name="mot_de_passe" minlength="6" autocomplete="current-password" required>
                     <p class="field-hint">Minimum 6 caractères.</p>
+                    <div class="field-error" data-field-error="mot_de_passe"></div>
                 </div>
 
                 <button type="submit" class="btn">Se connecter</button>

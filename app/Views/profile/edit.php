@@ -16,8 +16,9 @@
         </div>
     </div>
 
-    <form method="POST" action="<?= site_url('/profile/update') ?>" class="stack">
+    <form method="POST" action="<?= site_url('/profile/update') ?>" class="stack" data-ajax-form="true">
         <?= csrf_field() ?>
+        <div class="form-feedback" data-form-feedback></div>
 
         <div class="card stack">
             <div class="section-title">
@@ -29,7 +30,7 @@
             <div>
                 <label for="nom">Nom *</label>
                 <input type="text" id="nom" name="nom" minlength="2" maxlength="80" autocomplete="name" value="<?= old('nom', esc($user['nom'])) ?>" required>
-                <?php if (isset($validationErrors['nom'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['nom']) ?></div><?php endif; ?>
+                <div class="field-error" data-field-error="nom"><?php if (isset($validationErrors['nom'])): ?><?= esc($validationErrors['nom']) ?><?php endif; ?></div>
             </div>
             <div class="grid">
                 <div>
@@ -39,12 +40,12 @@
                         <option value="Homme" <?= old('genre', $user['genre']) === 'Homme' ? 'selected' : '' ?>>Homme</option>
                         <option value="Femme" <?= old('genre', $user['genre']) === 'Femme' ? 'selected' : '' ?>>Femme</option>
                     </select>
-                    <?php if (isset($validationErrors['genre'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['genre']) ?></div><?php endif; ?>
+                    <div class="field-error" data-field-error="genre"><?php if (isset($validationErrors['genre'])): ?><?= esc($validationErrors['genre']) ?><?php endif; ?></div>
                 </div>
                 <div>
                     <label for="date_naissance">Date de naissance *</label>
                     <input type="date" id="date_naissance" name="date_naissance" value="<?= old('date_naissance', esc($user['date_naissance'])) ?>" required>
-                    <?php if (isset($validationErrors['date_naissance'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['date_naissance']) ?></div><?php endif; ?>
+                    <div class="field-error" data-field-error="date_naissance"><?php if (isset($validationErrors['date_naissance'])): ?><?= esc($validationErrors['date_naissance']) ?><?php endif; ?></div>
                 </div>
             </div>
         </div>
@@ -60,19 +61,19 @@
                 <div>
                     <label for="taille_cm">Taille (cm) *</label>
                     <input type="number" step="0.01" min="50" max="260" id="taille_cm" name="taille_cm" value="<?= old('taille_cm', esc($user['taille_cm'])) ?>" required>
-                    <?php if (isset($validationErrors['taille_cm'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['taille_cm']) ?></div><?php endif; ?>
+                    <div class="field-error" data-field-error="taille_cm"><?php if (isset($validationErrors['taille_cm'])): ?><?= esc($validationErrors['taille_cm']) ?><?php endif; ?></div>
                 </div>
                 <div>
                     <label for="poids_kg">Poids actuel (kg) *</label>
                     <input type="number" step="0.01" min="20" max="350" id="poids_kg" name="poids_kg" value="<?= old('poids_kg', esc($user['poids_kg'])) ?>" required>
-                    <?php if (isset($validationErrors['poids_kg'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['poids_kg']) ?></div><?php endif; ?>
+                    <div class="field-error" data-field-error="poids_kg"><?php if (isset($validationErrors['poids_kg'])): ?><?= esc($validationErrors['poids_kg']) ?><?php endif; ?></div>
                 </div>
             </div>
             <div class="grid">
                 <div>
                     <label for="poids_objectif">Poids objectif (kg) *</label>
                     <input type="number" step="0.01" min="20" max="350" id="poids_objectif" name="poids_objectif" value="<?= old('poids_objectif', esc($user['poids_objectif'] ?? '')) ?>" required>
-                    <?php if (isset($validationErrors['poids_objectif'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['poids_objectif']) ?></div><?php endif; ?>
+                    <div class="field-error" data-field-error="poids_objectif"><?php if (isset($validationErrors['poids_objectif'])): ?><?= esc($validationErrors['poids_objectif']) ?><?php endif; ?></div>
                 </div>
                 <div>
                     <label for="id_objectif">Objectif *</label>
@@ -84,7 +85,7 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <?php if (isset($validationErrors['id_objectif'])): ?><div class="sub" style="color:#b42318;"><?= esc($validationErrors['id_objectif']) ?></div><?php endif; ?>
+                    <div class="field-error" data-field-error="id_objectif"><?php if (isset($validationErrors['id_objectif'])): ?><?= esc($validationErrors['id_objectif']) ?><?php endif; ?></div>
                 </div>
             </div>
         </div>
@@ -100,6 +101,7 @@
                 <label for="current_password">Mot de passe actuel *</label>
                 <input type="password" id="current_password" name="current_password" required>
                 <p class="sub">Requis pour confirmer les modifications.</p>
+                <div class="field-error" data-field-error="current_password"><?php if (isset($validationErrors['current_password'])): ?><?= esc($validationErrors['current_password']) ?><?php endif; ?></div>
             </div>
         </div>
 

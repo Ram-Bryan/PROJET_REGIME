@@ -10,23 +10,6 @@
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         margin-bottom: 20px;
     }
-    .radio-group {
-        display: flex;
-        gap: 12px;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-    }
-    .radio-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 14px;
-        color: var(--text);
-        padding: 6px 10px;
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        background: #fff;
-    }
     .badge-muted {
         background: #f2f4f7;
         color: #344054;
