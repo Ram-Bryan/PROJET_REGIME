@@ -567,7 +567,7 @@
             <div class="brand">
                 <span class="brand-kicker">Administration</span>
                 <h1>Gestion regime</h1>
-                <p>Gestion simple des contenus regime, activite et promo.</p>
+                <p>Gestion simple des contenus regime, activite, promo et option.</p>
             </div>
 
             <nav class="nav-list" aria-label="Navigation admin">
@@ -586,6 +586,10 @@
                 <a href="<?= base_url('admin/promos') ?>" class="<?= $navClass('promos') ?>">
                     <img class="icon" src="<?= esc(base_url('assets/icons/ticket-percent.svg')) ?>" alt="">
                     <span>Promos</span>
+                </a>
+                <a href="<?= base_url('admin/options') ?>" class="<?= $navClass('options') ?>">
+                    <img class="icon" src="<?= esc(base_url('assets/icons/crown.svg')) ?>" alt="">
+                    <span>Options</span>
                 </a>
             </nav>
 

@@ -284,3 +284,27 @@ The actions icons should be all hornzintaol in the same line.
 For the graph the jour is confused with the 90j words
 
 Apart from taht, I'm on Regime page of backoffice, When I go to other pages, the sidebar changes or either there are weird stuff happening. So the sidebar of Regme is what we take as final sidebar and put tha tin each pages of backoffice And a8lso when I go to some pages, there ar en8o sidebar add them 
+
+
+We're in backoffice
+
+OKay now we're in the CRUD of COde PROMO:
+Remove column ID
+Column Utilsiatuer will be renamed as  Utilisé par: if user exist then display the name of the utilsiatuer. Else put empty.
+Edit and delete are icons
+Add filter min max montant. And a radio etat tout disponible utilse 
+
+Creating:
+Deja utilise checkbox doestn exit 
+
+Now make this frontoffice-backoffice Code logique:
+When a client enter a code promo (page code promo of frontoffice), It shouldnt direclty say that it is confirmer. INstead it can say code alreayd used. Or it does this: It waits. The admin connect and go ot validation code promo page, and see all teh people who sent codes. And then it can confirm if he accpet teh code or not. ANd also we should add a tooltip next to it (No code match or match) to see if the code listed has a match inside the list of availbale code.
+
+
+
+Now we do work on OPtion (Gold):
+Do a CRUD of GOLD. INside we see Gold specs of Gold And then when we view we see details of that Option we see which person are inside and details and ofcourse edit is posisble.
+Still in Gold logic: the frontoffcie still hasnt the "Buy the Gold" logic. IN te frontofffic thelogic there is when we buy the requested amount of Gold then we become GOld. THis is wrong. NOrmally, we should acces hte gold and not become gold imediately. SO there is like a page Opption of Godl and we see Gold and icons specs and stuff of gold in a card. If avalible the card is like fading adn button buy is disable and like there is a message syaing that "Vouz devez acheter X regimes puor puovoir acceder au Gold". Sinon, le truc n est plus fade et on peut l acheter
+
+
+CRUD utilisateur: list of utilisateur without the admin in it. And also in 

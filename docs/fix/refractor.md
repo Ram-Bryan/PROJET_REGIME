@@ -49,17 +49,3 @@ Opus can remove some classes of html to totally rebuild the whole thing, It can 
 Why sometime it add index.php and osmetimes it doesnt ? 
 Some stuff are hardcoded in conrollers and in frontend views. 
 
-
-We're in backoffice
-
-OKay now we're in the CRUD of COde PROMO:
-Remove column ID
-Column Utilsiatuer will be renamed as  Utilisé par: if user exist then display the name of the utilsiatuer. Else put empty.
-Edit and delete are icons
-Add filter min max montant. And a radio etat tout disponible utilse 
-
-Creating:
-Deja utilise checkbox doestn exit 
-
-Now make this frontoffice-backoffice Code logique:
-When a client enter a code promo (page code promo of frontoffice), It shouldnt direclty say that it is confirmer. INstead it can say code alreayd used. Or it does this: It waits. The admin connect and go ot validation code promo page, and see all teh people who sent codes. And then it can confirm if he accpet teh code or not. ANd also we should add a tooltip next to it (No code match or match) to see if the code listed has a match inside the list of availbale code.

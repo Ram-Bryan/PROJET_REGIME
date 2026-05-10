@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\CommandeModel;
 use App\Models\DureeRegimeModel;
+use App\Models\OptionModel;
 use App\Models\RegimeModel;
 use App\Models\UtilisateurModel;
 
@@ -21,7 +22,7 @@ class CommandeController extends BaseController
 
         $regime = $regimeModel->find($id);
         if ($regime === null) {
-            return redirect()->to('/regimes')->with('error', 'Régime introuvable.');
+            return redirect()->to('/regimes')->with('error', 'Regime introuvable.');
         }
 
         $durees = $dureeModel->getByRegimeId($id);
@@ -34,6 +35,7 @@ class CommandeController extends BaseController
         $discountPercent = $this->getGoldDiscountPercent($isGold);
         $dureesAffichees = array_map(static function (array $duree) use ($discountPercent): array {
             $prixBase = (float) $duree['prix'];
+
             return $duree + [
                 'prix_final' => round($prixBase * (1 - ($discountPercent / 100)), 2),
             ];
@@ -60,7 +62,7 @@ class CommandeController extends BaseController
 
         if (! $this->validate($rules)) {
             return $this->validationErrorResponse(
-                'Veuillez choisir une durée de régime valide.',
+                'Veuillez choisir une duree de regime valide.',
                 $this->validator->getErrors()
             );
         }
@@ -72,15 +74,15 @@ class CommandeController extends BaseController
 
         $regime = $regimeModel->find($id);
         if ($regime === null) {
-            return $this->errorResponse('Régime introuvable.', '/regimes/' . $id, 404);
+            return $this->errorResponse('Regime introuvable.', '/regimes/' . $id, 404);
         }
 
         $idDureeRegime = (int) $this->request->getPost('id_duree_regime');
         $duree = $dureeRegimeModel->find($idDureeRegime);
 
         if ($duree === null || (int) $duree['id_regime'] !== $id) {
-            return $this->validationErrorResponse('Durée de régime invalide.', [
-                'id_duree_regime' => 'Durée de régime invalide.',
+            return $this->validationErrorResponse('Duree de regime invalide.', [
+                'id_duree_regime' => 'Duree de regime invalide.',
             ]);
         }
 
@@ -91,8 +93,8 @@ class CommandeController extends BaseController
         }
 
         if ($commandeModel->hasActiveRegime($userId, $id, $idDureeRegime)) {
-            return $this->validationErrorResponse('Vous avez déjà ce régime pour cette durée.', [
-                'id_duree_regime' => 'Vous avez déjà ce régime pour cette durée.',
+            return $this->validationErrorResponse('Vous avez deja ce regime pour cette duree.', [
+                'id_duree_regime' => 'Vous avez deja ce regime pour cette duree.',
             ]);
         }
 
@@ -101,8 +103,8 @@ class CommandeController extends BaseController
         $argent = (float) ($user['argent'] ?? 0);
         $prix = $this->calculateFinalPrice((float) $duree['prix'], $discountPercent);
         if ($argent < $prix) {
-            return $this->validationErrorResponse('Solde insuffisant pour acheter ce régime.', [
-                'id_duree_regime' => 'Solde insuffisant pour acheter ce régime.',
+            return $this->validationErrorResponse('Solde insuffisant pour acheter ce regime.', [
+                'id_duree_regime' => 'Solde insuffisant pour acheter ce regime.',
             ]);
         }
 
@@ -116,25 +118,15 @@ class CommandeController extends BaseController
             'montant_paye' => $prix,
         ]);
 
-        $purchaseCount = $commandeModel->countUserPurchases($userId);
-        $successMessage = 'Régime acheté avec succès.';
-        $updatedFields = [
-            'argent' => $newSolde,
-        ];
-
-        if ($purchaseCount >= 3 && ! (bool) ($user['is_gold'] ?? false)) {
-            $userModel->update($userId, ['is_gold' => true]);
-            $updatedFields['is_gold'] = true;
-            $successMessage = 'Régime acheté avec succès. Vous avez déverrouillé le statut Gold !';
-        }
-
         $updatedUser = $userModel->find($userId);
         if (is_array($updatedUser)) {
             session()->set('argent', (float) ($updatedUser['argent'] ?? $newSolde));
             session()->set('is_gold', (bool) ($updatedUser['is_gold'] ?? false));
         }
 
-        return $this->successResponse($successMessage, '/mes-regimes', $updatedFields);
+        return $this->successResponse('Regime achete avec succes.', '/mes-regimes', [
+            'argent' => $newSolde,
+        ]);
     }
 
     private function successResponse(string $message, string $redirectTo, array $payload = [])
@@ -172,13 +164,19 @@ class CommandeController extends BaseController
             ]);
         }
 
-        // Avoid repeating the same message in both global flash and field-level errors.
         return redirect()->back()->withInput()->with('errors', $errors);
     }
 
     private function getGoldDiscountPercent(bool $isGold): float
     {
-        return $isGold ? 15.0 : 0.0;
+        if (! $isGold) {
+            return 0.0;
+        }
+
+        $optionModel = new OptionModel();
+        $gold = $optionModel->getGoldOption();
+
+        return (float) ($gold['reduction_pourcentage'] ?? 0);
     }
 
     private function calculateFinalPrice(float $basePrice, float $discountPercent): float

@@ -55,7 +55,7 @@
 <?= $this->section('content') ?>
 <?php
     $isGold = ! empty($user['is_gold']);
-    $discountPercent = $isGold ? 15.0 : 0.0;
+    $discountPercent = (float) ($discountPercent ?? 0);
     $formatPrice = static function (float $price): string {
         return number_format($price, 0, ',', ' ');
     };
@@ -153,7 +153,7 @@
                                     <span style="text-decoration: line-through; margin-left: 6px; color: var(--muted);">
                                         <?= esc($formatPrice((float) $duree['prix'])) ?> Ar
                                     </span>
-                                    <span class="badge badge-success" style="margin-left: 6px;">-15%</span>
+                                    <span class="badge badge-success" style="margin-left: 6px;">-<?= esc(rtrim(rtrim(number_format($discountPercent, 2, ',', ' '), '0'), ',')) ?>%</span>
                                 <?php endif; ?>
                             </div>
                             <div class="option-meta">→ Résultat estimé: <span class="estimate" data-days="<?= esc($duree['nb_jours']) ?>"></span></div>

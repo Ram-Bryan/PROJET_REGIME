@@ -73,6 +73,7 @@
         </div>
         <div class="actions" style="margin-top:0;">
             <a href="<?= site_url('/profile/edit') ?>" class="btn btn-secondary">Modifier mon profil</a>
+            <a href="<?= site_url('/options') ?>" class="btn btn-secondary">Option Gold</a>
             <a href="<?= site_url('/transactions') ?>" class="btn btn-secondary">Transactions</a>
             <a href="<?= site_url('/promo') ?>" class="btn btn-secondary">Code promo</a>
             <a href="<?= site_url('/logout') ?>" class="btn btn-secondary" data-confirm-message="Voulez-vous vraiment vous déconnecter ?">Déconnexion</a>

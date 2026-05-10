@@ -55,4 +55,29 @@ class UtilisateurModel extends Model
     {
         return $this->orderBy($this->primaryKey, 'ASC')->first();
     }
+
+    public function getGoldMembers(): array
+    {
+        return $this->db->table('utilisateur u')
+            ->select([
+                'u.id_utilisateur',
+                'u.nom',
+                'u.email',
+                'u.argent',
+                'u.genre',
+                'COUNT(c.id_commande) AS nb_commandes',
+            ])
+            ->join('commande c', 'c.id_utilisateur = u.id_utilisateur', 'left')
+            ->where('u.is_gold', 1)
+            ->groupBy([
+                'u.id_utilisateur',
+                'u.nom',
+                'u.email',
+                'u.argent',
+                'u.genre',
+            ])
+            ->orderBy('u.nom', 'ASC')
+            ->get()
+            ->getResultArray();
+    }
 }

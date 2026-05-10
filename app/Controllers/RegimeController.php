@@ -7,6 +7,7 @@ use App\Models\CommandeModel;
 use App\Models\DureeRegimeModel;
 use App\Models\ImcModel;
 use App\Models\ObjectifModel;
+use App\Models\OptionModel;
 use App\Models\RegimeActiviteModel;
 use App\Models\RegimeModel;
 use App\Models\UtilisateurModel;
@@ -97,8 +98,14 @@ class RegimeController extends BaseController
         $activites = $activiteModel->getByIds($activiteIds);
 
         $user = null;
+        $discountPercent = 0.0;
         if (session()->get('is_logged_in')) {
             $user = $userModel->find((int) session()->get('id_utilisateur'));
+            if (! empty($user['is_gold'])) {
+                $optionModel = new OptionModel();
+                $gold = $optionModel->getGoldOption();
+                $discountPercent = (float) ($gold['reduction_pourcentage'] ?? 0);
+            }
         }
 
         $imcIdeal = $imcModel->getIdealRange();
@@ -111,6 +118,7 @@ class RegimeController extends BaseController
             'activites' => $activites,
             'objectiveLabel' => $objectiveLabel,
             'user' => $user,
+            'discountPercent' => $discountPercent,
             'imcIdealMin' => $imcIdealMin,
             'imcIdealMax' => $imcIdealMax,
         ]);
