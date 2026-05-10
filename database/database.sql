@@ -18,7 +18,6 @@ CREATE TABLE objectif (
 -- =========================================================
 -- TABLE UTILISATEUR
 -- =========================================================
-
 CREATE TABLE utilisateur (
     id_utilisateur INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -27,6 +26,7 @@ CREATE TABLE utilisateur (
     genre ENUM('Homme', 'Femme') NOT NULL,
     taille_cm DECIMAL(5,2),
     poids_kg DECIMAL(5,2),
+    poids_objectif DECIMAL(5,2) NULL, 
     date_naissance DATE,
     id_objectif INT,
     is_gold BOOLEAN DEFAULT FALSE,
@@ -44,7 +44,7 @@ CREATE TABLE utilisateur (
 CREATE TABLE regime (
     id_regime INT AUTO_INCREMENT PRIMARY KEY,
     nom_regime VARCHAR(100) NOT NULL,
-    variation_poids DECIMAL(5,2) NOT NULL,
+    variation_mensuelle_kg DECIMAL(5,2) NOT NULL,
     pourcentage_viande DECIMAL(5,2) DEFAULT 0,
     pourcentage_poisson DECIMAL(5,2) DEFAULT 0,
     pourcentage_volaille DECIMAL(5,2) DEFAULT 0
@@ -216,7 +216,6 @@ Sofia/sofia
 Admin/admin
 
 */
-
 INSERT INTO utilisateur(
     nom,
     email,
@@ -224,6 +223,7 @@ INSERT INTO utilisateur(
     genre,
     taille_cm,
     poids_kg,
+    poids_objectif,
     date_naissance,
     id_objectif,
     is_gold,
@@ -237,6 +237,7 @@ INSERT INTO utilisateur(
     'Homme',
     175,
     72,
+    65,
     '1998-05-12',
     1,
     FALSE,
@@ -250,6 +251,7 @@ INSERT INTO utilisateur(
     'Femme',
     165,
     58,
+    62,
     '2000-08-10',
     2,
     FALSE,
@@ -262,7 +264,8 @@ INSERT INTO utilisateur(
     '$2y$10$pj4MlDW6Mbg/2QlChmFFhePzl5EwXGff5RC1Ssab0e7IVFDT6DfGG',
     'Homme',
     180,
-    85,
+    98,
+    75,
     '1997-11-22',
     3,
     FALSE,
@@ -276,6 +279,7 @@ INSERT INTO utilisateur(
     'Femme',
     170,
     65,
+    60,
     '2001-01-17',
     1,
     FALSE,
@@ -289,20 +293,20 @@ INSERT INTO utilisateur(
     'Homme',
     178,
     75,
+    NULL,
     '1995-03-15',
     NULL,
     TRUE,
     100000,
     'admin'
 );
-
 -- =========================================================
 -- INSERTION REGIMES
 -- =========================================================
 
 INSERT INTO regime(
     nom_regime,
-    variation_poids,
+    variation_mensuelle_kg,
     pourcentage_viande,
     pourcentage_poisson,
     pourcentage_volaille
@@ -457,7 +461,7 @@ CREATE VIEW v_regime_details AS
 SELECT
     r.id_regime,
     r.nom_regime,
-    r.variation_poids,
+    r.variation_mensuelle_kg,
     r.pourcentage_viande,
     r.pourcentage_poisson,
     r.pourcentage_volaille,
@@ -511,6 +515,45 @@ ON cp.id_utilisateur_utilisation = u.id_utilisateur;
 CREATE VIEW v_regime_prix AS
 SELECT
     r.nom_regime,
+    d.nb_jours,
+    d.prix
+FROM regime r
+JOIN duree_regime d
+ON r.id_regime = d.id_regime;
+
+-- =========================================================
+-- VIEW : REGIMES ACHETES
+-- =========================================================
+
+CREATE VIEW v_commande_regime AS
+SELECT
+    c.id_commande,
+    c.id_utilisateur,
+    c.id_regime,
+    c.id_duree_regime,
+    c.date_achat,
+    c.montant_paye,
+    r.nom_regime,
+    r.variation_mensuelle_kg,
+    r.pourcentage_viande,
+    r.pourcentage_poisson,
+    r.pourcentage_volaille,
+    d.nb_jours,
+    d.prix
+FROM commande c
+JOIN regime r
+ON c.id_regime = r.id_regime
+JOIN duree_regime d
+ON c.id_duree_regime = d.id_duree_regime;
+
+CREATE VIEW v_regime_duree AS
+SELECT
+    r.id_regime,
+    r.nom_regime,
+    r.variation_mensuelle_kg,
+    r.pourcentage_viande,
+    r.pourcentage_poisson,
+    r.pourcentage_volaille,
     d.nb_jours,
     d.prix
 FROM regime r
