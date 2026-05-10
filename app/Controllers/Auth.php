@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\CodePromoModel;
 use App\Models\CommandeModel;
+use App\Models\ImcModel;
 use App\Models\ObjectifModel;
 use App\Models\UtilisateurModel;
 
@@ -24,23 +25,29 @@ class Auth extends BaseController
             return redirect()->to('/dashboard');
         }
 
-        return view('auth/register_personal');
+        return view('auth/register_personal', [
+            'personal' => session()->get('register_step_personal') ?? [],
+        ]);
     }
 
     public function saveRegisterPersonal()
     {
         $rules = [
-            'nom' => 'required|min_length[3]',
+            'nom' => 'required|min_length[2]|max_length[100]',
             'email' => 'required|valid_email',
-            'mot_de_passe' => 'required|min_length[6]',
-            'genre' => 'required|in_list[Homme,Femme]',
-            'date_naissance' => 'required|valid_date',
+            'mot_de_passe' => 'required|min_length[8]|regex_match[/[A-Z]/]|regex_match[/[0-9]/]',
+            'genre' => 'permit_empty|in_list[Homme,Femme,Autre]',
+            'date_naissance' => 'permit_empty|valid_date[Y-m-d]',
         ];
 
         if (! $this->validate($rules)) {
+            $errors = $this->validator->getErrors();
+            if (isset($errors['mot_de_passe'])) {
+                $errors['mot_de_passe'] = 'Le mot de passe doit contenir au moins 8 caracteres, une majuscule et un chiffre.';
+            }
             return $this->validationErrorResponse(
                 'Veuillez compléter correctement les informations personnelles.',
-                $this->validator->getErrors()
+                $errors
             );
         }
 
@@ -55,8 +62,8 @@ class Auth extends BaseController
             'nom' => (string) $this->request->getPost('nom'),
             'email' => (string) $this->request->getPost('email'),
             'mot_de_passe' => (string) $this->request->getPost('mot_de_passe'),
-            'genre' => (string) $this->request->getPost('genre'),
-            'date_naissance' => (string) $this->request->getPost('date_naissance'),
+            'genre' => (string) ($this->request->getPost('genre') ?: 'Autre'),
+            'date_naissance' => ($this->request->getPost('date_naissance') ?: null),
         ]);
 
         return $this->successResponse(
@@ -94,8 +101,8 @@ class Auth extends BaseController
         $rules = [
             'taille_cm' => 'required|numeric|greater_than[0]',
             'poids_kg' => 'required|numeric|greater_than[0]',
-            'poids_objectif' => 'required|numeric|greater_than[0]',
             'id_objectif' => 'required|is_natural_no_zero',
+            'poids_objectif' => 'permit_empty|numeric|greater_than[0]',
         ];
 
         if (! $this->validate($rules)) {
@@ -117,6 +124,12 @@ class Auth extends BaseController
 
         $tailleCm = (float) $this->request->getPost('taille_cm');
         $poidsKg = (float) $this->request->getPost('poids_kg');
+        $poidsObjectifRaw = $this->request->getPost('poids_objectif');
+        $poidsObjectif = ($poidsObjectifRaw === null || $poidsObjectifRaw === '') ? null : (float) $poidsObjectifRaw;
+        $coherenceErrors = $this->validateObjectiveConsistency((int) $objectif['id_objectif'], $poidsKg, $poidsObjectif, $tailleCm);
+        if ($coherenceErrors !== []) {
+            return $this->validationErrorResponse('Veuillez corriger les incohérences des données santé.', $coherenceErrors);
+        }
 
         $userId = $userModel->insert([
             'nom' => $personalStep['nom'],
@@ -125,7 +138,7 @@ class Auth extends BaseController
             'genre' => $personalStep['genre'],
             'taille_cm' => $tailleCm,
             'poids_kg' => $poidsKg,
-            'poids_objectif' => (float) $this->request->getPost('poids_objectif'),
+            'poids_objectif' => $poidsObjectif,
             'date_naissance' => $personalStep['date_naissance'],
             'id_objectif' => (int) $this->request->getPost('id_objectif'),
             'is_gold' => false,
@@ -167,7 +180,7 @@ class Auth extends BaseController
     {
         $rules = [
             'email' => 'required|valid_email',
-            'mot_de_passe' => 'required|min_length[6]',
+            'mot_de_passe' => 'required',
         ];
 
         if (! $this->validate($rules)) {
@@ -384,12 +397,12 @@ class Auth extends BaseController
         }
 
         $rules = [
-            'nom' => 'required|min_length[3]',
-            'genre' => 'required|in_list[Homme,Femme]',
-            'date_naissance' => 'required|valid_date[Y-m-d]',
+            'nom' => 'required|min_length[2]|max_length[100]',
+            'genre' => 'permit_empty|in_list[Homme,Femme,Autre]',
+            'date_naissance' => 'permit_empty|valid_date[Y-m-d]',
             'taille_cm' => 'required|numeric|greater_than[0]',
             'poids_kg' => 'required|numeric|greater_than[0]',
-            'poids_objectif' => 'required|numeric|greater_than[0]',
+            'poids_objectif' => 'permit_empty|numeric|greater_than[0]',
             'id_objectif' => 'required|is_natural_no_zero',
         ];
 
@@ -403,6 +416,8 @@ class Auth extends BaseController
         $tailleCm = (float) $this->request->getPost('taille_cm');
         $poidsKg = (float) $this->request->getPost('poids_kg');
         $idObjectif = (int) $this->request->getPost('id_objectif');
+        $poidsObjectifRaw = $this->request->getPost('poids_objectif');
+        $poidsObjectif = ($poidsObjectifRaw === null || $poidsObjectifRaw === '') ? null : (float) $poidsObjectifRaw;
 
         // Verify objectif exists
         $objectifModel = new ObjectifModel();
@@ -413,14 +428,22 @@ class Auth extends BaseController
             ]);
         }
 
+        $coherenceErrors = $this->validateObjectiveConsistency($idObjectif, $poidsKg, $poidsObjectif, $tailleCm);
+        if ($coherenceErrors !== []) {
+            return $this->validationErrorResponse(
+                'Veuillez corriger les champs indiqués.',
+                $coherenceErrors
+            );
+        }
+
         // Update user in database
         $updateData = [
             'nom' => (string) $this->request->getPost('nom'),
-            'genre' => (string) $this->request->getPost('genre'),
-            'date_naissance' => (string) $this->request->getPost('date_naissance'),
+            'genre' => (string) ($this->request->getPost('genre') ?: 'Autre'),
+            'date_naissance' => ($this->request->getPost('date_naissance') ?: null),
             'taille_cm' => $tailleCm,
             'poids_kg' => $poidsKg,
-            'poids_objectif' => (float) $this->request->getPost('poids_objectif'),
+            'poids_objectif' => $poidsObjectif,
             'id_objectif' => $idObjectif,
         ];
 
@@ -503,5 +526,120 @@ class Auth extends BaseController
             'objectif_label' => $objectif['label_objectif'] ?? null,
             'argent' => (float) ($user['argent'] ?? 0),
         ]);
+    }
+
+    public function checkEmailAvailability()
+    {
+        if (! $this->request->isAJAX()) {
+            return $this->response->setStatusCode(405)->setJSON([
+                'success' => false,
+                'message' => 'Méthode non autorisée.',
+            ]);
+        }
+
+        $email = trim((string) $this->request->getPost('email'));
+        if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->response->setStatusCode(422)->setJSON([
+                'success' => false,
+                'message' => 'Email invalide.',
+            ]);
+        }
+
+        $userModel = new UtilisateurModel();
+        $existing = $userModel->findByEmail($email);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'available' => $existing === null,
+            'message' => $existing === null ? 'Email disponible.' : 'Cet email est déjà utilisé.',
+        ]);
+    }
+
+    public function imcPreview()
+    {
+        if (! $this->request->isAJAX()) {
+            return $this->response->setStatusCode(405)->setJSON([
+                'success' => false,
+                'message' => 'Méthode non autorisée.',
+            ]);
+        }
+
+        $tailleCm = (float) $this->request->getPost('taille_cm');
+        $poidsKg = (float) $this->request->getPost('poids_kg');
+
+        $userModel = new UtilisateurModel();
+        $imcModel = new ImcModel();
+        $imc = $userModel->calculateImc($poidsKg, $tailleCm);
+
+        if ($imc === null) {
+            return $this->response->setStatusCode(422)->setJSON([
+                'success' => false,
+                'message' => 'Données IMC invalides.',
+            ]);
+        }
+
+        $ranges = $imcModel->orderBy('imc_min', 'ASC')->findAll();
+        $label = null;
+        $isIdeal = false;
+        foreach ($ranges as $range) {
+            if ($imc >= (float) $range['imc_min'] && $imc <= (float) $range['imc_max']) {
+                $label = $range['label_imc'];
+                $isIdeal = strtolower((string) $label) === 'poids normal';
+                break;
+            }
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'imc' => $imc,
+            'label' => $label,
+            'is_ideal' => $isIdeal,
+            'ranges' => $ranges,
+        ]);
+    }
+
+    private function validateObjectiveConsistency(int $idObjectif, float $poidsActuel, ?float $poidsObjectif, float $tailleCm): array
+    {
+        $errors = [];
+        $objectifModel = new ObjectifModel();
+        $objectif = $objectifModel->find($idObjectif);
+        if (! is_array($objectif)) {
+            $errors['id_objectif'] = 'Objectif invalide.';
+            return $errors;
+        }
+
+        $label = mb_strtolower((string) $objectif['label_objectif']);
+        $isLose = str_contains($label, 'perte');
+        $isGain = str_contains($label, 'prise');
+        $isIdealObjective = str_contains($label, 'ideal');
+
+        if (($isLose || $isGain) && $poidsObjectif === null) {
+            $errors['poids_objectif'] = 'Le poids cible est requis pour cet objectif.';
+            return $errors;
+        }
+
+        if ($isLose && $poidsObjectif !== null && $poidsObjectif >= $poidsActuel) {
+            $errors['poids_objectif'] = 'Pour perdre du poids, le poids cible doit être inférieur au poids actuel.';
+        }
+
+        if ($isGain && $poidsObjectif !== null && $poidsObjectif <= $poidsActuel) {
+            $errors['poids_objectif'] = 'Pour prendre du poids, le poids cible doit être supérieur au poids actuel.';
+        }
+
+        if ($isIdealObjective) {
+            $userModel = new UtilisateurModel();
+            $imcModel = new ImcModel();
+            $imc = $userModel->calculateImc($poidsActuel, $tailleCm);
+            $ideal = $imcModel->getIdealRange();
+
+            if ($imc !== null && $ideal !== null) {
+                $isAlreadyIdeal = $imc >= (float) $ideal['imc_min'] && $imc <= (float) $ideal['imc_max'];
+                if ($isAlreadyIdeal) {
+                    $errors['id_objectif'] = 'Vous êtes déjà dans l\'IMC idéal. Choisissez un autre objectif.';
+                }
+            }
+        }
+
+        return $errors;
     }
 }

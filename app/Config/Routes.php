@@ -10,6 +10,8 @@ $routes->get('register', 'Auth::register');
 $routes->post('register', 'Auth::saveRegisterPersonal');
 $routes->get('register/health', 'Auth::registerHealth');
 $routes->post('register/health', 'Auth::saveRegisterHealth');
+$routes->post('register/check-email', 'Auth::checkEmailAvailability');
+$routes->post('register/imc-preview', 'Auth::imcPreview');
 $routes->get('login', 'Auth::login');
 $routes->post('login', 'Auth::attemptLogin');
 $routes->get('dashboard', 'Auth::dashboard', ['filter' => 'auth']);

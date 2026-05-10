@@ -5,58 +5,37 @@
 <?= $this->section('content') ?>
 <?php $validationErrors = session()->getFlashdata('errors') ?? []; ?>
 <section class="stack" style="max-width:980px; margin: 0 auto;">
-    <div class="hero">
-        <div class="page-header" style="position:relative; z-index:1;">
-            <h1>Modifier mon profil</h1>
-            <p class="sub">Mettez à jour vos informations en toute sécurité avec un parcours clair et sans friction.</p>
-        </div>
-        <div class="hero-actions" style="position:relative; z-index:1;">
-            <a href="<?= site_url('/profile') ?>" class="btn btn-secondary">Retour au profil</a>
-            <a href="<?= site_url('/dashboard') ?>" class="btn btn-secondary">Dashboard</a>
-        </div>
-    </div>
+    <div class="hero"><h1>Modifier mon profil</h1><p class="sub">Mettez a jour vos informations avec verification locale claire.</p></div>
 
-    <form method="POST" action="<?= site_url('/profile/update') ?>" class="stack" data-ajax-form="true">
+    <form method="POST" action="<?= site_url('/profile/update') ?>" class="stack" data-ajax-form="true" id="profile-edit-form">
         <?= csrf_field() ?>
         <div class="form-feedback" data-form-feedback></div>
 
         <div class="card stack">
-            <div class="section-title">
-                <div>
-                    <h2>Informations personnelles</h2>
-                    <p class="sub">Les champs de base de votre identité.</p>
-                </div>
-            </div>
             <div>
                 <label for="nom">Nom *</label>
-                <input type="text" id="nom" name="nom" minlength="2" maxlength="80" autocomplete="name" value="<?= old('nom', esc($user['nom'])) ?>" required>
+                <input type="text" id="nom" name="nom" minlength="3" maxlength="80" value="<?= old('nom', esc($user['nom'])) ?>" required>
                 <div class="field-error" data-field-error="nom"><?php if (isset($validationErrors['nom'])): ?><?= esc($validationErrors['nom']) ?><?php endif; ?></div>
             </div>
             <div class="grid">
                 <div>
-                    <label for="genre">Genre *</label>
-                    <select id="genre" name="genre" required>
-                        <option value="">-- Sélectionner --</option>
+                    <label for="genre">Genre</label>
+                    <select id="genre" name="genre">
+                        <option value="Autre" <?= old('genre', $user['genre']) === 'Autre' ? 'selected' : '' ?>>Autre</option>
                         <option value="Homme" <?= old('genre', $user['genre']) === 'Homme' ? 'selected' : '' ?>>Homme</option>
                         <option value="Femme" <?= old('genre', $user['genre']) === 'Femme' ? 'selected' : '' ?>>Femme</option>
                     </select>
                     <div class="field-error" data-field-error="genre"><?php if (isset($validationErrors['genre'])): ?><?= esc($validationErrors['genre']) ?><?php endif; ?></div>
                 </div>
                 <div>
-                    <label for="date_naissance">Date de naissance *</label>
-                    <input type="date" id="date_naissance" name="date_naissance" value="<?= old('date_naissance', esc($user['date_naissance'])) ?>" required>
+                    <label for="date_naissance">Date de naissance</label>
+                    <input type="date" id="date_naissance" name="date_naissance" value="<?= old('date_naissance', esc($user['date_naissance'])) ?>">
                     <div class="field-error" data-field-error="date_naissance"><?php if (isset($validationErrors['date_naissance'])): ?><?= esc($validationErrors['date_naissance']) ?><?php endif; ?></div>
                 </div>
             </div>
         </div>
 
         <div class="card stack">
-            <div class="section-title">
-                <div>
-                    <h2>Informations santé</h2>
-                    <p class="sub">Votre base pour les recommandations et le calcul d’IMC.</p>
-                </div>
-            </div>
             <div class="grid">
                 <div>
                     <label for="taille_cm">Taille (cm) *</label>
@@ -69,40 +48,31 @@
                     <div class="field-error" data-field-error="poids_kg"><?php if (isset($validationErrors['poids_kg'])): ?><?= esc($validationErrors['poids_kg']) ?><?php endif; ?></div>
                 </div>
             </div>
-            <div class="grid">
-                <div>
-                    <label for="poids_objectif">Poids objectif (kg) *</label>
-                    <input type="number" step="0.01" min="20" max="350" id="poids_objectif" name="poids_objectif" value="<?= old('poids_objectif', esc($user['poids_objectif'] ?? '')) ?>" required>
-                    <div class="field-error" data-field-error="poids_objectif"><?php if (isset($validationErrors['poids_objectif'])): ?><?= esc($validationErrors['poids_objectif']) ?><?php endif; ?></div>
+
+            <div>
+                <label>Objectif</label>
+                <div class="radio-group" id="objectif-group">
+                    <?php foreach ($objectifs as $objectif): ?>
+                        <label class="radio-item">
+                            <input type="radio" name="id_objectif" value="<?= $objectif['id_objectif'] ?>" <?= old('id_objectif', (string) $user['id_objectif']) === (string) $objectif['id_objectif'] ? 'checked' : '' ?>>
+                            <?= esc($objectif['label_objectif']) ?>
+                        </label>
+                    <?php endforeach; ?>
                 </div>
-                <div>
-                    <label for="id_objectif">Objectif *</label>
-                    <select id="id_objectif" name="id_objectif" required>
-                        <option value="">-- Sélectionner --</option>
-                        <?php foreach ($objectifs as $objectif): ?>
-                            <option value="<?= $objectif['id_objectif'] ?>" <?= old('id_objectif', (string) $user['id_objectif']) === (string) $objectif['id_objectif'] ? 'selected' : '' ?>>
-                                <?= esc($objectif['label_objectif']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <div class="field-error" data-field-error="id_objectif"><?php if (isset($validationErrors['id_objectif'])): ?><?= esc($validationErrors['id_objectif']) ?><?php endif; ?></div>
-                </div>
+                <div class="field-error" data-field-error="id_objectif"><?php if (isset($validationErrors['id_objectif'])): ?><?= esc($validationErrors['id_objectif']) ?><?php endif; ?></div>
+            </div>
+
+            <div id="poids-objectif-wrap">
+                <label for="poids_objectif">Poids cible (kg)</label>
+                <input type="number" step="0.01" min="20" max="350" id="poids_objectif" name="poids_objectif" value="<?= old('poids_objectif', esc($user['poids_objectif'] ?? '')) ?>">
+                <div class="field-error" data-field-error="poids_objectif"><?php if (isset($validationErrors['poids_objectif'])): ?><?= esc($validationErrors['poids_objectif']) ?><?php endif; ?></div>
             </div>
         </div>
 
         <div class="card stack">
-            <div class="section-title">
-                <div>
-                    <h2>Vérification identité</h2>
-                    <p class="sub">Confirmez vos modifications avec votre mot de passe.</p>
-                </div>
-            </div>
-            <div>
-                <label for="current_password">Mot de passe actuel *</label>
-                <input type="password" id="current_password" name="current_password" required>
-                <p class="sub">Requis pour confirmer les modifications.</p>
-                <div class="field-error" data-field-error="current_password"><?php if (isset($validationErrors['current_password'])): ?><?= esc($validationErrors['current_password']) ?><?php endif; ?></div>
-            </div>
+            <label for="current_password">Mot de passe actuel *</label>
+            <input type="password" id="current_password" name="current_password" required>
+            <div class="field-error" data-field-error="current_password"><?php if (isset($validationErrors['current_password'])): ?><?= esc($validationErrors['current_password']) ?><?php endif; ?></div>
         </div>
 
         <div class="actions">
@@ -111,4 +81,43 @@
         </div>
     </form>
 </section>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+(() => {
+    const form = document.getElementById('profile-edit-form');
+    if (!form) return;
+    const poids = form.querySelector('#poids_kg');
+    const objectifWrap = form.querySelector('#poids-objectif-wrap');
+    const poidsObjectif = form.querySelector('#poids_objectif');
+
+    const selectedLabel = () => {
+        const checked = form.querySelector('input[name="id_objectif"]:checked');
+        return checked ? checked.closest('label').innerText.toLowerCase() : '';
+    };
+    const toggleTarget = () => {
+        const label = selectedLabel();
+        const needs = label.includes('perte') || label.includes('prise');
+        objectifWrap.style.display = needs ? 'block' : 'none';
+        poidsObjectif.required = needs;
+        if (!needs) poidsObjectif.value = '';
+    };
+
+    form.querySelectorAll('input[name="id_objectif"]').forEach((r) => r.addEventListener('change', toggleTarget));
+    poidsObjectif.addEventListener('blur', () => {
+        if (!poidsObjectif.required) return;
+        const p = parseFloat(poids.value || '0');
+        const o = parseFloat(poidsObjectif.value || '0');
+        const label = selectedLabel();
+        const err = form.querySelector('[data-field-error="poids_objectif"]');
+        if (!o || o <= 0) return err.textContent = 'Poids cible requis.';
+        if (label.includes('perte') && o >= p) return err.textContent = 'Le poids cible doit etre inferieur au poids actuel.';
+        if (label.includes('prise') && o <= p) return err.textContent = 'Le poids cible doit etre superieur au poids actuel.';
+        err.textContent = '';
+    });
+
+    toggleTarget();
+})();
+</script>
 <?= $this->endSection() ?>

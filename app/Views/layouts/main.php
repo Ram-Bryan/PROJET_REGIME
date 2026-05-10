@@ -785,7 +785,16 @@
                     const data = await response.json();
 
                     if (!response.ok || !data.success) {
-                        setFeedback(form, 'error', data.message || 'Veuillez vérifier les champs du formulaire.', data.errors || {});
+                        const hasFieldErrors = data.errors && Object.keys(data.errors).length > 0;
+                        if (hasFieldErrors) {
+                            const feedback = form.querySelector('[data-form-feedback]');
+                            if (feedback) {
+                                feedback.className = 'form-feedback';
+                                feedback.textContent = '';
+                            }
+                        } else {
+                            setFeedback(form, 'error', data.message || 'Veuillez vérifier les champs du formulaire.', data.errors || {});
+                        }
                         showFieldErrors(form, data.errors || {});
                         setLoading(submit, false);
                         return;

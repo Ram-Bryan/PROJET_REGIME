@@ -27,7 +27,7 @@
             <div class="metric-card"><div class="metric-label">Nom</div><div class="metric-value small"><?= esc($user['nom']) ?></div></div>
             <div class="metric-card"><div class="metric-label">Email</div><div class="metric-value small"><?= esc($user['email']) ?></div></div>
             <div class="metric-card"><div class="metric-label">Genre</div><div class="metric-value"><?= esc($user['genre']) ?></div></div>
-            <div class="metric-card"><div class="metric-label">Date de naissance</div><div class="metric-value small"><?= esc($user['date_naissance']) ?></div></div>
+            <div class="metric-card"><div class="metric-label">Date de naissance</div><div class="metric-value small"><?= esc($user['date_naissance'] ?? 'Non renseignée') ?></div></div>
         </div>
     </div>
 

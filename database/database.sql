@@ -23,7 +23,7 @@ CREATE TABLE utilisateur (
     nom VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     mot_de_passe VARCHAR(255) NOT NULL,
-    genre ENUM('Homme', 'Femme') NOT NULL,
+    genre ENUM('Homme', 'Femme', 'Autre') NOT NULL DEFAULT 'Autre' ,
     taille_cm DECIMAL(5,2),
     poids_kg DECIMAL(5,2),
     poids_objectif DECIMAL(5,2) NULL, 
