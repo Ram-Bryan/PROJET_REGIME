@@ -18,18 +18,20 @@
         <h3 class="section-title">Specs actuelles</h3>
         <p class="section-subtitle">Ces valeurs sont celles qui seront visibles et appliquees cote frontoffice.</p>
 
-        <div class="summary-grid">
-            <div class="summary-card">
-                <div class="summary-label">Prix</div>
-                <div class="summary-value"><?= esc(number_format((float) $option['prix_unique'], 2, ',', ' ')) ?> Ar</div>
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-label"><img src="<?= esc(base_url('assets/icons/wallet.svg')) ?>" alt="">Prix</div>
+                <div class="metric-value">
+                    <?= esc(number_format((float) $option['prix_unique'], 2, ',', ' ')) ?> Ar
+                </div>
             </div>
-            <div class="summary-card">
-                <div class="summary-label">Regimes requis</div>
-                <div class="summary-value"><?= esc((string) $option['nb_regimes_achetes']) ?></div>
+            <div class="metric-card">
+                <div class="metric-label"><img src="<?= esc(base_url('assets/icons/apple.svg')) ?>" alt="">Regimes requis</div>
+                <div class="metric-value"><?= esc((string) $option['nb_regimes_achetes']) ?></div>
             </div>
-            <div class="summary-card">
-                <div class="summary-label">Membres Gold</div>
-                <div class="summary-value"><?= esc((string) count($goldMembers ?? [])) ?></div>
+            <div class="metric-card">
+                <div class="metric-label"><img src="<?= esc(base_url('assets/icons/users.svg')) ?>" alt="">Membres Gold</div>
+                <div class="metric-value"><?= esc((string) count($goldMembers ?? [])) ?></div>
             </div>
         </div>
     </div>

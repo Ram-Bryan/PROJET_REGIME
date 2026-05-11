@@ -4,14 +4,16 @@
 
 
 <?= $this->section('content') ?>
-<section class="stack">
+<section class="stack profile-normal">
     <div class="hero">
         <div class="page-header">
             <h1>Mon profil</h1>
             <p class="sub">Consultez vos informations personnelles et santé, puis accédez rapidement à vos actions principales.</p>
         </div>
         <div class="hero-actions">
-            <a href="<?= site_url('/profile/edit') ?>" class="btn">Modifier le profil</a>
+            <a href="<?= site_url('/profile/edit') ?>" class="btn btn-ghost btn-icon" title="Modifier le profil">
+                <img src="<?= esc(base_url('assets/icons/pencil.svg')) ?>" alt="Modifier">
+            </a>
             <a href="<?= site_url('/mes-regimes') ?>" class="btn btn-secondary">Mes régimes</a>
             <a href="<?= site_url('/dashboard') ?>" class="btn btn-secondary">Dashboard</a>
         </div>

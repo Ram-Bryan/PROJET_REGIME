@@ -29,13 +29,13 @@
 
                 <div>
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" maxlength="120" autocomplete="email" placeholder="Ex: jean@gmail.com" value="<?= esc(old('email')) ?>" required>
+                    <input type="email" id="email" name="email" maxlength="120" autocomplete="email" placeholder="Ex: jean@gmail.com" value="<?= esc(old('email', 'jean@gmail.com')) ?>" required>
                     <div class="field-error" data-field-error="email"></div>
                 </div>
 
                 <div class="field-wrap">
                     <label for="mot_de_passe">Mot de passe</label>
-                    <input type="password" id="mot_de_passe" name="mot_de_passe" autocomplete="current-password" required>
+                    <input type="password" id="mot_de_passe" name="mot_de_passe" autocomplete="current-password" value="<?= esc(old('mot_de_passe', 'jean123')) ?>" required>
                     <button type="button" class="eye-btn" id="toggle-login-password"><img src="<?= base_url('assets/icons/eye.svg') ?>" alt="Voir"></button>
                     <div class="field-error" data-field-error="mot_de_passe"></div>
                 </div>

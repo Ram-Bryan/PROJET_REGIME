@@ -41,10 +41,12 @@ class AdminUtilisateurController extends BaseController
         }
 
         $commandes = $utilisateurModel->getUserCommandes($id);
+        $imc = $utilisateurModel->calculateImc((float) ($user['poids_kg'] ?? 0), (float) ($user['taille_cm'] ?? 0));
 
         return view('backoffice/utilisateur/show', [
             'user'      => $user,
             'commandes' => $commandes,
+            'imc'       => $imc,
             'activeNav' => 'utilisateurs',
         ]);
     }

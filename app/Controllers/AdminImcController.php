@@ -75,6 +75,24 @@ class AdminImcController extends BaseController
             }
         }
 
+        $ranges = array_merge($otherImcs, [[
+            'id_imc' => $id,
+            'label_imc' => (string) $this->request->getPost('label_imc'),
+            'imc_min' => $min,
+            'imc_max' => $max,
+        ]]);
+
+        usort($ranges, static fn ($a, $b) => ((float) $a['imc_min']) <=> ((float) $b['imc_min']));
+
+        for ($i = 0; $i < count($ranges) - 1; $i++) {
+            $currentMax = (float) $ranges[$i]['imc_max'];
+            $nextMin = (float) $ranges[$i + 1]['imc_min'];
+            if ($nextMin > $currentMax) {
+                session()->setFlashdata('error', 'Un intervalle IMC manque entre ' . $currentMax . ' et ' . $nextMin . '.');
+                return redirect()->back()->withInput();
+            }
+        }
+
         $imcModel->update($id, [
             'label_imc' => $this->request->getPost('label_imc'),
             'imc_min'   => $min,

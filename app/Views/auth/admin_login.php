@@ -35,12 +35,12 @@
 
                 <div>
                     <label for="email">Adresse Email</label>
-                    <input type="email" id="email" name="email" placeholder="exemple@email.com" required autocomplete="email">
+                    <input type="email" id="email" name="email" placeholder="exemple@email.com" value="<?= esc(old('email', 'admin@gmail.com')) ?>" required autocomplete="email">
                 </div>
 
                 <div class="field-wrap">
                     <label for="mot_de_passe">Mot de passe</label>
-                    <input type="password" id="mot_de_passe" name="mot_de_passe" placeholder="••••••••" required autocomplete="current-password">
+                    <input type="password" id="mot_de_passe" name="mot_de_passe" placeholder="••••••••" value="<?= esc(old('mot_de_passe', 'admin123')) ?>" required autocomplete="current-password">
                     <button type="button" class="eye-btn" id="togglePassword"><img src="<?= base_url('assets/icons/eye.svg') ?>" alt="Voir"></button>
                 </div>
 

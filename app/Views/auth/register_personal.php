@@ -20,7 +20,7 @@
     <div class="auth-grid">
         <div class="auth-promo">
             <h1>Créer un compte</h1>
-            <p class="sub">Champs obligatoires : nom, email, mot de passe.</p>
+            <p class="sub">Commencez votre parcours avec des informations claires et sûres.</p>
         </div>
         <div class="auth-form-panel">
             <form action="<?= site_url('/register') ?>" method="post" class="stack" data-ajax-form="true" id="register-personal-form">
@@ -63,7 +63,6 @@
                     <label for="mot_de_passe">Mot de passe <span class="required-star">*</span></label>
                     <input type="password" id="mot_de_passe" name="mot_de_passe" maxlength="72" placeholder="8+ caractères, 1 majuscule, 1 chiffre" value="<?= esc(old('mot_de_passe', $p['mot_de_passe'] ?? '')) ?>" required>
                     <button type="button" class="eye-btn" id="toggle-password"><img src="<?= base_url('assets/icons/eye.svg') ?>" alt="Voir"></button>
-                    <span class="field-icon" data-icon="mot_de_passe"></span>
                     <div class="field-hint" id="password-strength">Force : -</div>
                     <div class="field-error" data-field-error="mot_de_passe"></div>
                 </div>
@@ -90,9 +89,14 @@
         const input = form.querySelector(`[name="${name}"]`);
         const icon = form.querySelector(`[data-icon="${name}"]`);
         const err = form.querySelector(`[data-field-error="${name}"]`);
-        if (!input || !icon || !err) return;
-        if (String(input.value || '').trim() === '') { icon.className = 'field-icon'; input.classList.remove('is-invalid','is-valid'); err.textContent = ''; return; }
-        icon.className = `field-icon ${ok ? 'ok' : 'err'}`;
+        if (!input || !err) return;
+        if (String(input.value || '').trim() === '') {
+            if (icon) icon.className = 'field-icon';
+            input.classList.remove('is-invalid','is-valid');
+            err.textContent = '';
+            return;
+        }
+        if (icon) icon.className = `field-icon ${ok ? 'ok' : 'err'}`;
         input.classList.toggle('is-invalid', !ok); input.classList.toggle('is-valid', !!ok);
         err.textContent = ok ? '' : message;
     };

@@ -14,7 +14,6 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Nom</th>
                             <th>Email</th>
                             <th>Genre</th>
@@ -25,7 +24,6 @@
                     <tbody>
                         <?php foreach ($utilisateurs as $user): ?>
                             <tr>
-                                <td><?= esc($user['id_utilisateur']) ?></td>
                                 <td>
                                     <strong><?= esc($user['nom']) ?></strong>
                                 </td>

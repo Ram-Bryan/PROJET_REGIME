@@ -20,7 +20,7 @@
 <section class="stack">
     <div class="page-header">
         <h1><?= esc($regime['nom_regime']) ?> <span class="badge"><?= esc($regime['variation_label']) ?></span></h1>
-        <p class="sub">Détails complets du régime et objectifs attendus.</p>
+        <p class="sub">Détails complets du régime, composition et compatibilité avec votre objectif.</p>
     </div>
 
         <div class="card">
@@ -35,11 +35,7 @@
                 </div>
                 <div>
                     <div class="kv-title">Composition</div>
-                    <div class="kv-value">
-                        <?= esc($regime['pourcentage_viande']) ?>% viande ·
-                        <?= esc($regime['pourcentage_poisson']) ?>% poisson ·
-                        <?= esc($regime['pourcentage_volaille']) ?>% volaille
-                    </div>
+                    <div class="composition-large" style="--pie-gradients: <?= esc($regime['composition_gradient'] ?? '#e9eef3 0% 100%') ?>"></div>
                 </div>
             </div>
         </div>
@@ -51,9 +47,9 @@
                 basé sur une répartition précise des sources protéiques.
             </p>
             <ul class="info-list">
-                <li>Variation estimée mensuelle: <strong><?= esc($regime['variation_label']) ?></strong></li>
-                <li>Répartition: <?= esc($regime['pourcentage_viande']) ?>% viande, <?= esc($regime['pourcentage_poisson']) ?>% poisson, <?= esc($regime['pourcentage_volaille']) ?>% volaille.</li>
-                <li>Accompagnement sport recommandé selon les activités proposées.</li>
+                <li><img src="<?= esc(base_url('assets/icons/chart-line.svg')) ?>" alt="">Variation estimée mensuelle: <?= esc($regime['variation_label']) ?></li>
+                <li><img src="<?= esc(base_url('assets/icons/chart-pie.svg')) ?>" alt="">Répartition: <?= esc($regime['pourcentage_viande']) ?>% viande, <?= esc($regime['pourcentage_poisson']) ?>% poisson, <?= esc($regime['pourcentage_volaille']) ?>% volaille.</li>
+                <li><img src="<?= esc(base_url('assets/icons/activity.svg')) ?>" alt="">Accompagnement sport recommandé selon les activités proposées.</li>
             </ul>
         </div>
 
@@ -111,12 +107,17 @@
                                 <?php endif; ?>
                             </div>
                             <div class="option-meta">→ Résultat estimé: <span class="estimate" data-days="<?= esc($duree['nb_jours']) ?>"></span></div>
+                            <?php if (! empty($duree['objective_status'])): ?>
+                                <div class="option-meta">
+                                    <span class="badge badge-<?= esc($duree['objective_status']['tone']) ?>">
+                                        <?= esc($duree['objective_status']['label']) ?>
+                                    </span>
+                                </div>
+                            <?php endif; ?>
                         </label>
                     <?php endforeach; ?>
                     <div class="field-error" data-field-error="id_duree_regime"></div>
                     <div class="form-feedback" data-form-feedback></div>
-                    <div id="objectif-status" class="success" style="display:none; margin-top: 8px;">✅ Objectif atteint</div>
-                    <div id="objectif-status-fail" class="danger" style="display:none; margin-top: 8px;">❌ Objectif non atteint</div>
                     <div>
                         <button class="btn" type="submit" data-confirm-message="Confirmer cet achat de régime ?">Commander</button>
                     </div>
@@ -132,11 +133,7 @@
             const form = document.getElementById('commande-form');
             if (!form) return;
 
-            const objectiveStatus = document.getElementById('objectif-status');
             const variationMonthly = <?= json_encode((float) $regime['variation_mensuelle_kg']) ?>;
-            const user = <?= json_encode($user ?? null) ?>;
-            const imcIdealMin = <?= json_encode($imcIdealMin) ?>;
-            const imcIdealMax = <?= json_encode($imcIdealMax) ?>;
 
             const formatKg = (value) => {
                 const sign = value > 0 ? '+' : '';
@@ -152,58 +149,7 @@
                 });
             };
 
-            const isObjectiveReached = (selectedDays) => {
-                if (!user) return false;
-
-                const variation = variationMonthly * (selectedDays / 30);
-                const poidsActuel = Number(user.poids_kg || 0);
-                const poidsObjectif = user.poids_objectif !== null ? Number(user.poids_objectif) : null;
-                const tailleCm = Number(user.taille_cm || 0);
-                const objectifId = Number(user.id_objectif || 0);
-
-                if (objectifId === 1 && poidsObjectif !== null) {
-                    const cible = poidsObjectif - poidsActuel;
-                    return variation <= cible;
-                }
-
-                if (objectifId === 2 && poidsObjectif !== null) {
-                    const cible = poidsObjectif - poidsActuel;
-                    return variation >= cible;
-                }
-
-                if (objectifId === 3 && tailleCm > 0 && imcIdealMin !== null && imcIdealMax !== null) {
-                    const tailleM = tailleCm / 100;
-                    const nouveauPoids = poidsActuel + variation;
-                    const imc = nouveauPoids / (tailleM * tailleM);
-                    return imc >= imcIdealMin && imc <= imcIdealMax;
-                }
-
-                return false;
-            };
-
-            const updateObjectiveStatus = () => {
-                const selected = form.querySelector('input[name="id_duree_regime"]:checked');
-                if (!selected) return;
-                const days = Number(selected.dataset.days || 0);
-                if (!user) {
-                    objectiveStatus.style.display = 'none';
-                    const failNode = document.getElementById('objectif-status-fail');
-                    if (failNode) {
-                        failNode.style.display = 'none';
-                    }
-                    return;
-                }
-                const reached = isObjectiveReached(days);
-                objectiveStatus.style.display = reached ? 'block' : 'none';
-                const failNode = document.getElementById('objectif-status-fail');
-                if (failNode) {
-                    failNode.style.display = reached ? 'none' : 'block';
-                }
-            };
-
             updateEstimates();
-            updateObjectiveStatus();
-            form.addEventListener('change', updateObjectiveStatus);
         })();
 </script>
 <?= $this->endSection() ?>

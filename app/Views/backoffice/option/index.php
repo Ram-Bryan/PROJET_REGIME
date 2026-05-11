@@ -6,34 +6,8 @@
 <?= $this->endSection() ?>
 <?= $this->section('page_title') ?>Options<?= $this->endSection() ?>
 <?= $this->section('page_subtitle') ?>Administrez les offres speciales comme Gold, leurs conditions d'acces et leur tarification actuelle.<?= $this->endSection() ?>
-<?= $this->section('page_actions') ?>
-    <a href="<?= base_url('admin/options/create') ?>" class="btn btn-primary">
-        <img class="icon" src="<?= esc(base_url('assets/icons/plus.svg')) ?>" alt="">
-        <span>Nouvelle option</span>
-    </a>
-<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-    <div class="card">
-        <h3 class="section-title">Vue rapide</h3>
-        <p class="section-subtitle">Gardez un oeil sur le nombre d'options publiees et sur les membres Gold deja actifs.</p>
-
-        <div class="spec-grid">
-            <div class="spec-card">
-                <div class="spec-label">Options</div>
-                <div class="spec-value"><?= esc((string) count($options ?? [])) ?></div>
-            </div>
-            <div class="spec-card">
-                <div class="spec-label">Membres Gold</div>
-                <div class="spec-value"><?= esc((string) ($goldMembersCount ?? 0)) ?></div>
-            </div>
-            <div class="spec-card">
-                <div class="spec-label">Option phare</div>
-                <div class="spec-value"><?= ! empty($options) ? esc((string) ($options[0]['nom_option'] ?? 'Aucune')) : 'Aucune' ?></div>
-            </div>
-        </div>
-    </div>
-
     <div class="card">
         <h3 class="section-title">Catalogue des options</h3>
         <p class="section-subtitle">Chaque fiche resume les conditions d'achat, le prix et la reduction appliquee.</p>
@@ -70,12 +44,6 @@
                                         <a href="<?= base_url('admin/options/edit/' . $option['id_option']) ?>" class="btn btn-secondary btn-icon" title="Modifier l'option">
                                             <img src="<?= esc(base_url('assets/icons/pencil.svg')) ?>" alt="Modifier">
                                         </a>
-                                        <form action="<?= base_url('admin/options/delete/' . $option['id_option']) ?>" method="post" onsubmit="return confirm('Supprimer cette option ?');">
-                                            <?= csrf_field() ?>
-                                            <button type="submit" class="btn btn-danger btn-icon" title="Supprimer l'option">
-                                                <img src="<?= esc(base_url('assets/icons/trash-2.svg')) ?>" alt="Supprimer">
-                                            </button>
-                                        </form>
                                     </div>
                                 </td>
                             </tr>

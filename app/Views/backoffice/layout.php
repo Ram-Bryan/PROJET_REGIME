@@ -54,7 +54,7 @@
             </nav>
 
             <div class="sidebar-footer">
-                <a href="<?= base_url('admin/logout') ?>" class="nav-link" onclick="return confirm('Voulez-vous vraiment vous déconnecter ?');">
+                <a href="<?= base_url('admin/logout') ?>" class="nav-link" data-confirm-message="Voulez-vous vraiment vous déconnecter ?">
                     <img class="icon" src="<?= esc(base_url('assets/icons/log-out.svg')) ?>" alt="">
                     <span>Déconnexion</span>
                 </a>
@@ -83,6 +83,21 @@
         </main>
     </div>
 
+    <div class="confirm-modal" id="confirm-modal" aria-hidden="true">
+        <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+            <div class="confirm-head">
+                <img src="<?= esc(base_url('assets/icons/shield-alert.svg')) ?>" alt="">
+                <strong id="confirm-title">Confirmation</strong>
+            </div>
+            <div class="confirm-body" id="confirm-message">Confirmer cette action ?</div>
+            <div class="confirm-actions">
+                <button type="button" class="btn btn-secondary" id="confirm-cancel">Annuler</button>
+                <button type="button" class="btn" id="confirm-ok">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="<?= base_url('assets/js/app.js') ?>"></script>
     <?= $this->renderSection('scripts') ?>
 </body>
 </html>

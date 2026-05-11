@@ -55,6 +55,7 @@ class RegimeController extends BaseController
             $variation = (float) $regime['variation_mensuelle_kg'];
             $regime['variation_label'] = $this->formatVariationLabel($variation);
             $regime['activity_count'] = $activityCounts[(int) $regime['id_regime']] ?? 0;
+            $regime['composition_gradient'] = $this->buildCompositionGradient($regime);
             return $regime;
         }, $regimes);
 
@@ -112,6 +113,14 @@ class RegimeController extends BaseController
         $imcIdealMin = $imcIdeal !== null ? (float) $imcIdeal['imc_min'] : null;
         $imcIdealMax = $imcIdeal !== null ? (float) $imcIdeal['imc_max'] : null;
 
+        $durees = array_map(function (array $duree) use ($user, $variation, $imcIdealMin, $imcIdealMax) {
+            $status = $this->evaluateObjectiveStatus($user, $variation, (int) $duree['nb_jours'], $imcIdealMin, $imcIdealMax);
+            $duree['objective_status'] = $status;
+            return $duree;
+        }, $durees);
+
+        $regime['composition_gradient'] = $this->buildCompositionGradient($regime);
+
         return view('frontoffice/regime/show', [
             'regime' => $regime,
             'durees' => $durees,
@@ -122,6 +131,64 @@ class RegimeController extends BaseController
             'imcIdealMin' => $imcIdealMin,
             'imcIdealMax' => $imcIdealMax,
         ]);
+    }
+
+    private function buildCompositionGradient(array $regime): string
+    {
+        $segments = [
+            ['color' => '#ef4444', 'value' => (float) ($regime['pourcentage_viande'] ?? 0)],
+            ['color' => '#3b82f6', 'value' => (float) ($regime['pourcentage_poisson'] ?? 0)],
+            ['color' => '#f59e0b', 'value' => (float) ($regime['pourcentage_volaille'] ?? 0)],
+        ];
+
+        $parts = [];
+        $cumulative = 0.0;
+        foreach ($segments as $segment) {
+            if ($segment['value'] <= 0) {
+                continue;
+            }
+            $next = $cumulative + $segment['value'];
+            $parts[] = $segment['color'] . ' ' . $cumulative . '% ' . $next . '%';
+            $cumulative = $next;
+        }
+
+        return $parts !== [] ? implode(', ', $parts) : '#e9eef3 0% 100%';
+    }
+
+    private function evaluateObjectiveStatus(?array $user, float $monthlyVariation, int $days, ?float $imcIdealMin, ?float $imcIdealMax): ?array
+    {
+        if ($user === null) {
+            return null;
+        }
+
+        $variation = $monthlyVariation * ($days / 30);
+        $poidsActuel = (float) ($user['poids_kg'] ?? 0);
+        $poidsObjectif = $user['poids_objectif'] !== null ? (float) $user['poids_objectif'] : null;
+        $tailleCm = (float) ($user['taille_cm'] ?? 0);
+        $objectifId = (int) ($user['id_objectif'] ?? 0);
+
+        $ok = null;
+        if ($objectifId === 1 && $poidsObjectif !== null) {
+            $cible = $poidsObjectif - $poidsActuel;
+            $ok = $variation <= $cible;
+        } elseif ($objectifId === 2 && $poidsObjectif !== null) {
+            $cible = $poidsObjectif - $poidsActuel;
+            $ok = $variation >= $cible;
+        } elseif ($objectifId === 3 && $tailleCm > 0 && $imcIdealMin !== null && $imcIdealMax !== null) {
+            $tailleM = $tailleCm / 100;
+            $nouveauPoids = $poidsActuel + $variation;
+            $imc = $nouveauPoids / ($tailleM * $tailleM);
+            $ok = $imc >= $imcIdealMin && $imc <= $imcIdealMax;
+        }
+
+        if ($ok === null) {
+            return null;
+        }
+
+        return [
+            'label' => $ok ? 'Compatible avec votre objectif' : 'Non compatible avec votre objectif',
+            'tone' => $ok ? 'success' : 'warning',
+        ];
     }
 
     public function exportPdf(int $id)

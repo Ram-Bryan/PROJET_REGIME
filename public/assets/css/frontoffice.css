@@ -598,6 +598,59 @@ body.fo-body {
 
 .filter-group label { margin-bottom: 6px; }
 
+.composition-mini {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: conic-gradient(var(--pie-gradients, #e9eef3 0% 100%));
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.composition-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(var(--pie-gradients, #e9eef3 0% 100%));
+  border: 3px solid #fff;
+  box-shadow: var(--shadow-md);
+}
+
+.regime-name {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.info-list img {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.promo-card { max-width: 520px; }
+
+.promo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.promo-balance {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.profile-normal .metric-value,
+.profile-normal .metric-value.small {
+  font-weight: 500;
+}
+
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE — Mobile First
    ══════════════════════════════════════════════════════════════ */

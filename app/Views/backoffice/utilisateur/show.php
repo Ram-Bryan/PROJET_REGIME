@@ -1,7 +1,7 @@
 <?= $this->extend('backoffice/layout') ?>
 
 <?= $this->section('title') ?>Details de l'utilisateur<?= $this->endSection() ?>
-<?= $this->section('page_title') ?>Utilisateur : <?= esc($user['nom']) ?><?= $this->endSection() ?>
+<?= $this->section('page_title') ?><?= esc($user['nom']) ?><?= $this->endSection() ?>
 <?= $this->section('page_subtitle') ?>Informations detaillees et historique des regimes achetes.<?= $this->endSection() ?>
 
 <?= $this->section('page_actions') ?>
@@ -18,24 +18,24 @@
 <?= $this->section('content') ?>
     <div class="grid-2">
         <div class="card">
-            <h3 class="section-title">Informations generales</h3>
+            <h3 class="section-title"><img class="icon" src="<?= esc(base_url('assets/icons/user-round.svg')) ?>" alt=""> Informations generales</h3>
             <p class="section-subtitle">Apercu des caracteristiques de l'utilisateur.</p>
             
             <div class="detail-card">
                 <div class="detail-row">
-                    <span class="detail-label">Email</span>
+                    <span class="detail-label"><strong>Email</strong></span>
                     <span class="detail-value"><?= esc($user['email']) ?></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Genre</span>
+                    <span class="detail-label"><strong>Genre</strong></span>
                     <span class="detail-value"><?= esc($user['genre']) ?></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Date de naissance</span>
+                    <span class="detail-label"><strong>Date de naissance</strong></span>
                     <span class="detail-value"><?= esc($user['date_naissance'] ?? 'Non renseigne') ?></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Status Gold</span>
+                    <span class="detail-label"><strong>Status Gold</strong></span>
                     <span class="detail-value">
                         <?php if ($user['is_gold']): ?>
                             <span class="badge success">Oui</span>
@@ -45,48 +45,39 @@
                     </span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Solde</span>
+                    <span class="detail-label"><strong>Solde</strong></span>
                     <span class="detail-value"><?= number_format((float)$user['argent'], 0, ',', ' ') ?> Ar</span>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="section-title">Caracteristiques physiques</h3>
+            <h3 class="section-title"><img class="icon" src="<?= esc(base_url('assets/icons/activity.svg')) ?>" alt=""> Caracteristiques physiques</h3>
             <p class="section-subtitle">Donnees de poids et de taille utilisees pour les regimes.</p>
 
             <div class="detail-card">
                 <div class="detail-row">
-                    <span class="detail-label">Taille</span>
+                    <span class="detail-label"><strong>Taille</strong></span>
                     <span class="detail-value"><?= esc($user['taille_cm'] ?? '0') ?> cm</span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Poids actuel</span>
+                    <span class="detail-label"><strong>Poids actuel</strong></span>
                     <span class="detail-value"><?= esc($user['poids_kg'] ?? '0') ?> kg</span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Poids objectif</span>
+                    <span class="detail-label"><strong>Poids objectif</strong></span>
                     <span class="detail-value"><?= esc($user['poids_objectif'] ?? 'Non defini') ?> <?= $user['poids_objectif'] ? 'kg' : '' ?></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">IMC Actuel</span>
-                    <span class="detail-value">
-                        <?php
-                            $imc = 0;
-                            if (!empty($user['taille_cm']) && !empty($user['poids_kg'])) {
-                                $tailleM = $user['taille_cm'] / 100;
-                                $imc = $user['poids_kg'] / ($tailleM ** 2);
-                            }
-                            echo $imc > 0 ? number_format($imc, 2) : 'N/A';
-                        ?>
-                    </span>
+                    <span class="detail-label"><strong>IMC Actuel</strong></span>
+                    <span class="detail-value"><?= $imc !== null ? number_format((float) $imc, 2, ',', ' ') : 'N/A' ?></span>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="card">
-        <h3 class="section-title">Regimes Achetes</h3>
+        <h3 class="section-title"><img class="icon" src="<?= esc(base_url('assets/icons/apple.svg')) ?>" alt=""> Regimes Achetes</h3>
         <p class="section-subtitle">Historique des commandes de l'utilisateur.</p>
 
         <?php if (!empty($commandes)): ?>

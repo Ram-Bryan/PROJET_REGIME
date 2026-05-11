@@ -215,15 +215,17 @@
                                         <a href="<?= base_url('admin/regimes/edit/' . $regime['id_regime']) ?>" class="btn btn-secondary btn-icon icon-action" title="Modifier le regime">
                                             <img src="<?= esc(base_url('assets/icons/pencil.svg')) ?>" alt="Modifier">
                                         </a>
-                                        <button
-                                            type="button"
-                                            class="btn btn-danger btn-icon icon-action js-delete-trigger"
-                                            title="Supprimer le regime"
-                                            data-action="<?= esc(base_url('admin/regimes/delete/' . $regime['id_regime'])) ?>"
-                                            data-name="<?= esc($regime['nom_regime']) ?>"
-                                        >
-                                            <img src="<?= esc(base_url('assets/icons/trash-2.svg')) ?>" alt="Supprimer">
-                                        </button>
+                                        <form action="<?= esc(base_url('admin/regimes/delete/' . $regime['id_regime'])) ?>" method="post">
+                                            <?= csrf_field() ?>
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger btn-icon icon-action"
+                                                title="Supprimer le regime"
+                                                data-confirm-message="Supprimer le regime &quot;<?= esc($regime['nom_regime']) ?>&quot; ?"
+                                            >
+                                                <img src="<?= esc(base_url('assets/icons/trash-2.svg')) ?>" alt="Supprimer">
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -238,19 +240,6 @@
         </div>
     </div>
 
-    <div class="confirm-overlay" id="delete-confirmation">
-        <div class="confirm-card">
-            <h3>Supprimer ce regime ?</h3>
-            <p id="delete-confirmation-text">Cette action supprimera le regime selectionne si aucune duree verrouillee n'est liee a des commandes.</p>
-            <form id="delete-confirmation-form" method="post">
-                <?= csrf_field() ?>
-                <div class="confirm-actions">
-                    <button type="button" class="btn btn-secondary" id="delete-cancel">Annuler</button>
-                    <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
-                </div>
-            </form>
-        </div>
-    </div>
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
@@ -285,41 +274,6 @@
                 });
             });
 
-            const overlay = document.getElementById('delete-confirmation');
-            const form = document.getElementById('delete-confirmation-form');
-            const text = document.getElementById('delete-confirmation-text');
-            const cancel = document.getElementById('delete-cancel');
-            const triggers = document.querySelectorAll('.js-delete-trigger');
-
-            function closeModal() {
-                overlay?.classList.remove('is-open');
-                document.body.style.overflow = '';
-            }
-
-            triggers.forEach((button) => {
-                button.addEventListener('click', function () {
-                    const action = button.getAttribute('data-action') || '';
-                    const name = button.getAttribute('data-name') || 'ce regime';
-
-                    form.setAttribute('action', action);
-                    text.textContent = 'Vous allez supprimer "' + name + '". Cette action sera bloquee si certaines durees sont deja utilisees.';
-                    overlay?.classList.add('is-open');
-                    document.body.style.overflow = 'hidden';
-                });
-            });
-
-            cancel?.addEventListener('click', closeModal);
-            overlay?.addEventListener('click', function (event) {
-                if (event.target === overlay) {
-                    closeModal();
-                }
-            });
-
-            document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape') {
-                    closeModal();
-                }
-            });
         }());
     </script>
 <?= $this->endSection() ?>

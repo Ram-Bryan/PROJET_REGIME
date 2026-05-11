@@ -216,7 +216,7 @@ class Auth extends BaseController
 
         $this->refreshUserSessionData($user);
 
-    return $this->successResponse('Connexion réussie.', '/dashboard');
+    return $this->successResponse('', '/dashboard');
     }
 
     public function dashboard()
@@ -226,6 +226,7 @@ class Auth extends BaseController
         }
 
         $userModel = new UtilisateurModel();
+        $commandeModel = new CommandeModel();
         $user = $userModel->find((int) session()->get('id_utilisateur'));
 
         if ($user !== null) {
@@ -239,6 +240,7 @@ class Auth extends BaseController
             'imc' => session()->get('imc'),
             'objectifLabel' => session()->get('objectif_label'),
             'argent' => session()->get('argent'),
+            'regimesCount' => $commandeModel->countUserPurchases((int) session()->get('id_utilisateur')),
         ]);
     }
 
@@ -446,14 +448,6 @@ class Auth extends BaseController
             return redirect()->to('/login')->with('error', 'Utilisateur introuvable.');
         }
 
-        // Verify current password before allowing changes
-        $currentPassword = (string) $this->request->getPost('current_password');
-        if (! password_verify($currentPassword, (string) $currentUser['mot_de_passe'])) {
-            return $this->validationErrorResponse('Le mot de passe actuel est incorrect.', [
-                'current_password' => 'Le mot de passe actuel est incorrect.',
-            ]);
-        }
-
         $rules = [
             'nom' => 'required|min_length[2]|max_length[100]',
             'genre' => 'permit_empty|in_list[Homme,Femme,Autre]',
@@ -535,6 +529,10 @@ class Auth extends BaseController
                 'message' => $message,
                 'redirect' => $redirectTo,
             ]);
+        }
+
+        if ($message === '') {
+            return redirect()->to($redirectTo);
         }
 
         return redirect()->to($redirectTo)->with('success', $message);

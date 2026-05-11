@@ -16,7 +16,7 @@
         <h3 class="section-title">Filtres</h3>
         <p class="section-subtitle">Affinez la liste par montant et etat d'utilisation.</p>
 
-        <form method="get" action="<?= base_url('admin/promos') ?>" class="stack">
+        <form method="get" action="<?= base_url('admin/promos/validate') ?>" class="stack">
             <div class="filters-grid">
                 <div class="field">
                     <label>Montant (Ar)</label>
@@ -86,9 +86,9 @@
                                         <a href="<?= base_url('admin/promos/edit/' . $promo['id_code']) ?>" class="btn btn-secondary btn-icon icon-action" title="Modifier le code promo">
                                             <img src="<?= esc(base_url('assets/icons/pencil.svg')) ?>" alt="Modifier">
                                         </a>
-                                        <form action="<?= base_url('admin/promos/delete/' . $promo['id_code']) ?>" method="post" onsubmit="return confirm('Supprimer ce code promo ?');">
+                                        <form action="<?= base_url('admin/promos/delete/' . $promo['id_code']) ?>" method="post">
                                             <?= csrf_field() ?>
-                                            <button type="submit" class="btn btn-danger btn-icon icon-action" title="Supprimer le code promo">
+                                            <button type="submit" class="btn btn-danger btn-icon icon-action" title="Supprimer le code promo" data-confirm-message="Supprimer le code promo &quot;<?= esc($promo['code']) ?>&quot; ?">
                                                 <img src="<?= esc(base_url('assets/icons/trash-2.svg')) ?>" alt="Supprimer">
                                             </button>
                                         </form>

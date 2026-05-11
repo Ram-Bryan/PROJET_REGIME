@@ -70,15 +70,11 @@
                         <?php $durees = $regimeDurees[$regime['id_regime']] ?? []; ?>
                         <tr>
                             <td>
-                                <a href="<?= esc(site_url('regimes/' . $regime['id_regime'])) ?>">
-                                    <?= esc($regime['nom_regime']) ?>
-                                </a>
+                                <span class="regime-name"><?= esc($regime['nom_regime']) ?></span>
                             </td>
                             <td><span class="badge"><?= esc($regime['variation_label']) ?></span></td>
                             <td>
-                                <?= esc($regime['pourcentage_viande']) ?>% viande,
-                                <?= esc($regime['pourcentage_poisson']) ?>% poisson,
-                                <?= esc($regime['pourcentage_volaille']) ?>% volaille
+                                <div class="composition-mini" style="--pie-gradients: <?= esc($regime['composition_gradient'] ?? '#e9eef3 0% 100%') ?>"></div>
                             </td>
                             <td>
                                 <?php if (empty($durees)) : ?>
@@ -92,7 +88,11 @@
                                 <?php endif; ?>
                             </td>
                             <td><span class="badge badge-muted"><?= esc($regime['activity_count']) ?></span></td>
-                            <td><a href="<?= site_url('/regimes/' . $regime['id_regime']) ?>">Voir détail</a></td>
+                            <td>
+                                <a href="<?= site_url('/regimes/' . $regime['id_regime']) ?>" class="btn btn-ghost btn-icon" title="Voir le détail">
+                                    <img src="<?= esc(base_url('assets/icons/eye.svg')) ?>" alt="Voir">
+                                </a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -130,10 +130,10 @@
                     const row = document.createElement('tr');
 
                     const nameCell = document.createElement('td');
-                    const nameLink = document.createElement('a');
-                    nameLink.href = `${detailBase}/${regime.id_regime}`;
-                    nameLink.textContent = regime.nom_regime;
-                    nameCell.appendChild(nameLink);
+                    const nameText = document.createElement('span');
+                    nameText.className = 'regime-name';
+                    nameText.textContent = regime.nom_regime;
+                    nameCell.appendChild(nameText);
                     row.appendChild(nameCell);
 
                     const variationCell = document.createElement('td');
@@ -144,7 +144,10 @@
                     row.appendChild(variationCell);
 
                     const compositionCell = document.createElement('td');
-                    compositionCell.textContent = `${regime.pourcentage_viande}% viande, ${regime.pourcentage_poisson}% poisson, ${regime.pourcentage_volaille}% volaille`;
+                    const composition = document.createElement('div');
+                    composition.className = 'composition-mini';
+                    composition.style.setProperty('--pie-gradients', regime.composition_gradient || '#e9eef3 0% 100%');
+                    compositionCell.appendChild(composition);
                     row.appendChild(compositionCell);
 
                     const durationsCell = document.createElement('td');
@@ -177,7 +180,12 @@
                     const actionCell = document.createElement('td');
                     const actionLink = document.createElement('a');
                     actionLink.href = `${detailBase}/${regime.id_regime}`;
-                    actionLink.textContent = 'Voir détail';
+                    actionLink.className = 'btn btn-ghost btn-icon';
+                    actionLink.title = 'Voir le détail';
+                    const eye = document.createElement('img');
+                    eye.src = '<?= esc(base_url('assets/icons/eye.svg')) ?>';
+                    eye.alt = 'Voir';
+                    actionLink.appendChild(eye);
                     actionCell.appendChild(actionLink);
                     row.appendChild(actionCell);
                     rows.appendChild(row);

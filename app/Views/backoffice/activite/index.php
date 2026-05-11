@@ -86,15 +86,17 @@
                                         <a href="<?= base_url('admin/activites/edit/' . $activite['id_activite']) ?>" class="btn btn-secondary btn-icon" title="Modifier l'activite">
                                             <img src="<?= esc(base_url('assets/icons/pencil.svg')) ?>" alt="Modifier">
                                         </a>
-                                        <button
-                                            type="button"
-                                            class="btn btn-danger btn-icon js-delete-trigger"
-                                            title="Supprimer l'activite"
-                                            data-action="<?= esc(base_url('admin/activites/delete/' . $activite['id_activite'])) ?>"
-                                            data-name="<?= esc($activite['label_activite']) ?>"
-                                        >
-                                            <img src="<?= esc(base_url('assets/icons/trash-2.svg')) ?>" alt="Supprimer">
-                                        </button>
+                                        <form action="<?= esc(base_url('admin/activites/delete/' . $activite['id_activite'])) ?>" method="post">
+                                            <?= csrf_field() ?>
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger btn-icon"
+                                                title="Supprimer l'activite"
+                                                data-confirm-message="Supprimer l'activite &quot;<?= esc($activite['label_activite']) ?>&quot; ?"
+                                            >
+                                                <img src="<?= esc(base_url('assets/icons/trash-2.svg')) ?>" alt="Supprimer">
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -109,62 +111,4 @@
         </div>
     </div>
 
-    <div class="delete-modal" id="delete-activity-modal">
-        <div class="delete-card">
-            <h3>Supprimer cette activite ?</h3>
-            <p id="delete-activity-text">Cette action supprimera l'activite selectionnee si elle n'est liee a aucun regime.</p>
-            <form id="delete-activity-form" method="post">
-                <?= csrf_field() ?>
-                <div class="delete-actions">
-                    <button type="button" class="btn btn-secondary" id="delete-activity-cancel">Annuler</button>
-                    <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
-                </div>
-            </form>
-        </div>
-    </div>
-<?= $this->endSection() ?>
-
-<?= $this->section('scripts') ?>
-    <script>
-        (function () {
-            const overlay = document.getElementById('delete-activity-modal');
-            const form = document.getElementById('delete-activity-form');
-            const text = document.getElementById('delete-activity-text');
-            const cancel = document.getElementById('delete-activity-cancel');
-
-            function closeModal() {
-                overlay?.classList.remove('is-open');
-                document.body.style.overflow = '';
-            }
-
-            document.querySelectorAll('.js-delete-trigger').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    const action = button.getAttribute('data-action') || '';
-                    const name = button.getAttribute('data-name') || 'cette activite';
-
-                    form?.setAttribute('action', action);
-                    if (text) {
-                        text.textContent = 'Vous allez supprimer "' + name + '". La suppression sera refusee si cette activite est encore liee a un regime.';
-                    }
-
-                    overlay?.classList.add('is-open');
-                    document.body.style.overflow = 'hidden';
-                });
-            });
-
-            cancel?.addEventListener('click', closeModal);
-
-            overlay?.addEventListener('click', function (event) {
-                if (event.target === overlay) {
-                    closeModal();
-                }
-            });
-
-            document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape') {
-                    closeModal();
-                }
-            });
-        }());
-    </script>
 <?= $this->endSection() ?>

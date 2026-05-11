@@ -2,11 +2,9 @@
 
 <?php
     $recentUsers = $recentUsers ?? [];
-    $objectifs = $objectifs ?? [];
-    $maxObjectif = 1;
-    foreach ($objectifs as $objectif) {
-        $maxObjectif = max($maxObjectif, (int) ($objectif['total'] ?? 0));
-    }
+    $pieData = $pieData ?? [];
+    $trendLabels = $trendLabels ?? [];
+    $trendValues = $trendValues ?? [];
 ?>
 
 <?= $this->section('title') ?>Tableau de bord<?= $this->endSection() ?>
@@ -24,101 +22,101 @@
 
     <div class="stats-grid">
         <div class="stat-box stat-e">
+            <div class="stat-icon"><img src="<?= esc(base_url('assets/icons/wallet.svg')) ?>" alt=""></div>
             <h4>Chiffre d'affaire</h4>
             <p><?= number_format((float)$chiffreAffaire, 0, ',', ' ') ?> Ar</p>
         </div>
         <div class="stat-box stat-c">
+            <div class="stat-icon"><img src="<?= esc(base_url('assets/icons/shopping-bag.svg')) ?>" alt=""></div>
             <h4>Ventes</h4>
             <p><?= esc((string) $salesCount) ?></p>
         </div>
         <div class="stat-box stat-a">
+            <div class="stat-icon"><img src="<?= esc(base_url('assets/icons/users.svg')) ?>" alt=""></div>
             <h4>Utilisateurs</h4>
             <p><?= esc((string) $usersCount) ?></p>
         </div>
         <div class="stat-box stat-b">
+            <div class="stat-icon"><img src="<?= esc(base_url('assets/icons/crown.svg')) ?>" alt=""></div>
             <h4>Comptes Gold</h4>
             <p><?= esc((string) $goldCount) ?></p>
         </div>
-        <div class="stat-box stat-d">
-            <h4>Objectifs</h4>
-            <p><?= esc((string) $objectivesCount) ?></p>
-        </div>
         <div class="stat-box stat-f">
+            <div class="stat-icon"><img src="<?= esc(base_url('assets/icons/apple.svg')) ?>" alt=""></div>
             <h4>Nombre de regimes</h4>
             <p><?= esc((string) $regimesCount) ?></p>
         </div>
     </div>
 
-    <div class="grid-2">
-        <div class="card">
-            <h3 class="section-title">Repartition des objectifs</h3>
-            <p class="section-subtitle">Graphique circulaire des objectifs choisis par les utilisateurs.</p>
-
-            <?php if ($objectifs !== []): ?>
-                <?php
-                    $colors = ['#1f8f6a', '#183247', '#7c3aed', '#d97706', '#e11d48', '#0ea5e9'];
-                    $totalUsersWithGoals = array_sum(array_column($objectifs, 'total'));
-                    $pieGradients = [];
-                    $cumulativePercent = 0;
-                    
-                    if ($totalUsersWithGoals > 0):
-                        foreach ($objectifs as $index => $objectif) {
-                            $percent = ((int) $objectif['total'] / $totalUsersWithGoals) * 100;
-                            if ($percent == 0) continue;
-                            
-                            $color = $colors[$index % count($colors)];
-                            $nextPercent = $cumulativePercent + $percent;
-                            $pieGradients[] = "{$color} {$cumulativePercent}% {$nextPercent}%";
-                            $cumulativePercent = $nextPercent;
-                        }
-                    endif;
-                    $pieGradientStr = implode(', ', $pieGradients);
-                ?>
-                <div class="pie-chart-container" style="--pie-gradients: <?= $totalUsersWithGoals > 0 ? $pieGradientStr : '#e9eef3 0% 100%' ?>">
+    <div class="dashboard-blocks">
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="section-title">Repartition des objectifs</h3>
+                <p class="section-subtitle">Graphique circulaire des objectifs choisis par les utilisateurs.</p>
+                <div class="pie-chart-container" id="objective-pie">
                     <div class="pie-chart"></div>
-                    <div class="pie-legend">
-                        <?php foreach ($objectifs as $index => $objectif): ?>
-                            <?php $total = (int) ($objectif['total'] ?? 0); ?>
-                            <?php if ($total > 0): ?>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: <?= $colors[$index % count($colors)] ?>;"></span>
-                                <span><?= esc($objectif['label_objectif'] ?? 'Objectif') ?> (<?= $total ?>)</span>
-                            </div>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
+                    <div class="pie-legend"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="section-title">Tendance du chiffre d'affaires</h3>
+                <p class="section-subtitle">Evolution sur les 6 derniers mois.</p>
+                <div class="trend-chart">
+                    <canvas id="revenue-trend"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="section-title">Derniers utilisateurs</h3>
+            <p class="section-subtitle">Les cinq inscriptions les plus recentes.</p>
+
+            <?php if ($recentUsers !== []): ?>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recentUsers as $user): ?>
+                                <tr>
+                                    <td><?= esc($user['nom'] ?? '') ?></td>
+                                    <td><?= esc($user['email'] ?? '') ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             <?php else: ?>
-                <p class="hint">Aucune donnee disponible.</p>
+                <p class="hint">Aucun utilisateur recent.</p>
             <?php endif; ?>
         </div>
     </div>
+<?= $this->endSection() ?>
 
-    <div class="card">
-        <h3 class="section-title">Derniers utilisateurs</h3>
-        <p class="section-subtitle">Les cinq inscriptions les plus recentes.</p>
+<?= $this->section('scripts') ?>
+    <script src="<?= base_url('assets/js/charts.js') ?>"></script>
+    <script>
+        (function () {
+            var pieData = <?= json_encode($pieData) ?>;
+            var trendLabels = <?= json_encode($trendLabels) ?>;
+            var trendValues = <?= json_encode($trendValues) ?>;
 
-        <?php if ($recentUsers !== []): ?>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($recentUsers as $user): ?>
-                            <tr>
-                                <td><?= esc($user['nom'] ?? '') ?></td>
-                                <td><?= esc($user['email'] ?? '') ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php else: ?>
-            <p class="hint">Aucun utilisateur recent.</p>
-        <?php endif; ?>
-    </div>
+            renderPieChart({
+                containerId: 'objective-pie',
+                data: pieData
+            });
+
+            renderTrendChart({
+                canvasId: 'revenue-trend',
+                labels: trendLabels,
+                values: trendValues,
+                color: '#1f8f6a'
+            });
+        }());
+    </script>
 <?= $this->endSection() ?>
