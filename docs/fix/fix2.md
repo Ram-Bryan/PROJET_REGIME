@@ -436,7 +436,8 @@ modif profil
 
 
 
-
+Read CLAUDE.md and RULES.md for persona
+We will polish this project UI and fix the demande de code promo.
 
 In CRUD regime in Detail of a regime in composition:
 in the circular graph:
