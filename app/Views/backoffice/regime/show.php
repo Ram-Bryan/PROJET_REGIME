@@ -237,6 +237,7 @@
         <?php endif; ?>
     </div>
 
+
     <div class="card">
         <h3 class="section-title">Durees disponibles</h3>
         <p class="section-subtitle">Vue commerciale des durees et de leurs prix.</p>
