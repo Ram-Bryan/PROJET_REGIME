@@ -78,7 +78,7 @@
                                         <form action="<?= base_url('admin/promos/validate/reject/' . $demande['id_demande_code_promo']) ?>" method="post">
                                             <?= csrf_field() ?>
                                             <button type="submit" class="btn btn-danger btn-icon" title="Supprimer la demande" data-confirm-message="Supprimer cette demande ?">
-                                                <img src="<?= esc(base_url('assets/icons/trash-2.svg')) ?>" alt="Supprimer">
+                                                <img src="<?= esc(base_url('assets/icons/x.svg')) ?>" alt="Supprimer">
                                             </button>
                                         </form>
                                     </div>
