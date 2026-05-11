@@ -6,13 +6,17 @@
     <title><?= $this->renderSection('title') ?> | Projet Régime</title>
     <link rel="stylesheet" href="<?= base_url('assets/css/variables.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/global.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/frontoffice.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/auth.css') ?>">
     <?= $this->renderSection('head') ?>
 </head>
-<body class="auth-page">
+<body class="<?= trim($this->renderSection('body_class') ?: 'auth-page') ?>">
+    <?= $this->renderSection('topbar') ?>
+
     <div class="auth-wrapper">
         <?= $this->renderSection('content') ?>
     </div>
+    <script src="<?= base_url('assets/js/app.js') ?>"></script>
     <?= $this->renderSection('scripts') ?>
 </body>
 </html>

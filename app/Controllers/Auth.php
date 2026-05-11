@@ -524,7 +524,7 @@ class Auth extends BaseController
     {
         session()->destroy();
 
-        return redirect()->to('/login')->with('success', 'Déconnexion effectuée.');
+        return redirect()->to('/')->with('success', 'Déconnexion effectuée.');
     }
 
     private function successResponse(string $message, string $redirectTo)

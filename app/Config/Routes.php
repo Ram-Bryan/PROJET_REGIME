@@ -35,6 +35,7 @@ $routes->get('mes-regimes/(:num)/export-pdf', 'RegimeController::exportRegimePdf
 
 $routes->post('/admin/authenticate', 'AdminController::authenticate');
 $routes->get('/admin/dashboard', 'AdminController::dashboard');
+$routes->get('/admin/stats-croisees', 'AdminController::statsCroisees');
 $routes->get('/admin', 'AdminController::login');
 $routes->get('/admin/login', 'AdminController::login');
 $routes->get('/admin/logout', 'AdminController::logout');

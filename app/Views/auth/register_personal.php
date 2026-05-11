@@ -2,6 +2,12 @@
 
 <?= $this->section('title') ?>Inscription - Étape 1<?= $this->endSection() ?>
 
+<?= $this->section('body_class') ?>fo-body auth-page auth-with-topbar<?= $this->endSection() ?>
+
+<?= $this->section('topbar') ?>
+<?= $this->include('frontoffice/partials/navbar') ?>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 <?php $p = is_array($personal ?? null) ? $personal : []; ?>
 <section class="auth-shell">

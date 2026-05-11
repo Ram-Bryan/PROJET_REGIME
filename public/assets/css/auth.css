@@ -16,10 +16,20 @@
   padding: 20px;
 }
 
+.auth-with-topbar {
+  display: block;
+  padding: 0;
+}
+
 .auth-wrapper {
   width: 100%;
   max-width: 1000px;
   animation: authSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-with-topbar .auth-wrapper {
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
 @keyframes authSlideUp {

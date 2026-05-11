@@ -67,6 +67,24 @@ class AdminController extends BaseController
         ]);
     }
 
+    public function statsCroisees()
+    {
+        if (! session()->has('admin_id')) {
+            return redirect()->to('/admin/login');
+        }
+
+        $stats = $this->adminModel->getCrossTabStats();
+
+        return view('backoffice/stats-croisees/index', [
+            'regimesObjectifs' => $stats['regimesObjectifs'],
+            'objectifsUtilisateurs' => $stats['objectifsUtilisateurs'],
+            'regimesRevenu' => $stats['regimesRevenu'],
+            'objectifs' => $stats['objectifs'],
+            'regimes' => $stats['regimes'],
+            'activeNav' => 'stats',
+        ]);
+    }
+
     public function logout()
     {
         session()->destroy();

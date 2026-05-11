@@ -88,5 +88,66 @@ class AdminModel extends Model
             'trendValues' => $trendValues,
         ];
     }
+
+    public function getCrossTabStats(): array
+    {
+        $db = \Config\Database::connect();
+
+        // Tableau croisé: Régimes × Objectifs (nombre d'achats)
+        $regimesObjectifsData = $db->table('commande c')
+            ->select('r.id_regime, r.nom_regime, o.id_objectif, o.label_objectif, COUNT(c.id_commande) AS total', false)
+            ->join('regime r', 'r.id_regime = c.id_regime')
+            ->join('utilisateur u', 'u.id_utilisateur = c.id_utilisateur')
+            ->join('objectif o', 'o.id_objectif = u.id_objectif')
+            ->groupBy('r.id_regime, o.id_objectif')
+            ->orderBy('r.id_regime, o.id_objectif')
+            ->get()
+            ->getResultArray();
+
+        // Tableau croisé: Objectifs × Utilisateurs (types d'objectifs)
+        $objectifsUtilisatairesData = $db->table('utilisateur u')
+            ->select('o.id_objectif, o.label_objectif, COUNT(u.id_utilisateur) AS total, SUM(CASE WHEN u.is_gold = 1 THEN 1 ELSE 0 END) AS gold_count', false)
+            ->join('objectif o', 'o.id_objectif = u.id_objectif', 'left')
+            ->groupBy('o.id_objectif')
+            ->orderBy('o.id_objectif')
+            ->get()
+            ->getResultArray();
+
+        // Revenus par régime
+        $regimesRevenuData = $db->table('commande c')
+            ->select('r.id_regime, r.nom_regime, SUM(c.montant_paye) AS total_revenu, COUNT(c.id_commande) AS ventes', false)
+            ->join('regime r', 'r.id_regime = c.id_regime')
+            ->groupBy('r.id_regime')
+            ->orderBy('total_revenu DESC')
+            ->get()
+            ->getResultArray();
+
+        // Tous les régimes pour la pivot table
+        $regimes = $db->table('regime')->orderBy('nom_regime')->get()->getResultArray();
+
+        // Tous les objectifs pour la pivot table
+        $objectifs = $db->table('objectif')->orderBy('id_objectif')->get()->getResultArray();
+
+        // Construire le tableau croisé Régimes × Objectifs
+        $regimesObjectifsMatrix = [];
+        foreach ($regimes as $regime) {
+            $row = ['id_regime' => $regime['id_regime'], 'nom_regime' => $regime['nom_regime']];
+            foreach ($objectifs as $objectif) {
+                $found = array_filter($regimesObjectifsData, fn($item) => 
+                    $item['id_regime'] == $regime['id_regime'] && $item['id_objectif'] == $objectif['id_objectif']
+                );
+                $row['obj_' . $objectif['id_objectif']] = $found ? (int) reset($found)['total'] : 0;
+            }
+            $regimesObjectifsMatrix[] = $row;
+        }
+
+        return [
+            'regimesObjectifs' => $regimesObjectifsMatrix,
+            'objectifsUtilisateurs' => $objectifsUtilisatairesData,
+            'regimesRevenu' => $regimesRevenuData,
+            'objectifs' => $objectifs,
+            'regimes' => $regimes,
+        ];
+    }
 }
 ?>

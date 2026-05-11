@@ -20,6 +20,10 @@
             <img class="icon" src="<?= esc(base_url('assets/icons/layout-dashboard.svg')) ?>" alt="">
             <span>Tableau de bord</span>
         </a>
+        <a href="<?= base_url('admin/stats-croisees') ?>" class="<?= $navClass('stats') ?>">
+            <img class="icon" src="<?= esc(base_url('assets/icons/chart-bar.svg')) ?>" alt="">
+            <span>Stats croisées</span>
+        </a>
         <a href="<?= base_url('admin/utilisateurs') ?>" class="<?= $navClass('utilisateurs') ?>">
             <img class="icon" src="<?= esc(base_url('assets/icons/users.svg')) ?>" alt="">
             <span>Utilisateurs</span>

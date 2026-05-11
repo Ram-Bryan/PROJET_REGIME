@@ -43,6 +43,9 @@
             if ($segment['value'] >= 100) {
                 $svg .= '<circle cx="' . $cx . '" cy="' . $cy . '" r="' . $radius . '" fill="' . $segment['color'] . '" data-tooltip="'
                     . esc($segment['label']) . ' : ' . esc(number_format($segment['value'], 0, ',', ' ')) . '%"></circle>';
+                // Ajouter le label au centre
+                $svg .= '<text x="' . $cx . '" y="' . ($cy + 8) . '" text-anchor="middle" font-size="18" font-weight="bold" fill="#ffffff">'
+                    . esc(number_format($segment['value'], 0, ',', ' ')) . '%</text>';
                 break;
             }
 
@@ -71,6 +74,15 @@
 
             $svg .= '<path d="' . $path . '" fill="' . $segment['color'] . '" data-tooltip="'
                 . esc($segment['label']) . ' : ' . esc(number_format($segment['value'], 0, ',', ' ')) . '%"></path>';
+
+            // Ajouter le label du pourcentage au milieu du segment
+            if ($segment['value'] > 8) { // Afficher seulement si le segment est assez grand
+                $midAngle = $startAngle + ($sweep / 2);
+                $labelRadius = $innerRadius + ($radius - $innerRadius) / 2;
+                $labelPoint = $pointOnCircle($midAngle, $labelRadius, $cx, $cy);
+                $svg .= '<text x="' . $labelPoint['x'] . '" y="' . ($labelPoint['y'] + 5) . '" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff" pointer-events="none">'
+                    . esc(number_format($segment['value'], 0, ',', ' ')) . '%</text>';
+            }
 
             $startAngle = $endAngle;
         }
@@ -197,6 +209,11 @@
                     <circle cx="<?= $point['x'] ?>" cy="<?= $point['y'] ?>" r="6" fill="#1f8f6a">
                         <title><?= esc((string) $point['days']) ?> jours : <?= $point['value'] > 0 ? '+' : '' ?><?= esc(number_format($point['value'], 2, ',', ' ')) ?> kg</title>
                     </circle>
+                    <?php if ((int) $point['days'] > 0): ?>
+                        <text x="<?= $point['x'] ?>" y="<?= $point['y'] - 14 ?>" text-anchor="middle" font-size="11" font-weight="600" fill="#1f8f6a">
+                            <?= $point['value'] > 0 ? '+' : '' ?><?= esc(number_format($point['value'], 1, ',', ' ')) ?> kg
+                        </text>
+                    <?php endif; ?>
                 <?php endforeach; ?>
 
                 <text x="<?= $padLeft ?>" y="14" font-size="12" fill="#61758a">Kg</text>

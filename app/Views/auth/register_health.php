@@ -2,6 +2,12 @@
 
 <?= $this->section('title') ?>Inscription - Étapes 2 et 3<?= $this->endSection() ?>
 
+<?= $this->section('body_class') ?>fo-body auth-page auth-with-topbar<?= $this->endSection() ?>
+
+<?= $this->section('topbar') ?>
+<?= $this->include('frontoffice/partials/navbar') ?>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 <section class="auth-shell">
     <div class="auth-progress">

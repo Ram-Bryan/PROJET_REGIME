@@ -394,7 +394,7 @@ class RegimeModel extends Model
             ->get()
             ->getResultArray();
 
-        $regime['durations'] = clone (new DureeRegimeModel())
+        $regime['durations'] = (new DureeRegimeModel())
             ->where('id_regime', $id)
             ->orderBy('nb_jours', 'ASC')
             ->findAll();
