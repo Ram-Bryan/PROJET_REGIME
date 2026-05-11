@@ -56,6 +56,8 @@ class RegimeController extends BaseController
             $regime['variation_label'] = $this->formatVariationLabel($variation);
             $regime['activity_count'] = $activityCounts[(int) $regime['id_regime']] ?? 0;
             $regime['composition_gradient'] = $this->buildCompositionGradient($regime);
+            $regime['composition_legend'] = $this->buildCompositionLegend($regime);
+            $regime['composition_tooltip'] = $this->buildCompositionTooltip($regime);
             return $regime;
         }, $regimes);
 
@@ -120,6 +122,8 @@ class RegimeController extends BaseController
         }, $durees);
 
         $regime['composition_gradient'] = $this->buildCompositionGradient($regime);
+        $regime['composition_legend'] = $this->buildCompositionLegend($regime);
+        $regime['composition_tooltip'] = $this->buildCompositionTooltip($regime);
 
         return view('frontoffice/regime/show', [
             'regime' => $regime,
@@ -135,10 +139,11 @@ class RegimeController extends BaseController
 
     private function buildCompositionGradient(array $regime): string
     {
+        $colors = $this->getCompositionColors();
         $segments = [
-            ['color' => '#ef4444', 'value' => (float) ($regime['pourcentage_viande'] ?? 0)],
-            ['color' => '#3b82f6', 'value' => (float) ($regime['pourcentage_poisson'] ?? 0)],
-            ['color' => '#f59e0b', 'value' => (float) ($regime['pourcentage_volaille'] ?? 0)],
+            ['color' => $colors['viande'], 'value' => (float) ($regime['pourcentage_viande'] ?? 0)],
+            ['color' => $colors['poisson'], 'value' => (float) ($regime['pourcentage_poisson'] ?? 0)],
+            ['color' => $colors['volaille'], 'value' => (float) ($regime['pourcentage_volaille'] ?? 0)],
         ];
 
         $parts = [];
@@ -188,6 +193,118 @@ class RegimeController extends BaseController
         return [
             'label' => $ok ? 'Compatible avec votre objectif' : 'Non compatible avec votre objectif',
             'tone' => $ok ? 'success' : 'warning',
+        ];
+    }
+
+    private function getCompositionColors(): array
+    {
+        return [
+            'viande' => '#ef4444',
+            'poisson' => '#3b82f6',
+            'volaille' => '#f59e0b',
+        ];
+    }
+
+    private function formatPercent(float $value): string
+    {
+        return number_format($value, 2, ',', ' ');
+    }
+
+    private function buildCompositionLegend(array $regime): array
+    {
+        $colors = $this->getCompositionColors();
+
+        return [
+            [
+                'key' => 'viande',
+                'label' => 'Viande',
+                'value' => (float) ($regime['pourcentage_viande'] ?? 0),
+                'value_label' => $this->formatPercent((float) ($regime['pourcentage_viande'] ?? 0)),
+                'color' => $colors['viande'],
+            ],
+            [
+                'key' => 'poisson',
+                'label' => 'Poisson',
+                'value' => (float) ($regime['pourcentage_poisson'] ?? 0),
+                'value_label' => $this->formatPercent((float) ($regime['pourcentage_poisson'] ?? 0)),
+                'color' => $colors['poisson'],
+            ],
+            [
+                'key' => 'volaille',
+                'label' => 'Volaille',
+                'value' => (float) ($regime['pourcentage_volaille'] ?? 0),
+                'value_label' => $this->formatPercent((float) ($regime['pourcentage_volaille'] ?? 0)),
+                'color' => $colors['volaille'],
+            ],
+        ];
+    }
+
+    private function buildCompositionTooltip(array $regime): string
+    {
+        $legend = $this->buildCompositionLegend($regime);
+        $parts = [];
+
+        foreach ($legend as $item) {
+            $parts[] = $item['label'] . ' ' . $item['value_label'] . '%';
+        }
+
+        return implode(' | ', $parts);
+    }
+
+    private function buildWeightGraphData(float $monthlyVariation): array
+    {
+        $points = [
+            ['days' => 0, 'value' => 0.0],
+            ['days' => 30, 'value' => $monthlyVariation],
+            ['days' => 60, 'value' => $monthlyVariation * 2],
+            ['days' => 90, 'value' => $monthlyVariation * 3],
+        ];
+
+        $graphWidth = 640;
+        $graphHeight = 280;
+        $padLeft = 54;
+        $padRight = 24;
+        $padTop = 24;
+        $padBottom = 58;
+        $plotWidth = $graphWidth - $padLeft - $padRight;
+        $plotHeight = $graphHeight - $padTop - $padBottom;
+
+        $values = array_map(static fn (array $point): float => (float) $point['value'], $points);
+        $minValue = min(array_merge([0.0], $values));
+        $maxValue = max(array_merge([0.0], $values));
+        if ($minValue === $maxValue) {
+            $minValue -= 1;
+            $maxValue += 1;
+        }
+        $range = $maxValue - $minValue;
+
+        $linePoints = [];
+        foreach ($points as $point) {
+            $days = (float) $point['days'];
+            $x = $padLeft + (($days / 90) * $plotWidth);
+            $y = $padTop + (($maxValue - (float) $point['value']) / $range) * $plotHeight;
+            $linePoints[] = [
+                'x' => $x,
+                'y' => $y,
+                'days' => $days,
+                'value' => (float) $point['value'],
+            ];
+        }
+
+        return [
+            'width' => $graphWidth,
+            'height' => $graphHeight,
+            'padLeft' => $padLeft,
+            'padRight' => $padRight,
+            'padTop' => $padTop,
+            'padBottom' => $padBottom,
+            'plotWidth' => $plotWidth,
+            'plotHeight' => $plotHeight,
+            'minValue' => $minValue,
+            'maxValue' => $maxValue,
+            'range' => $range,
+            'points' => $points,
+            'linePoints' => $linePoints,
         ];
     }
 
@@ -417,16 +534,21 @@ class RegimeController extends BaseController
         $variation = (float) ($purchase['variation_mensuelle_kg'] ?? 0);
         $purchase['variation_label'] = $this->formatVariationLabel($variation);
         $purchase['objective_label'] = $this->getObjectiveLabel($variation);
+        $purchase['composition_gradient'] = $this->buildCompositionGradient($purchase);
+        $purchase['composition_legend'] = $this->buildCompositionLegend($purchase);
+        $purchase['composition_tooltip'] = $this->buildCompositionTooltip($purchase);
 
         $activiteIds = $regimeActiviteModel->getActiviteIdsForRegime((int) $purchase['id_regime']);
         $activites = $activiteModel->getByIds($activiteIds);
 
         $user = $userModel->find($userId);
+        $weightGraph = $this->buildWeightGraphData($variation);
 
         return view('frontoffice/regime/my_regime_detail', [
             'purchase' => $purchase,
             'activites' => $activites,
             'user' => $user,
+            'weightGraph' => $weightGraph,
         ]);
     }
 

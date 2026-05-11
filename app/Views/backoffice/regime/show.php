@@ -209,11 +209,6 @@
                     <circle cx="<?= $point['x'] ?>" cy="<?= $point['y'] ?>" r="6" fill="#1f8f6a">
                         <title><?= esc((string) $point['days']) ?> jours : <?= $point['value'] > 0 ? '+' : '' ?><?= esc(number_format($point['value'], 2, ',', ' ')) ?> kg</title>
                     </circle>
-                    <?php if ((int) $point['days'] > 0): ?>
-                        <text x="<?= $point['x'] ?>" y="<?= $point['y'] - 14 ?>" text-anchor="middle" font-size="11" font-weight="600" fill="#1f8f6a">
-                            <?= $point['value'] > 0 ? '+' : '' ?><?= esc(number_format($point['value'], 1, ',', ' ')) ?> kg
-                        </text>
-                    <?php endif; ?>
                 <?php endforeach; ?>
 
                 <text x="<?= $padLeft ?>" y="14" font-size="12" fill="#61758a">Kg</text>
@@ -231,7 +226,9 @@
             <div class="list-inline">
                 <?php foreach ($regime['activities'] as $activity): ?>
                     <span class="pill">
-                        <?= esc($activity['label_activite']) ?> - <?= esc((string) $activity['nb_par_semaine']) ?> fois / semaine
+                        <img src="<?= esc(base_url('assets/icons/activity.svg')) ?>" alt="">
+                        <strong><?= esc($activity['label_activite']) ?></strong>
+                        <span><?= esc((string) $activity['nb_par_semaine']) ?> fois / semaine</span>
                     </span>
                 <?php endforeach; ?>
             </div>

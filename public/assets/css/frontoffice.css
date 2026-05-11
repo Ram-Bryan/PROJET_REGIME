@@ -616,6 +616,18 @@ body.fo-body {
   box-shadow: var(--shadow-md);
 }
 
+.composition-block {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.activity-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .regime-name {
   font-weight: 700;
   color: var(--text);
@@ -628,7 +640,11 @@ body.fo-body {
   vertical-align: middle;
 }
 
-.promo-card { max-width: 520px; }
+.promo-card {
+  max-width: 520px;
+  width: min(520px, 100%);
+  margin: 0 auto;
+}
 
 .promo-header {
   display: flex;
@@ -649,6 +665,53 @@ body.fo-body {
 .profile-normal .metric-value,
 .profile-normal .metric-value.small {
   font-weight: 500;
+}
+
+.profile-normal .metric-genre {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.trend-chart {
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.trend-chart svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Composition Legend (frontoffice tables) ── */
+.composition-wrap {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.composition-legend-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.composition-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.composition-legend-item .legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
 }
 
 /* ══════════════════════════════════════════════════════════════

@@ -29,7 +29,7 @@
         <div class="metric-grid">
             <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/user-round.svg')) ?>" alt="">Nom</div><div class="metric-value small"><?= esc($user['nom']) ?></div></div>
             <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/mail.svg')) ?>" alt="">Email</div><div class="metric-value small"><?= esc($user['email']) ?></div></div>
-            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/venus-and-mars.svg')) ?>" alt="">Genre</div><div class="metric-value small"><?= esc($user['genre']) ?></div></div>
+            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/venus-and-mars.svg')) ?>" alt="">Genre</div><div class="metric-value small metric-genre"><?= esc($user['genre']) ?></div></div>
             <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/calendar-days.svg')) ?>" alt="">Date de naissance</div><div class="metric-value small"><?= esc($user['date_naissance'] ?? 'Non renseignée') ?></div></div>
         </div>
     </div>

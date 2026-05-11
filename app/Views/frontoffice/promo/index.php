@@ -21,7 +21,6 @@
                 <h2>Code promo</h2>
                 <p class="sub">Votre demande passe d'abord par validation admin.</p>
             </div>
-            <span class="promo-kicker">Validation admin</span>
         </div>
 
         <div class="promo-balance">
@@ -34,7 +33,6 @@
             <div>
                 <label for="code_promo">Code promo</label>
                 <input type="text" id="code_promo" name="code_promo" minlength="3" maxlength="30" value="<?= esc(old('code_promo')) ?>" required>
-                <p class="field-hint">Le code est envoyé pour vérification, même s'il n'existe pas encore dans la base.</p>
                 <div class="field-error" data-field-error="code_promo"></div>
             </div>
             <div class="actions">

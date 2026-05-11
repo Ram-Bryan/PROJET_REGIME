@@ -35,7 +35,12 @@
                                 $variation = (float) $variation;
                             ?>
                             <tr>
-                                <td><span class="linked-regime-name"><?= esc($regime['nom_regime']) ?></span></td>
+                                <td>
+                                    <span class="linked-regime-name">
+                                        <img src="<?= esc(base_url('assets/icons/utensils.svg')) ?>" alt="">
+                                        <?= esc($regime['nom_regime']) ?>
+                                    </span>
+                                </td>
                                 <td><?= $variation > 0 ? '+' : '' ?><?= esc(number_format($variation, 2, ',', ' ')) ?> kg / mois</td>
                                 <td>
                                     <a href="<?= base_url('admin/regimes/view/' . $regime['id_regime']) ?>" class="btn btn-ghost btn-icon" title="Voir le regime">

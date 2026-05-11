@@ -74,7 +74,17 @@
                             </td>
                             <td><span class="badge"><?= esc($regime['variation_label']) ?></span></td>
                             <td>
-                                <div class="composition-mini" style="--pie-gradients: <?= esc($regime['composition_gradient'] ?? '#e9eef3 0% 100%') ?>"></div>
+                                <div class="composition-wrap">
+                                    <div class="composition-mini" style="--pie-gradients: <?= esc($regime['composition_gradient'] ?? '#e9eef3 0% 100%') ?>" title="<?= esc($regime['composition_tooltip'] ?? '') ?>"></div>
+                                    <div class="composition-legend-inline">
+                                        <?php foreach ($regime['composition_legend'] ?? [] as $legend): ?>
+                                            <span class="composition-legend-item">
+                                                <span class="legend-dot" style="background: <?= esc($legend['color']) ?>;"></span>
+                                                <?= esc($legend['label']) ?> <?= esc($legend['value_label']) ?>%
+                                            </span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 <?php if (empty($durees)) : ?>
@@ -144,10 +154,33 @@
                     row.appendChild(variationCell);
 
                     const compositionCell = document.createElement('td');
+                    const compositionWrap = document.createElement('div');
+                    compositionWrap.className = 'composition-wrap';
                     const composition = document.createElement('div');
                     composition.className = 'composition-mini';
+                    composition.title = regime.composition_tooltip || '';
                     composition.style.setProperty('--pie-gradients', regime.composition_gradient || '#e9eef3 0% 100%');
-                    compositionCell.appendChild(composition);
+                    compositionWrap.appendChild(composition);
+
+                    const legend = document.createElement('div');
+                    legend.className = 'composition-legend-inline';
+                    (regime.composition_legend || []).forEach((item) => {
+                        const entry = document.createElement('span');
+                        entry.className = 'composition-legend-item';
+
+                        const dot = document.createElement('span');
+                        dot.className = 'legend-dot';
+                        dot.style.background = item.color || '#e9eef3';
+                        entry.appendChild(dot);
+
+                        const label = document.createElement('span');
+                        label.textContent = `${item.label} ${item.value_label}%`;
+                        entry.appendChild(label);
+
+                        legend.appendChild(entry);
+                    });
+                    compositionWrap.appendChild(legend);
+                    compositionCell.appendChild(compositionWrap);
                     row.appendChild(compositionCell);
 
                     const durationsCell = document.createElement('td');

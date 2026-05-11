@@ -35,22 +35,19 @@
                 </div>
                 <div>
                     <div class="kv-title">Composition</div>
-                    <div class="composition-large" style="--pie-gradients: <?= esc($regime['composition_gradient'] ?? '#e9eef3 0% 100%') ?>"></div>
+                    <div class="composition-block">
+                        <div class="composition-large" style="--pie-gradients: <?= esc($regime['composition_gradient'] ?? '#e9eef3 0% 100%') ?>" title="<?= esc($regime['composition_tooltip'] ?? '') ?>"></div>
+                        <div class="composition-legend-inline">
+                            <?php foreach ($regime['composition_legend'] ?? [] as $legend): ?>
+                                <span class="composition-legend-item">
+                                    <span class="legend-dot" style="background: <?= esc($legend['color']) ?>;"></span>
+                                    <?= esc($legend['label']) ?> <?= esc($legend['value_label']) ?>%
+                                </span>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="card">
-            <h2>À propos de ce régime</h2>
-            <p class="sub">
-                <?= esc($regime['nom_regime']) ?> est un programme alimentaire conçu pour <?= esc(strtolower($objectiveLabel)) ?>,
-                basé sur une répartition précise des sources protéiques.
-            </p>
-            <ul class="info-list">
-                <li><img src="<?= esc(base_url('assets/icons/chart-line.svg')) ?>" alt="">Variation estimée mensuelle: <?= esc($regime['variation_label']) ?></li>
-                <li><img src="<?= esc(base_url('assets/icons/chart-pie.svg')) ?>" alt="">Répartition: <?= esc($regime['pourcentage_viande']) ?>% viande, <?= esc($regime['pourcentage_poisson']) ?>% poisson, <?= esc($regime['pourcentage_volaille']) ?>% volaille.</li>
-                <li><img src="<?= esc(base_url('assets/icons/activity.svg')) ?>" alt="">Accompagnement sport recommandé selon les activités proposées.</li>
-            </ul>
         </div>
 
         <div class="card">
@@ -68,7 +65,12 @@
                     <tbody>
                         <?php foreach ($activites as $activite) : ?>
                             <tr>
-                                <td><?= esc($activite['label_activite']) ?></td>
+                                <td>
+                                    <span class="activity-name">
+                                        <img class="icon" src="<?= esc(base_url('assets/icons/activity.svg')) ?>" alt="">
+                                        <strong><?= esc($activite['label_activite']) ?></strong>
+                                    </span>
+                                </td>
                                 <td><?= esc($activite['nb_par_semaine']) ?>x/semaine</td>
                             </tr>
                         <?php endforeach; ?>

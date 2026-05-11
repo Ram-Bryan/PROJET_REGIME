@@ -26,6 +26,7 @@
                 <a class="<?= $isActive(['mes-regimes']) ? 'active' : '' ?>" href="<?= esc(site_url('mes-regimes')) ?>">Mes régimes</a>
                 <a class="<?= $isActive(['options']) ? 'active' : '' ?>" href="<?= esc(site_url('options')) ?>">Options</a>
                 <a class="<?= $isActive(['promo']) ? 'active' : '' ?>" href="<?= esc(site_url('promo')) ?>">Code promo</a>
+                <a class="<?= $isActive(['transactions']) ? 'active' : '' ?>" href="<?= esc(site_url('transactions')) ?>">Transactions</a>
                 <a href="<?= esc(site_url('logout')) ?>" data-confirm-message="Voulez-vous vraiment vous déconnecter ?">Déconnexion</a>
             <?php else: ?>
                 <a class="<?= $isActive(['']) ? 'active' : '' ?>" href="<?= esc(site_url('/')) ?>">Accueil</a>

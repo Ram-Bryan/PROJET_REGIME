@@ -290,6 +290,76 @@ body.bo-body {
   border-radius: 4px;
 }
 
+/* ── Detail Layout (regime view) ── */
+.detail-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: center;
+}
+
+.legend-list {
+  display: grid;
+  gap: 12px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.legend-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Activity Pills ── */
+.list-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pill img {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Activity Detail ── */
+.linked-regime-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.linked-regime-name img {
+  width: 16px;
+  height: 16px;
+}
+
 /* ── Duration Table ── */
 .duration-status {
   display: inline-block;

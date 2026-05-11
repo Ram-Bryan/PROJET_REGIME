@@ -1,3 +1,5 @@
+<?php $isLoggedIn = (bool) session()->get('is_logged_in'); ?>
+
 <footer class="fo-footer">
     <div class="fo-footer-inner">
         <div>
@@ -6,8 +8,21 @@
         </div>
         <div>
             <h4>Liens utiles</h4>
-            <a href="<?= esc(site_url('login')) ?>">Connexion</a>
-            <a href="<?= esc(site_url('register')) ?>">Inscription</a>
+            <?php if ($isLoggedIn): ?>
+                <a href="<?= esc(site_url('dashboard')) ?>">Dashboard</a>
+                <a href="<?= esc(site_url('profile')) ?>">Profil</a>
+                <a href="<?= esc(site_url('regimes')) ?>">Régimes</a>
+                <a href="<?= esc(site_url('mes-regimes')) ?>">Mes régimes</a>
+                <a href="<?= esc(site_url('options')) ?>">Options</a>
+                <a href="<?= esc(site_url('promo')) ?>">Code promo</a>
+                <a href="<?= esc(site_url('transactions')) ?>">Transactions</a>
+                <a href="<?= esc(site_url('logout')) ?>">Déconnexion</a>
+            <?php else: ?>
+                <a href="<?= esc(site_url('/')) ?>">Accueil</a>
+                <a href="<?= esc(site_url('login')) ?>">Connexion</a>
+                <a href="<?= esc(site_url('register')) ?>">Inscription</a>
+                <a href="<?= esc(site_url('admin/login')) ?>">Admin</a>
+            <?php endif; ?>
         </div>
         <div>
             <h4>Contact</h4>

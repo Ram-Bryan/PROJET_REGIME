@@ -521,6 +521,7 @@ label {
   background: #fff;
   font-size: 14px;
   box-shadow: var(--shadow-sm);
+  margin-bottom: 12px;
 }
 
 .form-feedback.is-visible { display: block; }
