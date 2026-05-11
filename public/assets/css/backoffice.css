@@ -415,6 +415,30 @@ body.bo-body {
 
 .radio-chip input { width: auto; }
 
+/* ── Promo Validation ── */
+.promo-client {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.promo-client span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.code-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 /* ── Utilisateur detail cards ── */
 .detail-card {
   display: grid;
