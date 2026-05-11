@@ -29,7 +29,7 @@
         <div class="metric-grid">
             <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/user-round.svg')) ?>" alt="">Nom</div><div class="metric-value small"><?= esc($user['nom']) ?></div></div>
             <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/mail.svg')) ?>" alt="">Email</div><div class="metric-value small"><?= esc($user['email']) ?></div></div>
-            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/venus-and-mars.svg')) ?>" alt="">Genre</div><div class="metric-value"><?= esc($user['genre']) ?></div></div>
+            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/venus-and-mars.svg')) ?>" alt="">Genre</div><div class="metric-value small"><?= esc($user['genre']) ?></div></div>
             <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/calendar-days.svg')) ?>" alt="">Date de naissance</div><div class="metric-value small"><?= esc($user['date_naissance'] ?? 'Non renseignée') ?></div></div>
         </div>
     </div>
@@ -41,14 +41,20 @@
                 <p class="sub">Les indicateurs liés à votre parcours.</p>
             </div>
         </div>
-        <div class="metric-grid">
-            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/ruler.svg')) ?>" alt="">Taille</div><div class="metric-value"><?= esc($user['taille_cm']) ?> cm</div></div>
-            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/weight.svg')) ?>" alt="">Poids actuel</div><div class="metric-value"><?= esc($user['poids_kg']) ?> kg</div></div>
-            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/weight-tilde.svg')) ?>" alt="">Poids objectif</div><div class="metric-value"><?= isset($user['poids_objectif']) && $user['poids_objectif'] !== null ? esc($user['poids_objectif']) . ' kg' : 'Non défini' ?></div></div>
-            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/activity.svg')) ?>" alt="">IMC</div><div class="metric-value"><?= $imc !== null ? number_format($imc, 2, ',', ' ') : 'Non calculable' ?></div></div>
-            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/target.svg')) ?>" alt="">Objectif</div><div class="metric-value small"><?= $objectif !== null ? esc($objectif['label_objectif']) : 'Non défini' ?></div></div>
-            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/wallet.svg')) ?>" alt="">Solde actuel</div><div class="metric-value"><?= esc((string) ($user['argent'] ?? 0)) ?> Ar</div></div>
-            <div class="metric-card"><div class="metric-label icon"><img src="<?= esc(base_url('assets/icons/crown.svg')) ?>" alt="">Statut</div><div class="metric-value"><?= $user['is_gold'] ? '<span class="badge badge-success">Gold</span>' : '<span class="badge">Standard</span>' ?></div></div>
+        <div class="health-grid">
+            <div class="health-block">
+                <div class="health-row"><span class="health-label">Taille</span><span class="health-value"><?= esc($user['taille_cm']) ?> cm</span></div>
+                <div class="health-row"><span class="health-label">Poids actuel</span><span class="health-value"><?= esc($user['poids_kg']) ?> kg</span></div>
+                <div class="health-row"><span class="health-label">IMC</span><span class="health-value"><?= $imc !== null ? number_format($imc, 2, ',', ' ') : 'Non calculable' ?></span></div>
+            </div>
+            <div class="health-block">
+                <div class="health-row"><span class="health-label">Objectif</span><span class="health-value"><?= $objectif !== null ? esc($objectif['label_objectif']) : 'Non défini' ?></span></div>
+                <div class="health-row"><span class="health-label">Poids objectif</span><span class="health-value"><?= isset($user['poids_objectif']) && $user['poids_objectif'] !== null ? esc($user['poids_objectif']) . ' kg' : 'Non défini' ?></span></div>
+                <div class="health-row"><span class="health-label">Statut</span><span class="health-value"><?= $user['is_gold'] ? '<span class="badge badge-success">Gold</span>' : '<span class="badge">Standard</span>' ?></span></div>
+            </div>
+            <div class="health-block">
+                <div class="health-row"><span class="health-label">Solde actuel</span><span class="health-value"><?= esc((string) ($user['argent'] ?? 0)) ?> Ar</span></div>
+            </div>
         </div>
     </div>
 </section>

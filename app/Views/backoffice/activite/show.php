@@ -12,25 +12,11 @@
 <?= $this->section('content') ?>
     <div class="activity-detail-hero">
         <h3><?= esc($activite['label_activite']) ?></h3>
-        <p>Frequence recommandee: <?= esc((string) $activite['nb_par_semaine']) ?> fois par semaine.</p>
-    </div>
-
-    <div class="grid-2">
-        <div class="metric">
-            <p class="metric-label">Frequence hebdomadaire</p>
-            <p class="metric-value"><?= esc((string) $activite['nb_par_semaine']) ?></p>
-            <p class="metric-note">Nombre de seances conseillees par semaine</p>
-        </div>
-        <div class="metric">
-            <p class="metric-label">Regimes lies</p>
-            <p class="metric-value"><?= esc((string) count($linkedRegimes ?? [])) ?></p>
-            <p class="metric-note">Nombre de regimes qui utilisent cette activite</p>
-        </div>
     </div>
 
     <div class="card">
         <h3 class="section-title">Regimes associes</h3>
-        <p class="section-subtitle">Chaque regime ci-dessous renvoie vers son detail admin.</p>
+        <p class="section-subtitle">Liste des regimes qui utilisent cette activite.</p>
 
         <?php if (! empty($linkedRegimes)): ?>
             <div class="table-wrap">
@@ -49,14 +35,12 @@
                                 $variation = (float) $variation;
                             ?>
                             <tr>
-                                <td>
-                                    <a class="regime-link" href="<?= base_url('admin/regimes/view/' . $regime['id_regime']) ?>">
-                                        <?= esc($regime['nom_regime']) ?>
-                                    </a>
-                                </td>
+                                <td><span class="linked-regime-name"><?= esc($regime['nom_regime']) ?></span></td>
                                 <td><?= $variation > 0 ? '+' : '' ?><?= esc(number_format($variation, 2, ',', ' ')) ?> kg / mois</td>
                                 <td>
-                                    <a href="<?= base_url('admin/regimes/view/' . $regime['id_regime']) ?>" class="btn btn-secondary btn-small">Voir le regime</a>
+                                    <a href="<?= base_url('admin/regimes/view/' . $regime['id_regime']) ?>" class="btn btn-ghost btn-icon" title="Voir le regime">
+                                        <img src="<?= esc(base_url('assets/icons/eye.svg')) ?>" alt="Voir">
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -460,8 +460,42 @@ in information personnel make the text genre not that big.
 in infrmation sante:
 UI target by block: taille, poids actuelle, IMC one bloc, Objectif and Poids object one block, and solde actuel goes alone
 
+Footer:
+lien utiles are the lien of header
 
+Transaction:
+reput it in the header but keep the seiton inside dashboard.
 
+Inside list of regimes:
+Composition: hovering show the percentages. And we also have legend to see what color is waht composition
 
-Always pro SOC MVC style and folwign Rules
+Detail of a regime:
+remove seciton "A propose de ce regime"
+Activite recommande: add icons or bold
+The flash error: Solde insuffisant pour acheter ce regime.
+should be a have a little space to the button commander
+
+In mes regimes:
+There should be a column action in it:
+Pdf export should be a file icon. (or a pdf icon). And ther eis eye icon to see the thing. And remove the link in the name of the regime
+
+In detial of mes regime of a regime:
+in a block: Durée choisie
+Montant payé
+Date d'achat
+
+in a block: remove description du regime content and do it like this instead;
+Objectif, circular graph of its composition with hover male see the composition, and variaiton estime du poids like a tred graph. This will be jsut like backoffice detail of a regime
+Keep the rest
+
+In code promo:
+remove the green badge "Validaition admin"
+Remove also "Le code est envoyé pour vérification, même s'il n'existe pas encore dans la base."
+Make the card in the middle of the page
+
+Also: 
+Whne in backoffice when I go to Demandes a valider it still doest show the page of validation. It should show the page of pvvidation. Currently when I go to that button, its like its just filtering the code. This is the main fix last
+
+Always pro SOC MVC style and folwign Rules. 
+No style tags inside views. And no logic inside views too. Remember
 

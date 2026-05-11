@@ -147,26 +147,26 @@
                 <span class="composition-tooltip"></span>
             </div>
             <div class="legend-list">
-                <div class="legend-row" title="Viande : <?= esc((string) $regime['pourcentage_viande']) ?>%">
+                <div class="legend-row" title="Viande : <?= esc(number_format((float) $regime['pourcentage_viande'], 2, ',', ' ')) ?>%">
                     <span class="legend-name">
                         <span class="legend-dot" style="background:<?= esc($compositionColors['viande']) ?>;"></span>
                         Viande
                     </span>
-                    <strong><?= esc((string) $regime['pourcentage_viande']) ?>%</strong>
+                    <strong><?= esc(number_format((float) $regime['pourcentage_viande'], 2, ',', ' ')) ?>%</strong>
                 </div>
-                <div class="legend-row" title="Poisson : <?= esc((string) $regime['pourcentage_poisson']) ?>%">
+                <div class="legend-row" title="Poisson : <?= esc(number_format((float) $regime['pourcentage_poisson'], 2, ',', ' ')) ?>%">
                     <span class="legend-name">
                         <span class="legend-dot" style="background:<?= esc($compositionColors['poisson']) ?>;"></span>
                         Poisson
                     </span>
-                    <strong><?= esc((string) $regime['pourcentage_poisson']) ?>%</strong>
+                    <strong><?= esc(number_format((float) $regime['pourcentage_poisson'], 2, ',', ' ')) ?>%</strong>
                 </div>
-                <div class="legend-row" title="Volaille : <?= esc((string) $regime['pourcentage_volaille']) ?>%">
+                <div class="legend-row" title="Volaille : <?= esc(number_format((float) $regime['pourcentage_volaille'], 2, ',', ' ')) ?>%">
                     <span class="legend-name">
                         <span class="legend-dot" style="background:<?= esc($compositionColors['volaille']) ?>;"></span>
                         Volaille
                     </span>
-                    <strong><?= esc((string) $regime['pourcentage_volaille']) ?>%</strong>
+                    <strong><?= esc(number_format((float) $regime['pourcentage_volaille'], 2, ',', ' ')) ?>%</strong>
                 </div>
             </div>
         </div>
@@ -221,14 +221,6 @@
             </svg>
         </div>
 
-        <div class="point-list">
-            <?php foreach ($points as $point): ?>
-                <?php if ((int) $point['days'] === 0) { continue; } ?>
-                <span class="point-badge">
-                    <?= esc((string) $point['days']) ?> jours: <?= $point['value'] > 0 ? '+' : '' ?><?= esc(number_format((float) $point['value'], 2, ',', ' ')) ?> kg
-                </span>
-            <?php endforeach; ?>
-        </div>
     </div>
 
     <div class="card">

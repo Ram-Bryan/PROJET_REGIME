@@ -264,7 +264,7 @@ INSERT INTO utilisateur(
     '1998-05-12',
     1,
     FALSE,
-    45000,
+    100000,
     'client'
 ),
 (
