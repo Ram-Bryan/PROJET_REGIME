@@ -61,22 +61,24 @@
                                     <?php if (! empty($demande['code_existe'])): ?>
                                         <span class="badge success" title="Ce code existe dans la liste des codes promo.">Code trouve</span>
                                     <?php else: ?>
-                                        <span class="badge warn" title="Aucun code ne correspond a cette saisie.">Code introuvable</span>
+                                        <span class="badge badge-danger" title="Aucun code ne correspond a cette saisie.">Code introuvable</span>
                                     <?php endif; ?>
                                 </td>
                                 <td><?= esc((string) ($demande['date_demande'] ?? '')) ?></td>
                                 <td>
                                     <div class="table-actions">
-                                        <form action="<?= base_url('admin/promos/validate/approve/' . $demande['id_demande_code_promo']) ?>" method="post">
-                                            <?= csrf_field() ?>
-                                            <button type="submit" class="btn btn-primary btn-icon" title="Accepter la demande" data-confirm-message="Accepter cette demande ?">
-                                                <img src="<?= esc(base_url('assets/icons/check.svg')) ?>" alt="Accepter">
-                                            </button>
-                                        </form>
+                                        <?php if (! empty($demande['code_existe'])): ?>
+                                            <form action="<?= base_url('admin/promos/validate/approve/' . $demande['id_demande_code_promo']) ?>" method="post">
+                                                <?= csrf_field() ?>
+                                                <button type="submit" class="btn btn-primary btn-icon" title="Accepter la demande" data-confirm-message="Accepter cette demande ?">
+                                                    <img src="<?= esc(base_url('assets/icons/check.svg')) ?>" alt="Accepter">
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
                                         <form action="<?= base_url('admin/promos/validate/reject/' . $demande['id_demande_code_promo']) ?>" method="post">
                                             <?= csrf_field() ?>
-                                            <button type="submit" class="btn btn-danger btn-icon" title="Refuser la demande" data-confirm-message="Refuser cette demande ?">
-                                                <img src="<?= esc(base_url('assets/icons/x.svg')) ?>" alt="Refuser">
+                                            <button type="submit" class="btn btn-danger btn-icon" title="Supprimer la demande" data-confirm-message="Supprimer cette demande ?">
+                                                <img src="<?= esc(base_url('assets/icons/trash-2.svg')) ?>" alt="Supprimer">
                                             </button>
                                         </form>
                                     </div>

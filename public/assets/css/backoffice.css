@@ -415,6 +415,11 @@ body.bo-body {
 
 .radio-chip input { width: auto; }
 
+.badge-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
 /* ── Promo Validation ── */
 .promo-client {
   display: grid;
