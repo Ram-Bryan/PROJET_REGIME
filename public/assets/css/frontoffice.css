@@ -672,6 +672,44 @@ body.fo-body {
   font-weight: 600;
 }
 
+.health-cards {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.health-card {
+  padding: 18px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  gap: 10px;
+}
+
+.health-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.health-label {
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11px;
+}
+
+.health-value {
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+}
+
 .trend-chart {
   margin-top: 18px;
   padding: 12px;
@@ -752,6 +790,8 @@ body.fo-body {
 
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { width: 100%; }
+
+  .health-cards { grid-template-columns: 1fr; }
 
   .landing-hero { padding: var(--space-10) 20px; }
 
