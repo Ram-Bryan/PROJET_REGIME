@@ -16,7 +16,7 @@
                 <a href="<?= esc(site_url('options')) ?>">Options</a>
                 <a href="<?= esc(site_url('promo')) ?>">Code promo</a>
                 <a href="<?= esc(site_url('transactions')) ?>">Transactions</a>
-                <a href="<?= esc(site_url('logout')) ?>">Déconnexion</a>
+                <a class="link-danger" href="<?= esc(site_url('logout')) ?>">Déconnexion</a>
             <?php else: ?>
                 <a href="<?= esc(site_url('/')) ?>">Accueil</a>
                 <a href="<?= esc(site_url('login')) ?>">Connexion</a>

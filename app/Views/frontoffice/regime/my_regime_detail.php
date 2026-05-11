@@ -44,7 +44,9 @@
             <div>
                 <div class="kv-title">Composition</div>
                 <div class="composition-block">
-                    <div class="composition-large" style="--pie-gradients: <?= esc($purchase['composition_gradient'] ?? '#e9eef3 0% 100%') ?>" title="<?= esc($purchase['composition_tooltip'] ?? '') ?>"></div>
+                    <div class="composition-chart composition-large" style="--pie-gradients: <?= esc($purchase['composition_gradient'] ?? '#e9eef3 0% 100%') ?>" data-tooltip="<?= esc($purchase['composition_tooltip'] ?? '') ?>">
+                        <span class="composition-tooltip"></span>
+                    </div>
                     <div class="composition-legend-inline">
                         <?php foreach ($purchase['composition_legend'] ?? [] as $legend): ?>
                             <span class="composition-legend-item">
@@ -57,6 +59,15 @@
             </div>
         </div>
 
+    </div>
+
+    <div class="card">
+        <div class="section-title">
+            <div>
+                <h2>Tendance du poids</h2>
+                <p class="sub">Projection sur 0, 30, 60 et 90 jours.</p>
+            </div>
+        </div>
         <?php $graph = $weightGraph ?? []; ?>
         <div class="trend-chart">
             <svg viewBox="0 0 <?= esc((string) ($graph['width'] ?? 640)) ?> <?= esc((string) ($graph['height'] ?? 280)) ?>" width="<?= esc((string) ($graph['width'] ?? 640)) ?>" height="<?= esc((string) ($graph['height'] ?? 280)) ?>" role="img" aria-label="Graphe de variation du poids">

@@ -188,4 +188,56 @@
             }
         });
     });
+
+    /* ── Composition Chart Tooltips ── */
+    const initCompositionTooltips = (root = document) => {
+        const charts = root.querySelectorAll('.composition-chart');
+        charts.forEach((chart) => {
+            if (chart.dataset.tooltipBound === '1') return;
+
+            let tooltip = chart.querySelector('.composition-tooltip');
+            if (!tooltip) {
+                tooltip = document.createElement('span');
+                tooltip.className = 'composition-tooltip';
+                chart.appendChild(tooltip);
+            }
+
+            const segmentTargets = chart.querySelectorAll('[data-tooltip]');
+            const chartTooltip = chart.getAttribute('data-tooltip');
+            const targets = segmentTargets.length ? Array.from(segmentTargets) : (chartTooltip ? [chart] : []);
+
+            if (!targets.length) return;
+
+            const showTooltip = (target) => {
+                const label = target.getAttribute('data-tooltip') || '';
+                if (!label) return;
+                tooltip.textContent = label;
+                tooltip.style.opacity = '1';
+            };
+
+            const moveTooltip = (event) => {
+                const rect = chart.getBoundingClientRect();
+                tooltip.style.left = (event.clientX - rect.left) + 'px';
+                tooltip.style.top = (event.clientY - rect.top - 10) + 'px';
+            };
+
+            const hideTooltip = () => {
+                tooltip.style.opacity = '0';
+            };
+
+            targets.forEach((target) => {
+                target.addEventListener('mouseenter', function (event) {
+                    showTooltip(target);
+                    moveTooltip(event);
+                });
+                target.addEventListener('mousemove', moveTooltip);
+                target.addEventListener('mouseleave', hideTooltip);
+            });
+
+            chart.dataset.tooltipBound = '1';
+        });
+    };
+
+    window.initCompositionTooltips = initCompositionTooltips;
+    initCompositionTooltips();
 })();

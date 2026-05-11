@@ -266,37 +266,3 @@
     </div>
 <?= $this->endSection() ?>
 
-<?= $this->section('scripts') ?>
-    <script>
-        (function () {
-            document.querySelectorAll('.composition-chart').forEach(function (chart) {
-                const tooltip = chart.querySelector('.composition-tooltip');
-
-                chart.querySelectorAll('[data-tooltip]').forEach(function (segment) {
-                    segment.addEventListener('mouseenter', function () {
-                        if (!tooltip) {
-                            return;
-                        }
-                        tooltip.textContent = segment.getAttribute('data-tooltip') || '';
-                        tooltip.style.opacity = '1';
-                    });
-
-                    segment.addEventListener('mousemove', function (event) {
-                        if (!tooltip) {
-                            return;
-                        }
-                        const rect = chart.getBoundingClientRect();
-                        tooltip.style.left = (event.clientX - rect.left) + 'px';
-                        tooltip.style.top = (event.clientY - rect.top - 10) + 'px';
-                    });
-
-                    segment.addEventListener('mouseleave', function () {
-                        if (tooltip) {
-                            tooltip.style.opacity = '0';
-                        }
-                    });
-                });
-            });
-        }());
-    </script>
-<?= $this->endSection() ?>

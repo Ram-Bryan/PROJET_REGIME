@@ -36,7 +36,9 @@
                 <div>
                     <div class="kv-title">Composition</div>
                     <div class="composition-block">
-                        <div class="composition-large" style="--pie-gradients: <?= esc($regime['composition_gradient'] ?? '#e9eef3 0% 100%') ?>" title="<?= esc($regime['composition_tooltip'] ?? '') ?>"></div>
+                            <div class="composition-chart composition-large" style="--pie-gradients: <?= esc($regime['composition_gradient'] ?? '#e9eef3 0% 100%') ?>" data-tooltip="<?= esc($regime['composition_tooltip'] ?? '') ?>">
+                                <span class="composition-tooltip"></span>
+                            </div>
                         <div class="composition-legend-inline">
                             <?php foreach ($regime['composition_legend'] ?? [] as $legend): ?>
                                 <span class="composition-legend-item">
@@ -131,27 +133,9 @@
 
 <?= $this->section('scripts') ?>
 <script>
-        (function() {
-            const form = document.getElementById('commande-form');
-            if (!form) return;
-
-            const variationMonthly = <?= json_encode((float) $regime['variation_mensuelle_kg']) ?>;
-
-            const formatKg = (value) => {
-                const sign = value > 0 ? '+' : '';
-                return sign + value.toFixed(2).replace(/\.00$/, '').replace(/\.([1-9])0$/, '.$1') + 'kg';
-            };
-
-            const updateEstimates = () => {
-                const estimateNodes = form.querySelectorAll('.estimate');
-                estimateNodes.forEach((node) => {
-                    const days = Number(node.dataset.days || 0);
-                    const estimated = variationMonthly * (days / 30);
-                    node.textContent = formatKg(estimated);
-                });
-            };
-
-            updateEstimates();
-        })();
+    window.regimeData = <?= json_encode([
+        'variationMonthly' => (float) ($regime['variation_mensuelle_kg'] ?? 0),
+    ]) ?>;
 </script>
+<script src="<?= base_url('assets/js/regime.js') ?>"></script>
 <?= $this->endSection() ?>

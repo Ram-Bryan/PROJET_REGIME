@@ -27,7 +27,7 @@
                 <a class="<?= $isActive(['options']) ? 'active' : '' ?>" href="<?= esc(site_url('options')) ?>">Options</a>
                 <a class="<?= $isActive(['promo']) ? 'active' : '' ?>" href="<?= esc(site_url('promo')) ?>">Code promo</a>
                 <a class="<?= $isActive(['transactions']) ? 'active' : '' ?>" href="<?= esc(site_url('transactions')) ?>">Transactions</a>
-                <a href="<?= esc(site_url('logout')) ?>" data-confirm-message="Voulez-vous vraiment vous déconnecter ?">Déconnexion</a>
+                <a class="link-danger" href="<?= esc(site_url('logout')) ?>" data-confirm-message="Voulez-vous vraiment vous déconnecter ?">Déconnexion</a>
             <?php else: ?>
                 <a class="<?= $isActive(['']) ? 'active' : '' ?>" href="<?= esc(site_url('/')) ?>">Accueil</a>
                 <a class="<?= $isActive(['login']) ? 'active' : '' ?>" href="<?= esc(site_url('login')) ?>">Connexion</a>

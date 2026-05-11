@@ -89,6 +89,19 @@ body.fo-body {
   border-color: #8be0c6;
 }
 
+.nav a.link-danger {
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.nav a.link-danger:hover {
+  background: #dc2626;
+  color: #fff;
+  border-color: #b91c1c;
+  box-shadow: 0 12px 22px rgba(185, 28, 28, 0.22);
+}
+
 /* ── Hamburger ── */
 .mobile-menu-btn {
   display: none;
@@ -425,6 +438,15 @@ body.fo-body {
 .fo-footer a { color: var(--muted); display: block; margin-bottom: var(--space-2); text-decoration: none; font-size: 14px; }
 .fo-footer a:hover { color: var(--primary); }
 
+.fo-footer a.link-danger {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.fo-footer a.link-danger:hover {
+  color: #dc2626;
+}
+
 .fo-footer-bottom {
   text-align: center;
   padding-top: var(--space-6);
@@ -614,6 +636,29 @@ body.fo-body {
   background: conic-gradient(var(--pie-gradients, #e9eef3 0% 100%));
   border: 3px solid #fff;
   box-shadow: var(--shadow-md);
+}
+
+.composition-chart {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.composition-tooltip {
+  position: absolute;
+  background: #1e293b;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  transform: translate(-50%, -100%);
 }
 
 .composition-block {

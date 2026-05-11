@@ -81,6 +81,21 @@ body.bo-body {
   color: #5ec4a0;
 }
 
+.nav-link.nav-link-danger {
+  background: rgba(220, 38, 38, 0.14);
+  color: #fecaca;
+}
+
+.nav-link.nav-link-danger img {
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.nav-link.nav-link-danger:hover {
+  background: rgba(220, 38, 38, 0.26);
+  color: #fff;
+}
+
 .sidebar-footer {
   margin-top: auto;
   padding-top: 18px;

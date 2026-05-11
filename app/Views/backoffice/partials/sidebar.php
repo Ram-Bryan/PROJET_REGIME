@@ -51,7 +51,7 @@
     </nav>
 
     <div class="sidebar-footer">
-        <a href="<?= base_url('admin/logout') ?>" class="nav-link" data-confirm-message="Voulez-vous vraiment vous déconnecter ?">
+        <a href="<?= base_url('admin/logout') ?>" class="nav-link nav-link-danger" data-confirm-message="Voulez-vous vraiment vous déconnecter ?">
             <img class="icon" src="<?= esc(base_url('assets/icons/log-out.svg')) ?>" alt="">
             <span>Déconnexion</span>
         </a>
